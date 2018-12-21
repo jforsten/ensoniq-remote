@@ -154,6 +154,8 @@
 import SystemInformation from './WelcomeView/SystemInformation'
 import { spawn } from 'child_process'
 import { TypeIcons } from '../../enums.js'
+import WebMidi from '../../webmidi'
+
 export default {
   data () {
     return {
@@ -197,14 +199,37 @@ export default {
     open (link) {
       this.$electron.shell.openExternal(link)
     },
+
     reset () {
       this.currentPath = '/'
       this.run('./epslin', ['-J', this.currentMedia])
+      console.log('count:' + this.count)
+      this.$store.dispatch('appState/emailupdate', 'john.doe@mstar.com')
+
+      if (navigator.requestMIDIAccess) {
+        navigator.requestMIDIAccess({
+          sysex: false
+        }).then(onMIDISuccess, onMIDIFailure)
+      } else {
+        console.warn('No MIDI support in your browser')
+      }
+
+      WebMidi.enable(function (err) {
+        if (err) {
+          console.log('WebMidi could not be enabled.', err)
+        } else {
+          console.log('WebMidi enabled!')
+          console.log(WebMidi.inputs)
+          console.log(WebMidi.outputs)
+        }
+      })
     },
+
     change_media () {
       console.log(this.currentMedia)
       this.reset()
     },
+
     item_click_handler (item) {
       switch (item.type_id) {
         case '2':
@@ -215,6 +240,7 @@ export default {
           break
       }
     },
+
     run (cmd, args) {
       const p = spawn(cmd, args, { cwd: '/Users/jforsten/Projects/EpsLin' })
       p.stdout.on('data', (data) => {
@@ -235,6 +261,7 @@ export default {
         console.log('child process exited with code ' + code)
       })
     },
+
     get_icon (itemTypeId) {
       switch (itemTypeId) {
         case '1':
@@ -266,6 +293,7 @@ export default {
           return ''
       }
     },
+
     capital_letter (str) {
       str = str.trim().toLowerCase()
       str = str.split(' ')
@@ -276,6 +304,7 @@ export default {
 
       return str.join(' ')
     },
+
     go_dir (dirId) {
       console.log(dirId)
       if (this.currentPath === '/') {
@@ -286,6 +315,7 @@ export default {
       this.run('./epslin', ['-J', '-d' + this.currentPath, this.currentMedia])
       console.log('currentPath:' + this.currentPath)
     },
+
     go_parent_dir () {
       var pathParts = this.currentPath.split('/')
       pathParts.pop()
@@ -295,7 +325,34 @@ export default {
       console.log('currentPath:' + this.currentPath)
       this.run('./epslin', ['-J', '-d' + this.currentPath, this.currentMedia])
     }
+  },
+
+  computed: {
+    count: function () {
+      return this.$store.getters['appState/fullname']
+    }
   }
+}
+
+// on success
+function onMIDISuccess (midiData) {
+  var midi
+  console.log('midi opened')
+  midi = midiData
+  var allInputs = midi.inputs.values()
+  for (var input = allInputs.next(); input && !input.done; input = allInputs.next()) {
+    // when a MIDI value is received call the onMIDIMessage function
+    input.value.onmidimessage = gotMIDImessage
+  }
+}
+
+function gotMIDImessage (messageData) {
+  console.log(messageData)
+}
+
+// on failure
+function onMIDIFailure () {
+  console.warn('Not recognising MIDI controller')
 }
 </script>
 
