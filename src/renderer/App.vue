@@ -69,7 +69,7 @@ export default {
     drawer: true,
     fixed: false,
     items: [
-      { icon: 'apps', title: 'Welcome', to: '/' },
+      { icon: 'apps', title: 'Browser', to: '/' },
       { icon: 'settings', title: 'Settings', to: '/settings' }
     ],
     miniVariant: false,
