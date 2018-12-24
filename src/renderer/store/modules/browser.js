@@ -6,8 +6,13 @@ export default {
   state: {
     items: [],
     currentPath: '/',
-    currentMedia: './TheArtOfTranswaves.iso',
-    mediaList: ['./TheArtOfTranswaves.iso', './PellePiano_Demos.iso']
+    currentPathName: '/',
+    currentMedia: '',
+    mediaList: [],
+    mediaDirectory: '/Users/jforsten/Projects/EpsLin',
+    epslin: '/Users/jforsten/Projects/EpsLin/epslin',
+    workingDirectory: '/Users/jforsten/Projects/EpsLin',
+    mediaExtension: '.iso'
   },
 
   getters: {
@@ -24,15 +29,18 @@ export default {
     updateCurrentPath (state, path) {
       state.currentPath = path
     },
+    updateCurrentPathName (state, path) {
+      state.currentPathName = path
+    },
     updateCurrentMedia (state, media) {
       state.currentMedia = media
     },
     updateMediaList (state) {
       var fs = require('fs')
-      var files = fs.readdirSync('/Users/jforsten/Projects/EpsLin')
+      var files = fs.readdirSync(state.mediaDirectory)
 
       var path = require('path')
-      var EXTENSION = '.iso'
+      var EXTENSION = state.mediaExtension
 
       var mediaList = files.filter(function (file) {
         return path.extname(file).toLowerCase() === EXTENSION
@@ -61,6 +69,7 @@ export default {
 
     goDir ({commit, state}, dirId) {
       console.log('goDir' + dirId)
+      var name, str, i, x
 
       if (dirId === '..') {
         var pathParts = state.currentPath.split('/')
@@ -68,23 +77,53 @@ export default {
         pathParts = pathParts.join('/')
         var path = pathParts
         if (path === '') path = '/'
+
         commit('updateCurrentPath', path)
 
-        const p = spawn('./epslin', ['-J', '-d' + path, state.currentMedia], { cwd: '/Users/jforsten/Projects/EpsLin' })
+        const p = spawn(state.epslin, ['-J', '-d' + path, state.currentMedia], { cwd: state.workingDirectory })
         p.stdout.on('data', (data) => { commit('updateItems', JSON.parse(data).items) })
         p.stderr.on('data', (data) => { console.log('stderr: ' + data) })
+
+        pathParts = state.currentPathName.split('/')
+        pathParts.pop()
+        pathParts = pathParts.join('/')
+        path = pathParts
+        if (path === '') path = '/'
+
+        commit('updateCurrentPathName', path)
         return
       }
 
       if (dirId === '/') {
         commit('updateCurrentPath', '/')
+        commit('updateCurrentPathName', '/')
       } else if (state.currentPath === '/') {
         commit('updateCurrentPath', '/' + dirId)
+        name = state.items.filter(function (item) {
+          return item.index === dirId
+        })[0].name.trim()
+        str = name.trim().toLowerCase()
+        str = str.split(' ')
+        for (i = 0, x = str.length; i < x; i++) {
+          if (str[i].length > 1) { str[i] = str[i][0].toUpperCase() + str[i].substr(1) }
+        }
+        name = str.join(' ')
+        commit('updateCurrentPathName', '/' + name)
       } else {
         commit('updateCurrentPath', state.currentPath + '/' + dirId)
+        name = state.items.filter(function (item) {
+          return item.index === dirId
+        })[0].name.trim()
+        str = name.trim().toLowerCase()
+        str = str.split(' ')
+        for (i = 0, x = str.length; i < x; i++) {
+          if (str[i].length > 1) { str[i] = str[i][0].toUpperCase() + str[i].substr(1) }
+        }
+        name = str.join(' ')
+        commit('updateCurrentPathName', state.currentPathName + '/' + name)
       }
 
-      const p = spawn('./epslin', ['-J', '-d' + state.currentPath, state.currentMedia], { cwd: '/Users/jforsten/Projects/EpsLin' })
+      const p = spawn(state.epslin, ['-J', '-d' + state.currentPath, state.currentMedia], { cwd: state.workingDirectory })
       p.stdout.on('data', (data) => { commit('updateItems', JSON.parse(data).items) })
       p.stderr.on('data', (data) => { console.log('stderr: ' + data) })
     },
@@ -97,7 +136,7 @@ export default {
       if (path === '') path = '/'
       commit('updateCurrentPath', path)
 
-      const p = spawn('./epslin', ['-J', '-d' + path, state.currentMedia], { cwd: '/Users/jforsten/Projects/EpsLin' })
+      const p = spawn(state.epslin, ['-J', '-d' + path, state.currentMedia], { cwd: state.workingDirectory })
       p.stdout.on('data', (data) => { commit('updateItems', JSON.parse(data).items) })
       p.stderr.on('data', (data) => { console.log('stderr: ' + data) })
     }

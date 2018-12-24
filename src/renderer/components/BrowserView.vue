@@ -45,8 +45,8 @@
           ml-2
         >
           <v-card
-          flat
-          v-if="showMediaInfo"
+            flat
+            v-if="showMediaInfo"
           >
             <div>
               <span class="grey--text"> Name: {{ensoniqName}}</span><br>
@@ -63,79 +63,88 @@
       xs10
       class="mt-4"
     >
+      <v-flex my-2>
+        <div class="grey darken-3">
+          <v-card-text>
+            <small>
+              <font color="grey">Path:</font> {{currentPathName}}
+            </small>
+          </v-card-text>
+        </div>
+      </v-flex>
       <template>
-      <v-data-table
-        :headers="headers"
-        :items="dataItems"
-        item-key="index"
-        hide-actions
-      >
-        <template
-          slot="items"
-          slot-scope="props"
+        <v-data-table
+          :headers="headers"
+          :items="dataItems"
+          item-key="index"
+          hide-actions
         >
-          <tr
-            v-bind:class="{'grey': props.expanded}"
-            @click="props.expanded = !props.expanded && props.item.type_id === '3';item_click_handler(props.item)"
+          <template
+            slot="items"
+            slot-scope="props"
           >
-            <td class="justify-center">
-              <v-icon
-                small
-                class="mr-2"
-              >
-                {{get_icon(props.item.type_id)}}
-              </v-icon>
-            </td>
-            <td class="subheading">{{ props.item.name }}</td>
-            <td>{{ props.item.index }}</td>
-            <td>{{ props.item.type }}</td>
-            <td>{{ props.item.blocks }}</td>
-            <td>{{ props.item.bytes }}</td>
-          </tr>
-        </template>
-        <template
-          slot="expand"
-          slot-scope="props"
-        >
-          <v-card
-            flat
-            class="grey darken-2"
-          >
-            <v-layout row>
-              <v-flex
-                class="grey darken-2"
-                mx-1
-                v-for="option in selectOptions"
-                :key="option.text"
-              >
-                <v-btn
-                  @click="show=!show"
-                  block
+            <tr
+              v-bind:class="{'grey': props.expanded}"
+              @click="props.expanded = !props.expanded && props.item.type_id === '3';item_click_handler(props.item)"
+            >
+              <td class="justify-center">
+                <v-icon
                   small
-                  class='black'
-                >{{option.value}}</v-btn>
-              </v-flex>
-            </v-layout>
-            <v-slide-y-transition>
-              <v-layout
-                row
-                v-if="show"
-              >
-                <v-flex class="grey darken-2">
-                  <v-progress-linear
-                    background-color="grey darken-2"
-                    color="error"
-                    v-model="value"
-                    height="15"
-                    :active="show"
-                    :indeterminate="true"
-                  />
+                  class="mr-2"
+                >
+                  {{get_icon(props.item.type_id)}}
+                </v-icon>
+              </td>
+              <td class="subheading">{{ props.item.name }}</td>
+              <td>{{ props.item.index }}</td>
+              <td>{{ props.item.type }}</td>
+              <td>{{ props.item.blocks }}</td>
+              <td>{{ props.item.bytes }}</td>
+            </tr>
+          </template>
+          <template
+            slot="expand"
+            slot-scope="props"
+          >
+            <v-card
+              flat
+              class="grey darken-2"
+            >
+              <v-layout row>
+                <v-flex
+                  class="grey darken-2"
+                  mx-1
+                  v-for="option in selectOptions"
+                  :key="option.text"
+                >
+                  <v-btn
+                    @click="show=!show"
+                    block
+                    small
+                    class='black'
+                  >{{option.value}}</v-btn>
                 </v-flex>
               </v-layout>
-            </v-slide-y-transition>
-          </v-card>
-        </template>
-      </v-data-table>
+              <v-slide-y-transition>
+                <v-layout
+                  row
+                  v-if="show"
+                >
+                  <v-flex class="grey darken-2">
+                    <v-progress-linear
+                      background-color="grey darken-2"
+                      color="error"
+                      v-model="value"
+                      height="15"
+                      :active="show"
+                      :indeterminate="true"
+                    />
+                  </v-flex>
+                </v-layout>
+              </v-slide-y-transition>
+            </v-card>
+          </template>
+        </v-data-table>
       </template>
     </v-flex>
     <v-flex
@@ -143,7 +152,7 @@
       class="mt-4"
     >
       <v-card>
-        <v-card-title class="headline">Docs</v-card-title>
+        <v-card-title class="headline">Actions</v-card-title>
         <v-divider></v-divider>
         <v-card-actions class="pt-3 pb-3">
           <v-spacer></v-spacer>
@@ -160,11 +169,11 @@
           <v-btn
             class="link-btn"
             @click="updateMediaList()"
-          >update media list</v-btn>
+          >update media</v-btn>
           <v-btn
             class="link-btn"
-            @click="reset()"
-          > reset </v-btn>
+            @click="goToRoot()"
+          > Root </v-btn>
           <v-spacer></v-spacer>
         </v-card-actions>
       </v-card>
@@ -219,7 +228,7 @@ export default {
   },
 
   computed: {
-    ...mapState('browser', ['items', 'currentPath', 'currentMedia', 'mediaList']),
+    ...mapState('browser', ['items', 'currentPath', 'currentPathName', 'currentMedia', 'mediaList']),
 
     // Change name casing
     dataItems: function () {
@@ -259,12 +268,12 @@ export default {
       this.$electron.shell.openExternal(link)
     },
 
-    reset () {
+    goToRoot () {
       this.goDir('/')
     },
 
     change_media () {
-      this.reset()
+      this.goToRoot()
     },
 
     item_click_handler (item) {
@@ -292,8 +301,13 @@ export default {
     }
   },
 
+  created () {
+    console.log('Browser - CREATED')
+  },
+
   mounted () {
-    this.reset()
+    console.log('Browser - MOUNTED')
+    this.updateMediaList()
   }
 }
 </script>
