@@ -1,4 +1,5 @@
 import { spawn } from 'child_process'
+import { Helpers } from '../../utils/helpers.js'
 
 export default {
   namespaced: true,
@@ -69,7 +70,7 @@ export default {
 
     goDir ({commit, state}, dirId) {
       console.log('goDir' + dirId)
-      var name, str, i, x
+      var name
 
       if (dirId === '..') {
         var pathParts = state.currentPath.split('/')
@@ -102,25 +103,13 @@ export default {
         name = state.items.filter(function (item) {
           return item.index === dirId
         })[0].name.trim()
-        str = name.trim().toLowerCase()
-        str = str.split(' ')
-        for (i = 0, x = str.length; i < x; i++) {
-          if (str[i].length > 1) { str[i] = str[i][0].toUpperCase() + str[i].substr(1) }
-        }
-        name = str.join(' ')
-        commit('updateCurrentPathName', '/' + name)
+        commit('updateCurrentPathName', '/' + Helpers.capital_letter(name))
       } else {
         commit('updateCurrentPath', state.currentPath + '/' + dirId)
         name = state.items.filter(function (item) {
           return item.index === dirId
         })[0].name.trim()
-        str = name.trim().toLowerCase()
-        str = str.split(' ')
-        for (i = 0, x = str.length; i < x; i++) {
-          if (str[i].length > 1) { str[i] = str[i][0].toUpperCase() + str[i].substr(1) }
-        }
-        name = str.join(' ')
-        commit('updateCurrentPathName', state.currentPathName + '/' + name)
+        commit('updateCurrentPathName', state.currentPathName + '/' + Helpers.capital_letter(name))
       }
 
       const p = spawn(state.epslin, ['-J', '-d' + state.currentPath, state.currentMedia], { cwd: state.workingDirectory })

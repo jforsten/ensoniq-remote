@@ -185,6 +185,7 @@
 import { mapState, mapActions } from 'Vuex'
 import SystemInformation from './WelcomeView/SystemInformation'
 import { TypeIcons } from '../utils/typeIcons.js'
+import { Helpers } from '../utils/helpers.js'
 
 export default {
   name: 'browser',
@@ -238,7 +239,7 @@ export default {
       return tmpItems.map(i => {
         var item = i
         if (item.name !== undefined) {
-          item.name = this.capital_letter(item.name)
+          item.name = Helpers.capital_letter(item.name)
         }
         return item
       })
@@ -289,15 +290,6 @@ export default {
 
     get_icon (itemTypeId) {
       return TypeIcons.get_icon(itemTypeId)
-    },
-
-    capital_letter (str) {
-      str = str.trim().toLowerCase()
-      str = str.split(' ')
-      for (var i = 0, x = str.length; i < x; i++) {
-        if (str[i].length > 1) { str[i] = str[i][0].toUpperCase() + str[i].substr(1) }
-      }
-      return str.join(' ')
     }
   },
 
