@@ -4,35 +4,32 @@ export default {
   namespaced: true,
 
   state: {
-    firstname: 'John',
-    lastname: 'Doe',
-    email: 'john.doe@morningstar.com',
     midiInputs: {},
-    midiOutputs: []
+    midiOutputs: {}
   },
 
   getters: {
-    fullname: state => `${state.firstname} ${state.lastname} ${state.email}`,
     midiInputs: state => {
       console.log('getter:' + state.midiInputs)
       return state.midiInputs
     },
-    midiOutputs: state => `${state.midiOutputs}`
-  },
-
-  mutations: {
-    updatemail (state, email) {
-      state.email = email
-    },
-    updateMidiPorts (state, inputs) {
-      state.midiInputs = inputs
+    midiOutputs: state => {
+      console.log('getter:' + state.midiOutputs)
+      return state.midiOutputs
     }
   },
 
-  actions: {
-    emailupdate (context, email) {
-      context.commit('updatemail', email)
+  mutations: {
+    updateMidiInputs (state, inputs) {
+      state.midiInputs = inputs
     },
+    updateMidiOutputs (state, outputs) {
+      state.midiOutputs = outputs
+    }
+
+  },
+
+  actions: {
     midiPortsUpdate (context) {
       console.log('midiupdate called')
       var midiInputs = []
@@ -54,8 +51,14 @@ export default {
             dict['name'] = i.name
             return dict
           })
-          midiOutputs = WebMidi.outputs
-          context.commit('updateMidiPorts', JSON.stringify(midiInputs))
+          midiOutputs = WebMidi.outputs.map(i => {
+            var dict = {}
+            dict['id'] = i.id
+            dict['name'] = i.name
+            return dict
+          })
+          context.commit('updateMidiInputs', JSON.stringify(midiInputs))
+          context.commit('updateMidiOutputs', JSON.stringify(midiOutputs))
         }
       }, true)
     },
@@ -90,8 +93,14 @@ export default {
               dict['name'] = i.name
               return dict
             })
-            midiOutputs = WebMidi.outputs
-            commit('updateMidiPorts', JSON.stringify(midiInputs))
+            midiOutputs = WebMidi.outputs.map(i => {
+              var dict = {}
+              dict['id'] = i.id
+              dict['name'] = i.name
+              return dict
+            })
+            commit('updateMidiInputs', JSON.stringify(midiInputs))
+            commit('updateMidiOutputs', JSON.stringify(midiOutputs))
             resolve()
           }
         }, true)

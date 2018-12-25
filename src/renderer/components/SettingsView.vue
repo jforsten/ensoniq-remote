@@ -18,6 +18,17 @@
           />
         </v-card>
       </v-flex>
+       <v-flex xs6 mt-4>
+        <v-card>
+          <v-select
+            v-model="midiOutput"
+            :items="midiOutputs.map(i => { return i.name })"
+            box
+            autofocus
+            label="MIDI Output"
+          />
+        </v-card>
+      </v-flex>
       <v-btn @click="setup()">Vue</v-btn>
     </v-flex>
   </v-layout>
@@ -30,7 +41,9 @@ export default {
   data () {
     return {
       midiInput: '',
-      midiInputs: []
+      midiInputs: [],
+      midiOutput: '',
+      midiOutputs: []
     }
   },
   computed: {
@@ -45,6 +58,9 @@ export default {
       var jsonInputs = this.$store.getters['settings/midiInputs']
       console.log('SV: json:' + jsonInputs)
       this.midiInputs = JSON.parse(jsonInputs)
+      jsonInputs = this.$store.getters['settings/midiOutputs']
+      console.log('SV: json:' + jsonInputs)
+      this.midiOutputs = JSON.parse(jsonInputs)
     }
   },
   created () {
