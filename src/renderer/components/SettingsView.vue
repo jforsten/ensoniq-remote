@@ -10,19 +10,26 @@
       <v-flex xs6>
         <v-card>
           <v-select
-            v-model="midiInput"
-            :items="midiInputs.map(i => { return i.name })"
+            v-model="currentMidiInput"
+            :items="midiInputs"
+            item-text="name"
+            item-value="id"
             box
             autofocus
             label="MIDI Input"
           />
         </v-card>
       </v-flex>
-       <v-flex xs6 mt-4>
+      <v-flex
+        xs6
+        mt-4
+      >
         <v-card>
           <v-select
-            v-model="midiOutput"
-            :items="midiOutputs.map(i => { return i.name })"
+            v-model="currentMidiOutput"
+            :items="midiOutputs"
+            item-text="name"
+            item-value="id"
             box
             autofocus
             label="MIDI Output"
@@ -36,31 +43,37 @@
 
      
 <script>
+
+import { mapState, mapActions } from 'Vuex'
+
 export default {
 
   data () {
     return {
-      midiInput: '',
-      midiInputs: [],
-      midiOutput: '',
-      midiOutputs: []
+
     }
   },
   computed: {
-    midiInputss: function () {
-      var inputs = this.$store.getters['settings/midiInputs']
-      console.log('MIDI INPUTS:' + inputs)
-      return inputs
+    ...mapState('settings', ['midiInputs', 'midiOutputs', 'midiInput', 'midiOutput']),
+
+    currentMidiInput: {
+      get () { return this.midiInput },
+      set (value) { this.selectMidiInput(value) }
+    },
+
+    currentMidiOutput: {
+      get () { return this.midiOutput },
+      set (value) { this.selectMidiOutput(value) }
     }
+
   },
   methods: {
+    ...mapActions({
+      selectMidiInput: 'settings/selectMidiInput',
+      selectMidiOutput: 'settings/selectMidiOutput'
+    }),
     setup () {
-      var jsonInputs = this.$store.getters['settings/midiInputs']
-      console.log('SV: json:' + jsonInputs)
-      this.midiInputs = JSON.parse(jsonInputs)
-      jsonInputs = this.$store.getters['settings/midiOutputs']
-      console.log('SV: json:' + jsonInputs)
-      this.midiOutputs = JSON.parse(jsonInputs)
+
     }
   },
   created () {

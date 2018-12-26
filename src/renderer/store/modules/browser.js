@@ -100,15 +100,11 @@ export default {
         commit('updateCurrentPathName', '/')
       } else if (state.currentPath === '/') {
         commit('updateCurrentPath', '/' + dirId)
-        name = state.items.filter(function (item) {
-          return item.index === dirId
-        })[0].name.trim()
+        name = state.items.find(function (item) { return item.index === dirId }).name.trim()
         commit('updateCurrentPathName', '/' + Helpers.capital_letter(name))
       } else {
         commit('updateCurrentPath', state.currentPath + '/' + dirId)
-        name = state.items.filter(function (item) {
-          return item.index === dirId
-        })[0].name.trim()
+        name = state.items.find(function (item) { return item.index === dirId }).name.trim()
         commit('updateCurrentPathName', state.currentPathName + '/' + Helpers.capital_letter(name))
       }
 

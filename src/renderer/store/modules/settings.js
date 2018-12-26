@@ -4,8 +4,10 @@ export default {
   namespaced: true,
 
   state: {
-    midiInputs: {},
-    midiOutputs: {}
+    midiInputs: [],
+    midiOutputs: [],
+    midiInput: undefined,
+    midiOutput: undefined
   },
 
   getters: {
@@ -25,42 +27,24 @@ export default {
     },
     updateMidiOutputs (state, outputs) {
       state.midiOutputs = outputs
+    },
+    selectMidiInput (state, id) {
+      var input = state.midiInputs.find(function (item) { return item.id === id })
+      state.midiInput = input
+    },
+    selectMidiOutput (state, id) {
+      var output = state.midiOutputs.find(function (item) { return item.id === id })
+      state.midiOutput = output
     }
-
   },
 
   actions: {
-    midiPortsUpdate (context) {
-      console.log('midiupdate called')
-      var midiInputs = []
-      var midiOutputs = []
+    selectMidiInput ({commit}, id) {
+      commit('selectMidiInput', id)
+    },
 
-      WebMidi.enable(function (err) {
-        if (err) {
-          console.log('WebMidi could not be enabled.', err)
-          context.commit('updateMidiPorts', midiInputs, midiOutputs)
-        } else {
-          console.log('WebMidi enabled!')
-          console.log('Midi ins:' + WebMidi.inputs.length)
-          console.log(WebMidi.inputs)
-          console.log(WebMidi.inputs[0].name)
-          console.log(WebMidi.outputs)
-          midiInputs = WebMidi.inputs.map(i => {
-            var dict = {}
-            dict['id'] = i.id
-            dict['name'] = i.name
-            return dict
-          })
-          midiOutputs = WebMidi.outputs.map(i => {
-            var dict = {}
-            dict['id'] = i.id
-            dict['name'] = i.name
-            return dict
-          })
-          context.commit('updateMidiInputs', JSON.stringify(midiInputs))
-          context.commit('updateMidiOutputs', JSON.stringify(midiOutputs))
-        }
-      }, true)
+    selectMidiOutput ({commit}, id) {
+      commit('selectMidiOutput', id)
     },
 
     asyncMidiPortsUpdate ({ commit }) {
@@ -79,14 +63,10 @@ export default {
         WebMidi.enable(function (err) {
           if (err) {
             console.log('WebMidi could not be enabled.', err)
-            commit('updateMidiPorts', midiInputs, midiOutputs)
+            commit('updateMidiInputs', midiInputs)
+            commit('updateMidiOutputs', midiOutputs)
             reject(err)
           } else {
-            console.log('WebMidi enabled!')
-            console.log('Midi ins:' + WebMidi.inputs.length)
-            console.log(WebMidi.inputs)
-            console.log(WebMidi.inputs[0].name)
-            console.log(WebMidi.outputs)
             midiInputs = WebMidi.inputs.map(i => {
               var dict = {}
               dict['id'] = i.id
@@ -99,8 +79,8 @@ export default {
               dict['name'] = i.name
               return dict
             })
-            commit('updateMidiInputs', JSON.stringify(midiInputs))
-            commit('updateMidiOutputs', JSON.stringify(midiOutputs))
+            commit('updateMidiInputs', midiInputs)
+            commit('updateMidiOutputs', midiOutputs)
             resolve()
           }
         }, true)
