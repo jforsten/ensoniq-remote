@@ -13,7 +13,7 @@
         xs1
         align-center
         justify-space-between="true"
-        v-for="option in selectOptions"
+        v-for="option in panelData.selectOptions"
         :key="option.text"
       >
         <v-btn
@@ -48,9 +48,9 @@
 <script>
 export default {
   props: {
-    selectOptions: {
-      type: Array,
-      default: () => []
+    panelData: {
+      type: Object,
+      default: () => {}
     }
   },
   data () {
