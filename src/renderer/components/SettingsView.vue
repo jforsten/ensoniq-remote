@@ -76,17 +76,12 @@ export default {
 
     }
   },
-  created () {
-    console.log('CREATED')
-  },
 
   mounted () {
-    console.log('MOUNTED')
     this.$store.dispatch('settings/asyncMidiPortsUpdate').then(() => {
-      console.log('then: ok')
       this.setup()
     }).catch(err => {
-      console.log('catch: ' + err)
+      console.error('catch: ' + err)
     })
   }
 }

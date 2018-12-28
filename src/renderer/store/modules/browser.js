@@ -1,5 +1,6 @@
-import { spawn } from 'child_process'
+// import { spawn } from 'child_process'
 import { Helpers } from '../../utils/helpers.js'
+import { DataSource } from '../../utils/datasource'
 
 export default {
   namespaced: true,
@@ -17,6 +18,9 @@ export default {
   },
 
   getters: {
+    epslin: state => `${state.epslin}`,
+    workingDirectory: state => `${state.workingDirectory}`,
+
     items: state => `${state.items}`,
     currentPath: state => `${state.currentPath}`,
     currentMedia: state => `${state.currentMedia}`,
@@ -73,57 +77,33 @@ export default {
       var name
 
       if (dirId === '..') {
-        var pathParts = state.currentPath.split('/')
-        pathParts.pop()
-        pathParts = pathParts.join('/')
-        var path = pathParts
-        if (path === '') path = '/'
-
-        commit('updateCurrentPath', path)
-
-        const p = spawn(state.epslin, ['-J', '-d' + path, state.currentMedia], { cwd: state.workingDirectory })
-        p.stdout.on('data', (data) => { commit('updateItems', JSON.parse(data).items) })
-        p.stderr.on('data', (data) => { console.log('stderr: ' + data) })
-
-        pathParts = state.currentPathName.split('/')
-        pathParts.pop()
-        pathParts = pathParts.join('/')
-        path = pathParts
-        if (path === '') path = '/'
-
-        commit('updateCurrentPathName', path)
-        return
-      }
-
-      if (dirId === '/') {
-        commit('updateCurrentPath', '/')
-        commit('updateCurrentPathName', '/')
-      } else if (state.currentPath === '/') {
-        commit('updateCurrentPath', '/' + dirId)
-        name = state.items.find(function (item) { return item.index === dirId }).name.trim()
-        commit('updateCurrentPathName', '/' + Helpers.capital_letter(name))
+        // parent dir
+        commit('updateCurrentPath', Helpers.parent_dir(state.currentPath))
+        commit('updateCurrentPathName', Helpers.parent_dir(state.currentPathName))
       } else {
-        commit('updateCurrentPath', state.currentPath + '/' + dirId)
-        name = state.items.find(function (item) { return item.index === dirId }).name.trim()
-        commit('updateCurrentPathName', state.currentPathName + '/' + Helpers.capital_letter(name))
+        if (dirId === '/') {
+          // root dir
+          commit('updateCurrentPath', '/')
+          commit('updateCurrentPathName', '/')
+        } else if (state.currentPath === '/') {
+          // from root dir
+          commit('updateCurrentPath', '/' + dirId)
+          name = state.items.find(function (item) { return item.index === dirId }).name.trim()
+          commit('updateCurrentPathName', '/' + Helpers.capital_letter(name))
+        } else {
+          // "normal" case
+          commit('updateCurrentPath', state.currentPath + '/' + dirId)
+          name = state.items.find(function (item) { return item.index === dirId }).name.trim()
+          commit('updateCurrentPathName', state.currentPathName + '/' + Helpers.capital_letter(name))
+        }
       }
-
-      const p = spawn(state.epslin, ['-J', '-d' + state.currentPath, state.currentMedia], { cwd: state.workingDirectory })
-      p.stdout.on('data', (data) => { commit('updateItems', JSON.parse(data).items) })
-      p.stderr.on('data', (data) => { console.log('stderr: ' + data) })
+      DataSource.fetchData(state.currentPath).then(items => { commit('updateItems', items) })
     },
 
     goParentDir ({commit, state}) {
-      var pathParts = state.currentPath.split('/')
-      pathParts.pop()
-      pathParts = pathParts.join('/')
-      var path = pathParts
-      if (path === '') path = '/'
-      commit('updateCurrentPath', path)
-
-      const p = spawn(state.epslin, ['-J', '-d' + path, state.currentMedia], { cwd: state.workingDirectory })
-      p.stdout.on('data', (data) => { commit('updateItems', JSON.parse(data).items) })
-      p.stderr.on('data', (data) => { console.log('stderr: ' + data) })
+      commit('updateCurrentPath', Helpers.parent_dir(state.currentPath))
+      commit('updateCurrentPathName', Helpers.parent_dir(state.currentPathName))
+      DataSource.fetchData(state.currentPath).then(items => { commit('updateItems', items) })
     }
   }
 }

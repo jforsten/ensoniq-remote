@@ -7,6 +7,15 @@ export const Helpers = {
       if (str[i].length > 1) { str[i] = str[i][0].toUpperCase() + str[i].substr(1) }
     }
     return str.join(' ')
+  },
+
+  parent_dir (path) {
+    var pathParts = path.split('/')
+    pathParts.pop()
+    pathParts = pathParts.join('/')
+    var parentPath = pathParts
+    if (parentPath === '') parentPath = '/'
+    return parentPath
   }
 
 }

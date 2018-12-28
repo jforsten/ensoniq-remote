@@ -11,21 +11,17 @@
       offset-md1
       class="text-xs-center centered"
     >
-      <!--img id="logo" class="logo" src="~@/assets/logo.png" alt="electron-vue"-->
     </v-flex>
     <v-flex
       xs12
       md6
       class="text-xs-center centered"
     >
-
-      <!--img id="logo" class="logo" src="/static/v.png" alt="Vuetifyjs"-->
     </v-flex>
     <v-flex
       xs10
       class="mt-4"
     >
-      <!--system-information></system-information-->
       <v-layout>
         <v-flex
           xs6
@@ -58,7 +54,6 @@
         </v-flex>
       </v-layout>
     </v-flex>
-
     <v-flex
       xs10
       class="mt-4"
@@ -106,43 +101,7 @@
             slot="expand"
             slot-scope="props"
           >
-            <v-card
-              flat
-              class="grey darken-2"
-            >
-              <v-layout row>
-                <v-flex
-                  class="grey darken-2"
-                  mx-1
-                  v-for="option in selectOptions"
-                  :key="option.text"
-                >
-                  <v-btn
-                    @click="show=!show"
-                    block
-                    small
-                    class='black'
-                  >{{option.value}}</v-btn>
-                </v-flex>
-              </v-layout>
-              <v-slide-y-transition>
-                <v-layout
-                  row
-                  v-if="show"
-                >
-                  <v-flex class="grey darken-2">
-                    <v-progress-linear
-                      background-color="grey darken-2"
-                      color="error"
-                      v-model="value"
-                      height="15"
-                      :active="show"
-                      :indeterminate="true"
-                    />
-                  </v-flex>
-                </v-layout>
-              </v-slide-y-transition>
-            </v-card>
+            <instrument-panel :selectOptions="selectOptions" />
           </template>
         </v-data-table>
       </template>
@@ -158,23 +117,14 @@
           <v-spacer></v-spacer>
           <v-btn
             class="link-btn"
-            @click="open('https://vuejs.org/v2/guide/')"
-          >Vue</v-btn>
-          <v-spacer></v-spacer>
-          <v-btn
-            class="link-btn"
-            @click="open('https://electron.atom.io/docs/')"
-          >Electron</v-btn>
-          <v-spacer></v-spacer>
-          <v-btn
-            class="link-btn"
             @click="updateMediaList()"
           >update media</v-btn>
+
           <v-btn
             class="link-btn"
             @click="goToRoot()"
           > Root </v-btn>
-          <v-spacer></v-spacer>
+
         </v-card-actions>
       </v-card>
     </v-flex>
@@ -182,16 +132,17 @@
 </template>
 
 <script>
+
 import { mapState, mapActions } from 'Vuex'
-import SystemInformation from './WelcomeView/SystemInformation'
-import { TypeIcons } from '../utils/typeIcons.js'
-import { Helpers } from '../utils/helpers.js'
+import { TypeIcons } from '../utils/typeIcons'
+import { Helpers } from '../utils/helpers'
+import InstrumentPanel from './BrowserView/InstrumentPanel'
 
 export default {
   name: 'browser',
 
   components: {
-    SystemInformation
+    InstrumentPanel
   },
 
   data () {
@@ -265,10 +216,6 @@ export default {
       updateMediaList: 'browser/updateMediaList'
     }),
 
-    open (link) {
-      this.$electron.shell.openExternal(link)
-    },
-
     goToRoot () {
       this.goDir('/')
     },
@@ -293,21 +240,13 @@ export default {
     }
   },
 
-  created () {
-    console.log('Browser - CREATED')
-  },
-
   mounted () {
-    console.log('Browser - MOUNTED')
     this.updateMediaList()
   }
 }
 </script>
 
 <style scoped>
-.v-btn {
-  min-width: 0;
-}
 
 .centered {
   display: flex;
