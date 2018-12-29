@@ -11,15 +11,16 @@ export default {
     currentPathName: '/',
     currentMedia: '',
     mediaList: [],
-    mediaDirectory: '/Users/jforsten/Projects/EpsLin',
+    mediaDirectory: '/Users/jforsten/Projects/EpsLin/disks',
     epslin: '/Users/jforsten/Projects/EpsLin/epslin',
     workingDirectory: '/Users/jforsten/Projects/EpsLin',
-    mediaExtension: '.iso'
+    mediaExtension: '.img'
   },
 
   getters: {
     epslin: state => `${state.epslin}`,
     workingDirectory: state => `${state.workingDirectory}`,
+    mediaDirectory: state => `${state.mediaDirectory}`,
 
     items: state => `${state.items}`,
     currentPath: state => `${state.currentPath}`,
