@@ -23,27 +23,29 @@
       class="mt-4"
     >
       <v-layout>
+
         <v-flex
-          xs6
+          xs5
           mr-2
         >
           <v-select
             @input="change_media"
-            v-model="currentSelectedMedia"
+            v-model="currentSelectedMediaId"
             :items="mediaList"
+            item-text="name"
+            item-value="id"
             box
             autofocus
             label="Ensoniq media file"
           />
         </v-flex>
+
         <v-flex
           xs6
           ml-2
+          v-if="showMediaInfo"
         >
-          <v-card
-            flat
-            v-if="showMediaInfo"
-          >
+          <v-card flat>
             <div>
               <span class="grey--text"> Name: {{ensoniqName}}</span><br>
               <span class="grey--text"> Used blocks: {{mediaUsedBlocks}} </span><br>
@@ -51,6 +53,12 @@
             </div>
           </v-card>
 
+        </v-flex>
+        <v-flex xs4>
+          <v-layout row pt-1>
+              <v-btn icon @click="previous_media"><v-icon>remove</v-icon></v-btn>
+              <v-btn icon @click="next_media"><v-icon>add</v-icon></v-btn>
+            </v-layout>
         </v-flex>
       </v-layout>
     </v-flex>
@@ -101,7 +109,10 @@
             slot="expand"
             slot-scope="props"
           >
-            <component :is="selectedPanel" :panelData="panelData"></component>
+            <component
+              :is="selectedPanel"
+              :panelData="panelData"
+            ></component>
           </template>
         </v-data-table>
       </template>
@@ -168,7 +179,7 @@ export default {
   },
 
   computed: {
-    ...mapState('browser', ['items', 'currentPath', 'currentPathName', 'currentMedia', 'mediaList']),
+    ...mapState('browser', ['items', 'currentPath', 'currentPathName', 'currentMediaId', 'mediaList']),
 
     // Change name casing
     dataItems: function () {
@@ -184,12 +195,12 @@ export default {
       })
     },
 
-    currentSelectedMedia: {
+    currentSelectedMediaId: {
       get () {
-        return this.currentMedia
+        return this.currentMediaId
       },
       set (value) {
-        this.updateCurrentMedia(value)
+        this.updateCurrentMediaId(value)
       }
     },
 
@@ -217,7 +228,7 @@ export default {
     ...mapActions({
       addItems: 'browser/updateItems',
       goDir: 'browser/goDir',
-      updateCurrentMedia: 'browser/updateCurrentMedia',
+      updateCurrentMediaId: 'browser/updateCurrentMediaId',
       updateMediaList: 'browser/updateMediaList'
     }),
 
@@ -226,6 +237,18 @@ export default {
     },
 
     change_media () {
+      this.goToRoot()
+    },
+
+    next_media () {
+      this.updateCurrentMediaId((this.currentMediaId + 1) % this.mediaList.length)
+      this.goToRoot()
+    },
+
+    previous_media () {
+      var id = this.currentMediaId - 1
+      if (id < 0) id = this.mediaList.length - 1
+      this.updateCurrentMediaId(id)
       this.goToRoot()
     },
 
@@ -252,7 +275,6 @@ export default {
 </script>
 
 <style scoped>
-
 .centered {
   display: flex;
   justify-content: center;

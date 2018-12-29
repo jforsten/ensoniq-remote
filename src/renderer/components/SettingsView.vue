@@ -72,9 +72,7 @@ export default {
       selectMidiInput: 'settings/selectMidiInput',
       selectMidiOutput: 'settings/selectMidiOutput'
     }),
-    setup () {
-
-    }
+    setup () { }
   },
 
   mounted () {

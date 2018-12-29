@@ -9,8 +9,6 @@ export const DataSource = {
     var workingDirectory = store.getters['browser/workingDirectory']
     var mediaDirectory = store.getters['browser/mediaDirectory']
 
-    console.log('epslin:' + epslin)
-
     return new Promise((resolve, reject) => {
       const p = spawn(epslin, ['-J', '-d' + path, mediaDirectory + '/' + currentMedia], { cwd: workingDirectory })
       p.stdout.on('data', (data) => {
@@ -21,5 +19,27 @@ export const DataSource = {
         reject(data)
       })
     })
+  },
+
+  getMediaList () {
+    var mediaDirectory = store.getters['browser/mediaDirectory']
+    var mediaExtension = store.getters['browser/mediaExtension']
+
+    var fs = require('fs')
+    var files = fs.readdirSync(mediaDirectory)
+
+    var path = require('path')
+
+    var mediaList = files.filter(function (file) {
+      return path.extname(file).toLowerCase() === mediaExtension
+    })
+
+    return mediaList.map((name, index) => {
+      var dict = {}
+      dict['id'] = index
+      dict['name'] = name
+      return dict
+    })
   }
+
 }

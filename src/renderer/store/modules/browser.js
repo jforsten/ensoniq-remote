@@ -1,4 +1,3 @@
-// import { spawn } from 'child_process'
 import { Helpers } from '../../utils/helpers.js'
 import { DataSource } from '../../utils/datasource'
 
@@ -9,12 +8,13 @@ export default {
     items: [],
     currentPath: '/',
     currentPathName: '/',
+    currentMediaId: '',
     currentMedia: '',
     mediaList: [],
-    mediaDirectory: '/Users/jforsten/Projects/EpsLin/disks',
-    epslin: '/Users/jforsten/Projects/EpsLin/epslin',
-    workingDirectory: '/Users/jforsten/Projects/EpsLin',
-    mediaExtension: '.img'
+    mediaDirectory: '/Users/jforsten/Projects/epslin',
+    epslin: '/Users/jforsten/Projects/epslin/epslin',
+    workingDirectory: '/Users/jforsten/Projects/epslin',
+    mediaExtension: '.iso'
   },
 
   getters: {
@@ -24,8 +24,10 @@ export default {
 
     items: state => `${state.items}`,
     currentPath: state => `${state.currentPath}`,
+    currentMediaId: state => `${state.currentMediaId}`,
     currentMedia: state => `${state.currentMedia}`,
-    mediaList: state => `${state.mediaList}`
+    mediaList: state => `${state.mediaList}`,
+    mediaExtension: state => `${state.mediaExtension}`
   },
 
   mutations: {
@@ -38,25 +40,16 @@ export default {
     updateCurrentPathName (state, path) {
       state.currentPathName = path
     },
-    updateCurrentMedia (state, media) {
-      state.currentMedia = media
+    updateCurrentMediaId (state, id) {
+      state.currentMediaId = id
+      state.currentMedia = state.mediaList.find(item => { return item.id === state.currentMediaId }).name
     },
     updateMediaList (state) {
-      var fs = require('fs')
-      var files = fs.readdirSync(state.mediaDirectory)
-
-      var path = require('path')
-      var EXTENSION = state.mediaExtension
-
-      var mediaList = files.filter(function (file) {
-        return path.extname(file).toLowerCase() === EXTENSION
-      })
-      state.mediaList = mediaList
+      state.mediaList = DataSource.getMediaList()
     }
   },
 
   actions: {
-
     updateItems (context, items) {
       context.commit('updateItems', items)
     },
@@ -65,8 +58,8 @@ export default {
       context.commit('updateCurrentPath', path)
     },
 
-    updateCurrentMedia (context, media) {
-      context.commit('updateCurrentMedia', media)
+    updateCurrentMediaId (context, id) {
+      context.commit('updateCurrentMediaId', id)
     },
 
     updateMediaList (context) {
