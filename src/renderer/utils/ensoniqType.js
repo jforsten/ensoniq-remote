@@ -1,0 +1,23 @@
+export const EnsoniqType = {
+  EPS_OS: 1,
+  Directory: 2,
+  Instrument: 3,
+  EPS_Bank: 4,
+  EPS_Sequence: 5,
+  EPS_Song: 6,
+  EPS_System: 7,
+  Parent_Directory: 8,
+  EPS_Macro: 9,
+  E16_Bank: 23,
+  E16_Effect: 24,
+  E16_Sequence: 25,
+  E16_Song: 26,
+  E16_OS: 27,
+  ASR_Sequence: 28,
+  ASR_Song: 29,
+  ASR_Bank: 30,
+  ASR_Trak: 31,
+  ASR_OS: 32,
+  ASR_Effect: 33,
+  ASR_Macro: 34
+}

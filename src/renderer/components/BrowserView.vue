@@ -88,7 +88,7 @@
           >
             <tr
               v-bind:class="{'grey': props.expanded}"
-              @click="props.expanded = !props.expanded && props.item.type_id === '3';item_click_handler(props.item)"
+              @click="props.expanded = item_click_handler(props.item, props.expanded)"
             >
               <td class="justify-center">
                 <v-icon
@@ -145,7 +145,8 @@
 <script>
 
 import { mapState, mapActions } from 'Vuex'
-import { TypeIcons } from '../utils/typeIcons'
+import { TypeIcon } from '../utils/typeIcon'
+import { EnsoniqType } from '../utils/ensoniqType'
 import { Helpers } from '../utils/helpers'
 import InstrumentPanel from './BrowserView/InstrumentPanel'
 
@@ -174,7 +175,8 @@ export default {
       showMediaInfo: false,
       ensoniqName: '',
       mediaUsedBlocks: '',
-      mediaFreeBlocks: ''
+      mediaFreeBlocks: '',
+      expandPanel: false
     }
   },
 
@@ -210,14 +212,14 @@ export default {
     panelData: function () {
       return {
         selectOptions: [
-          { text: '1', value: '1' },
-          { text: '2', value: '2' },
-          { text: '3', value: '3' },
-          { text: '4', value: '4' },
-          { text: '5', value: '5' },
-          { text: '6', value: '6' },
-          { text: '7', value: '7' },
-          { text: '8', value: '8' }
+          { text: '1', value: 1 },
+          { text: '2', value: 2 },
+          { text: '3', value: 3 },
+          { text: '4', value: 4 },
+          { text: '5', value: 5 },
+          { text: '6', value: 6 },
+          { text: '7', value: 7 },
+          { text: '8', value: 8 }
         ]
       }
     }
@@ -252,19 +254,23 @@ export default {
       this.goToRoot()
     },
 
-    item_click_handler (item) {
+    item_click_handler (item, expanded) {
+      if (expanded) return false
+
       switch (item.type_id) {
-        case '2':
+        case EnsoniqType.Instrument:
+          return true
+        case EnsoniqType.Directory:
           this.goDir(item.index)
-          break
-        case '8':
+          return false
+        case EnsoniqType.Parent_Directory:
           this.goDir('..')
-          break
+          return false
       }
     },
 
     get_icon (itemTypeId) {
-      return TypeIcons.get_icon(itemTypeId)
+      return TypeIcon.get_icon(itemTypeId)
     }
   },
 
