@@ -7,7 +7,12 @@ export default {
     midiInputs: [],
     midiOutputs: [],
     midiInput: undefined,
-    midiOutput: undefined
+    midiOutput: undefined,
+
+    mediaDirectory: '/Users/jforsten/Projects/epslin',
+    epslin: '/Users/jforsten/Projects/epslin/epslin',
+    workingDirectory: '/Users/jforsten/Projects/epslin',
+    mediaExtension: '.iso'
   },
 
   getters: {
@@ -18,7 +23,12 @@ export default {
     midiOutputs: state => {
       console.log('getter:' + state.midiOutputs)
       return state.midiOutputs
-    }
+    },
+
+    epslin: state => `${state.epslin}`,
+    workingDirectory: state => `${state.workingDirectory}`,
+    mediaDirectory: state => `${state.mediaDirectory}`,
+    mediaExtension: state => `${state.mediaExtension}`
   },
 
   mutations: {

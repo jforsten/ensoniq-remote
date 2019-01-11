@@ -4,10 +4,10 @@ import store from '../store/'
 export const DataSource = {
 
   fetchData (path) {
-    var epslin = store.getters['browser/epslin']
+    var epslin = store.getters['settings/epslin']
     var currentMedia = store.getters['browser/currentMedia']
-    var workingDirectory = store.getters['browser/workingDirectory']
-    var mediaDirectory = store.getters['browser/mediaDirectory']
+    var workingDirectory = store.getters['settings/workingDirectory']
+    var mediaDirectory = store.getters['settings/mediaDirectory']
 
     return new Promise((resolve, reject) => {
       const p = spawn(epslin, ['-J', '-d' + path, mediaDirectory + '/' + currentMedia], { cwd: workingDirectory })
@@ -22,8 +22,8 @@ export const DataSource = {
   },
 
   getMediaList () {
-    var mediaDirectory = store.getters['browser/mediaDirectory']
-    var mediaExtension = store.getters['browser/mediaExtension']
+    var mediaDirectory = store.getters['settings/mediaDirectory']
+    var mediaExtension = store.getters['settings/mediaExtension']
 
     var fs = require('fs')
     var files = fs.readdirSync(mediaDirectory)

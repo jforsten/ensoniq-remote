@@ -10,24 +10,15 @@ export default {
     currentPathName: '/',
     currentMediaId: '',
     currentMedia: '',
-    mediaList: [],
-    mediaDirectory: '/Users/jforsten/Projects/epslin',
-    epslin: '/Users/jforsten/Projects/epslin/epslin',
-    workingDirectory: '/Users/jforsten/Projects/epslin',
-    mediaExtension: '.iso'
+    mediaList: []
   },
 
   getters: {
-    epslin: state => `${state.epslin}`,
-    workingDirectory: state => `${state.workingDirectory}`,
-    mediaDirectory: state => `${state.mediaDirectory}`,
-
     items: state => `${state.items}`,
     currentPath: state => `${state.currentPath}`,
     currentMediaId: state => `${state.currentMediaId}`,
     currentMedia: state => `${state.currentMedia}`,
-    mediaList: state => `${state.mediaList}`,
-    mediaExtension: state => `${state.mediaExtension}`
+    mediaList: state => `${state.mediaList}`
   },
 
   mutations: {
