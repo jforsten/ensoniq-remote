@@ -8,6 +8,8 @@
       row
       justify-space-around
     >
+      {{panelData}}
+      {{selectedItem}}
       <v-flex
         class="grey darken-2"
         xs1
@@ -50,7 +52,11 @@ export default {
   props: {
     panelData: {
       type: Object,
-      default: () => {}
+      default: () => { }
+    },
+    selectedItem: {
+      type: Object,
+      default: () => { }
     }
   },
   data () {

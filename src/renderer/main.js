@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import axios from 'axios'
+import '@mdi/font/css/materialdesignicons.css'
 import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.css'
 
@@ -8,8 +9,9 @@ import router from './router'
 import store from './store'
 
 Vue.use(Vuetify, {
+  iconfont: 'mdi',
   theme: {
-    primary: '#99bbff'
+    primary: '#bbbbbb'
   }
 })
 

@@ -45,6 +45,15 @@ export default {
     selectMidiOutput (state, id) {
       var output = state.midiOutputs.find(function (item) { return item.id === id })
       state.midiOutput = output
+    },
+    updateMediaDirectory (state, path) {
+      state.mediaDirectory = path
+    },
+    updateWorkingDirectory (state, path) {
+      state.workingDirectory = path
+    },
+    updateEpslin (state, path) {
+      state.epslin = path
     }
   },
 
@@ -95,6 +104,15 @@ export default {
           }
         }, true)
       })
+    },
+    updateMediaDirectory (context, path) {
+      context.commit('updateMediaDirectory', path)
+    },
+    updateWorkingDirectory (context, path) {
+      context.commit('updateWorkingDirectory', path)
+    },
+    updateEpslin (context, path) {
+      context.commit('updateEpslin', path)
     }
   }
 }

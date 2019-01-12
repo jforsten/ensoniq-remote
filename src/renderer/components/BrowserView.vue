@@ -112,6 +112,7 @@
             <component
               :is="selectedPanel"
               :panelData="panelData"
+              :selectedItem=props
             ></component>
           </template>
         </v-data-table>
@@ -133,7 +134,7 @@
 
           <v-btn
             class="link-btn"
-            @click="goToRoot()"
+            @click="expandPanel=false;goToRoot()"
           > Root </v-btn>
 
         </v-card-actions>
