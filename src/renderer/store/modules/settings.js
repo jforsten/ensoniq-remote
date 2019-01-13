@@ -9,13 +9,23 @@ export default {
     midiInput: undefined,
     midiOutput: undefined,
 
-    mediaDirectory: '/Users/jforsten/Projects/epslin',
-    epslin: '/Users/jforsten/Projects/epslin/epslin',
-    workingDirectory: '/Users/jforsten/Projects/epslin',
-    mediaExtension: '.iso'
+    mediaDirectory: '/Users/jforsten/Projects/epslin/media',
+    workingDirectory: '/Users/jforsten/Projects/epslin/temp',
+    epslin: '/Users/jforsten/Projects/epslin/epslin'
   },
 
   getters: {
+
+    allSettings: state => {
+      return {
+        midiInput: state.midiInput,
+        midiOutput: state.midiOutput,
+        mediaDirectory: state.mediaDirectory,
+        workingDirectory: state.workingDirectory,
+        epslin: state.epslin
+      }
+    },
+
     midiInputs: state => {
       console.log('getter:' + state.midiInputs)
       return state.midiInputs
@@ -24,14 +34,20 @@ export default {
       console.log('getter:' + state.midiOutputs)
       return state.midiOutputs
     },
-
     epslin: state => `${state.epslin}`,
     workingDirectory: state => `${state.workingDirectory}`,
-    mediaDirectory: state => `${state.mediaDirectory}`,
-    mediaExtension: state => `${state.mediaExtension}`
+    mediaDirectory: state => `${state.mediaDirectory}`
   },
 
   mutations: {
+    setAllSettings (state, settings) {
+      state.midiInput = settings.midiInput
+      state.midiOutput = settings.midiOutput
+      state.mediaDirectory = settings.mediaDirectory
+      state.workingDirectory = settings.workingDirectory
+      state.epslin = settings.epslin
+    },
+
     updateMidiInputs (state, inputs) {
       state.midiInputs = inputs
     },
@@ -58,6 +74,11 @@ export default {
   },
 
   actions: {
+
+    setAllSettings ({commit}, settings) {
+      commit('setAllSettings', settings)
+    },
+
     selectMidiInput ({commit}, id) {
       commit('selectMidiInput', id)
     },

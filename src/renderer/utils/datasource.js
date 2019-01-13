@@ -23,16 +23,9 @@ export const DataSource = {
 
   getMediaList () {
     var mediaDirectory = store.getters['settings/mediaDirectory']
-    var mediaExtension = store.getters['settings/mediaExtension']
 
     var fs = require('fs')
-    var files = fs.readdirSync(mediaDirectory)
-
-    var path = require('path')
-
-    var mediaList = files.filter(function (file) {
-      return path.extname(file).toLowerCase() === mediaExtension
-    })
+    var mediaList = fs.readdirSync(mediaDirectory)
 
     return mediaList.map((name, index) => {
       var dict = {}
@@ -40,6 +33,14 @@ export const DataSource = {
       dict['name'] = name
       return dict
     })
+  },
+
+  loadSettings () {
+
+  },
+
+  saveSettings () {
+
   }
 
 }
