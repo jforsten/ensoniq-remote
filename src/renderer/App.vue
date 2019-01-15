@@ -62,6 +62,9 @@
 </template>
 
 <script>
+
+import { DataSource } from './utils/datasource'
+
 export default {
   name: 'ensoniq-remote',
   data: () => ({
@@ -76,7 +79,10 @@ export default {
     right: true,
     rightDrawer: false,
     title: 'Ensoniq remote'
-  })
+  }),
+  mounted () {
+    DataSource.loadSettings()
+  }
 }
 </script>
 

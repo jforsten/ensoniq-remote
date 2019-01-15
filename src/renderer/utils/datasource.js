@@ -1,5 +1,6 @@
 import { spawn } from 'child_process'
 import store from '../store/'
+// import WebMidi from '../../../webmidi'
 
 export const DataSource = {
 
@@ -36,11 +37,16 @@ export const DataSource = {
   },
 
   loadSettings () {
-
+    if (localStorage.getItem('settings')) {
+      var allSettings = JSON.parse(localStorage.getItem('settings'))
+      if (allSettings !== undefined) {
+        store.dispatch('settings/setAllSettings', allSettings)
+      }
+    }
   },
 
   saveSettings () {
-
+    localStorage.setItem('settings', JSON.stringify(store.getters['settings/allSettings']))
   }
 
 }

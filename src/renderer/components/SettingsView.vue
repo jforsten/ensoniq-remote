@@ -84,7 +84,7 @@
 
         </v-flex>
       </v-layout>
-      <!-- <v-btn @click="setup()">Vue</v-btn> -->
+       <v-btn @click="save()">Save</v-btn> 
     </v-flex>
   </v-layout>
 </template>
@@ -93,6 +93,7 @@
 <script>
 
 import { mapState, mapActions } from 'Vuex'
+import { DataSource } from '../utils/datasource'
 
 export default {
 
@@ -143,15 +144,17 @@ export default {
       selectMidiInput: 'settings/selectMidiInput',
       selectMidiOutput: 'settings/selectMidiOutput',
       updateMediaDirectory: 'settings/updateMediaDirectory',
-      updateWorkingDirectory: 'settings/updateWorkingWDirectory',
+      updateWorkingDirectory: 'settings/updateWorkingDirectory',
       updateEpslin: 'settings/updateEpslin'
     }),
-    setup () { }
+    save () {
+      DataSource.saveSettings()
+    }
   },
 
   mounted () {
     this.$store.dispatch('settings/asyncMidiPortsUpdate').then(() => {
-      this.setup()
+      // this.setup()
     }).catch(err => {
       console.error('catch: ' + err)
     })
