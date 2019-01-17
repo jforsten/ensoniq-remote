@@ -84,6 +84,7 @@
 
         </v-flex>
       </v-layout>
+      <v-btn @click="readMidiPorts()">Refresh Midi ports</v-btn> 
        <v-btn @click="save()">Save</v-btn> 
     </v-flex>
   </v-layout>
@@ -99,13 +100,12 @@ export default {
 
   data () {
     return {
-
+      midiInputs: [],
+      midiOutputs: []
     }
   },
   computed: {
     ...mapState('settings', [
-      'midiInputs',
-      'midiOutputs',
       'midiInput',
       'midiOutput',
       'mediaDirectory',
@@ -115,12 +115,12 @@ export default {
 
     currentMidiInput: {
       get () { return this.midiInput },
-      set (value) { this.selectMidiInput(value) }
+      set (value) { this.updateMidiInput(value) }
     },
 
     currentMidiOutput: {
       get () { return this.midiOutput },
-      set (value) { this.selectMidiOutput(value) }
+      set (value) { this.updateMidiOutput(value) }
     },
 
     currentMediaDirectory: {
@@ -141,23 +141,39 @@ export default {
   },
   methods: {
     ...mapActions({
-      selectMidiInput: 'settings/selectMidiInput',
-      selectMidiOutput: 'settings/selectMidiOutput',
       updateMediaDirectory: 'settings/updateMediaDirectory',
       updateWorkingDirectory: 'settings/updateWorkingDirectory',
+      updateMidiInput: 'settings/updateMidiInput',
+      updateMidiOutput: 'settings/updateMidiOutput',
       updateEpslin: 'settings/updateEpslin'
     }),
+
+    selectMidiInput (id) {
+      var input = this.midiInputs.find(function (item) { return item.id === id })
+      this.currentMidiInput = input
+    },
+
+    selectMidiOutput (id) {
+      var output = this.midiOutputs.find(function (item) { return item.id === id })
+      this.currentMidiOutput = output
+    },
+
+    readMidiPorts () {
+      DataSource.getMidiPorts().then(ports => {
+        this.midiInputs = ports.ins
+        this.midiOutputs = ports.outs
+      }).catch(err => {
+        console.error('catch: ' + err)
+      })
+    },
+
     save () {
       DataSource.saveSettings()
     }
   },
 
   mounted () {
-    this.$store.dispatch('settings/asyncMidiPortsUpdate').then(() => {
-      // this.setup()
-    }).catch(err => {
-      console.error('catch: ' + err)
-    })
+    this.readMidiPorts()
   }
 }
 </script>

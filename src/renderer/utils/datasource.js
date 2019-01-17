@@ -1,6 +1,7 @@
-import { spawn } from 'child_process'
 import store from '../store/'
-// import WebMidi from '../../../webmidi'
+
+import { spawn } from 'child_process'
+import WebMidi from '../../webmidi'
 
 export const DataSource = {
 
@@ -47,6 +48,40 @@ export const DataSource = {
 
   saveSettings () {
     localStorage.setItem('settings', JSON.stringify(store.getters['settings/allSettings']))
-  }
+  },
 
+  getMidiPorts () {
+    return new Promise((resolve, reject) => {
+      if (WebMidi.enabled) {
+        resolve({ins: DataSource.internalGetMidiIns(), outs: DataSource.internalGetMidiOuts()})
+        return
+      }
+      WebMidi.enable(function (err) {
+        if (err) {
+          console.error('WebMidi could not be enabled.', err)
+          reject(err)
+        } else {
+          resolve({ins: DataSource.internalGetMidiIns(), outs: DataSource.internalGetMidiOuts()})
+        }
+      }, true)
+    })
+  },
+
+  internalGetMidiIns () {
+    return WebMidi.inputs.map(i => {
+      var dict = {}
+      dict['id'] = i.id
+      dict['name'] = i.name
+      return dict
+    })
+  },
+
+  internalGetMidiOuts () {
+    return WebMidi.outputs.map(i => {
+      var dict = {}
+      dict['id'] = i.id
+      dict['name'] = i.name
+      return dict
+    })
+  }
 }

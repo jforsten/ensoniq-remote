@@ -55,7 +55,7 @@
       </v-navigation-drawer>
       <v-footer :fixed="fixed" app>
         <v-spacer></v-spacer>
-        <span>v0.1</span>
+        <span>v0.5</span>
       </v-footer>
     </v-app>
   </div>
