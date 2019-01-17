@@ -36,6 +36,7 @@ export default {
       state.currentMedia = state.mediaList.find(item => { return item.id === state.currentMediaId }).name
     },
     updateMediaList (state) {
+      // ToDo change so that DataSource will call action..
       state.mediaList = DataSource.getMediaList()
     }
   },

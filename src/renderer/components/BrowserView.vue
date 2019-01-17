@@ -3,84 +3,25 @@
     row
     wrap
     justify-center
-    id="wrapper"
   >
-    <v-flex
-      xs12
-      md4
-      offset-md1
-      class="text-xs-center centered"
-    >
-    </v-flex>
-    <v-flex
-      xs12
-      md6
-      class="text-xs-center centered"
-    >
-    </v-flex>
-    <v-flex
-      xs10
-      class="mt-4"
-    >
-      <v-layout>
-
-        <v-flex
-          xs5
-          mr-2
-        >
-          <v-select
-            @input="change_media"
-            v-model="currentSelectedMediaId"
-            :items="mediaList"
-            item-text="name"
-            item-value="id"
-            box
-            autofocus
-            label="Ensoniq media file"
-          />
-        </v-flex>
-
-        <v-flex
-          xs6
-          ml-2
-          v-if="showMediaInfo"
-        >
-          <v-card flat>
-            <div>
-              <span class="grey--text"> Name: {{ensoniqName}}</span><br>
-              <span class="grey--text"> Used blocks: {{mediaUsedBlocks}} </span><br>
-              <span class="grey--text"> Free blocks: {{mediaFreeBlocks}} </span>
-            </div>
-          </v-card>
-
-        </v-flex>
-        <v-flex xs4>
-          <v-layout row pt-1>
-              <v-btn icon @click="previous_media"><v-icon>remove</v-icon></v-btn>
-              <v-btn icon @click="next_media"><v-icon>add</v-icon></v-btn>
-            </v-layout>
-        </v-flex>
-      </v-layout>
-    </v-flex>
-    <v-flex
-      xs10
-      class="mt-4"
-    >
+    <v-flex xs11>
       <v-flex my-2>
         <div class="grey darken-3">
           <v-card-text>
-            <small>
-              <font color="grey">Path:</font> {{currentPathName}}
-            </small>
+            <font color="grey">Path:</font> {{currentPathName}}
           </v-card-text>
         </div>
       </v-flex>
-      <template>
+      <div
+        remove_this____style="max-height:calc(100vh - 220px); overflow-y: auto"
+        ref="scrollView"
+      >
         <v-data-table
           :headers="headers"
           :items="dataItems"
           item-key="index"
           hide-actions
+          _remove_this_part___style="max-height: 300px; overflow-y: auto"
         >
           <template
             slot="items"
@@ -116,29 +57,7 @@
             ></component>
           </template>
         </v-data-table>
-      </template>
-    </v-flex>
-    <v-flex
-      xs10
-      class="mt-4"
-    >
-      <v-card>
-        <v-card-title class="headline">Actions</v-card-title>
-        <v-divider></v-divider>
-        <v-card-actions class="pt-3 pb-3">
-          <v-spacer></v-spacer>
-          <v-btn
-            class="link-btn"
-            @click="updateMediaList()"
-          >update media</v-btn>
-
-          <v-btn
-            class="link-btn"
-            @click="expandPanel=false;goToRoot()"
-          > Root </v-btn>
-
-        </v-card-actions>
-      </v-card>
+      </div>
     </v-flex>
   </v-layout>
 </template>
@@ -197,16 +116,6 @@ export default {
         return item
       })
     },
-
-    currentSelectedMediaId: {
-      get () {
-        return this.currentMediaId
-      },
-      set (value) {
-        this.updateCurrentMediaId(value)
-      }
-    },
-
     selectedPanel: function () {
       return 'InstrumentPanel'
     },
@@ -230,54 +139,48 @@ export default {
 
     ...mapActions({
       addItems: 'browser/updateItems',
-      goDir: 'browser/goDir',
-      updateCurrentMediaId: 'browser/updateCurrentMediaId',
-      updateMediaList: 'browser/updateMediaList'
+      goDir: 'browser/goDir'
     }),
 
     goToRoot () {
       this.goDir('/')
     },
 
-    change_media () {
-      this.goToRoot()
-    },
-
-    next_media () {
-      this.updateCurrentMediaId((this.currentMediaId + 1) % this.mediaList.length)
-      this.goToRoot()
-    },
-
-    previous_media () {
-      var id = this.currentMediaId - 1
-      if (id < 0) id = this.mediaList.length - 1
-      this.updateCurrentMediaId(id)
-      this.goToRoot()
-    },
-
     item_click_handler (item, expanded) {
       if (expanded) return false
-
       switch (item.type_id) {
         case EnsoniqType.Instrument:
           return true
         case EnsoniqType.Directory:
           this.goDir(item.index)
+          this.scrollToTop()
           return false
         case EnsoniqType.Parent_Directory:
           this.goDir('..')
+          this.scrollToTop()
           return false
       }
     },
 
     get_icon (itemTypeId) {
       return TypeIcon.get_icon(itemTypeId)
+    },
+
+    scrollToTop () {
+      // this.$refs.scrollView.scrollTop = 0
     }
+
   },
 
   mounted () {
-    this.updateMediaList()
+    // this.updateMediaList()
   }
+  /*,
+  created () {
+    this.$root.$on('scrollBrowserToTop', filter => {
+      this.$refs.scrollView.scrollTop = 0
+    })
+  } */
 }
 </script>
 
