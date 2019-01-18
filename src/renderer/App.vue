@@ -187,7 +187,13 @@ export default {
       console.log(this.$refs)
       this.updateMediaList()
       this.goToRoot()
-      // this.$root.$emit('scrollBrowserToTop', { })
+      this.$vuetify.goTo(
+        0,
+        {
+          duration: 100,
+          offset: 0,
+          easing: 'easeInOutCubic'
+        })
     }
   },
 

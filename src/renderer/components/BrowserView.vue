@@ -167,20 +167,15 @@ export default {
     },
 
     scrollToTop () {
-      // this.$refs.scrollView.scrollTop = 0
+      this.$vuetify.goTo(
+        0,
+        {
+          duration: 100,
+          offset: 0,
+          easing: 'easeInOutCubic'
+        })
     }
-
-  },
-
-  mounted () {
-    // this.updateMediaList()
   }
-  /*,
-  created () {
-    this.$root.$on('scrollBrowserToTop', filter => {
-      this.$refs.scrollView.scrollTop = 0
-    })
-  } */
 }
 </script>
 
