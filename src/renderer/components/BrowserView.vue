@@ -150,6 +150,12 @@ export default {
       if (expanded) return false
       switch (item.type_id) {
         case EnsoniqType.Instrument:
+          var itemsCount = this.dataItems.length
+          if (itemsCount > 0 && this.dataItems[itemsCount - 1].index === item.index) {
+            setTimeout(() => {
+              this.scrollTo(Infinity, 500)
+            }, 200)
+          }
           return true
         case EnsoniqType.Directory:
           this.goDir(item.index)
@@ -166,14 +172,17 @@ export default {
       return TypeIcon.get_icon(itemTypeId)
     },
 
-    scrollToTop () {
+    scrollTo (pos, duration) {
       this.$vuetify.goTo(
-        0,
+        pos,
         {
-          duration: 100,
+          duration: duration,
           offset: 0,
           easing: 'easeInOutCubic'
         })
+    },
+    scrollToTop () {
+      this.scrollTo(0, 100)
     }
   }
 }
