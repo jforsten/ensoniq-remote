@@ -12,9 +12,11 @@ export const DataSource = {
     var mediaDirectory = store.getters['settings/mediaDirectory']
 
     return new Promise((resolve, reject) => {
-      const p = spawn(epslin, ['-J', '-d' + path, mediaDirectory + '/' + currentMedia], { cwd: workingDirectory })
+      const p = spawn(epslin, ['-J', '-d' + path, mediaDirectory + '\\' + currentMedia], { cwd: workingDirectory })
       p.stdout.on('data', (data) => {
-        resolve(JSON.parse(data).items)
+        var jsonString = new TextDecoder('utf-8').decode(data)
+        jsonString = jsonString.split('\\').join('\\\\')
+        resolve(JSON.parse(jsonString).items)
       })
       p.stderr.on('data', (data) => {
         console.error('stderr: ' + data)
@@ -51,6 +53,7 @@ export const DataSource = {
   },
 
   getMidiPorts () {
+    console.log('getMidiPorts')
     return new Promise((resolve, reject) => {
       if (WebMidi.enabled) {
         resolve({ins: DataSource.internalGetMidiIns(), outs: DataSource.internalGetMidiOuts()})

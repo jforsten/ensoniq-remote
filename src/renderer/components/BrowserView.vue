@@ -148,6 +148,7 @@ export default {
 
     item_click_handler (item, expanded) {
       if (expanded) return false
+
       switch (item.type_id) {
         case EnsoniqType.Instrument:
           var itemsCount = this.dataItems.length
@@ -166,6 +167,7 @@ export default {
           this.scrollToTop()
           return false
       }
+      console.log('no types matched!')
     },
 
     get_icon (itemTypeId) {

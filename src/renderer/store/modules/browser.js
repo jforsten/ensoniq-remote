@@ -59,9 +59,7 @@ export default {
     },
 
     goDir ({commit, state}, dirId) {
-      console.log('goDir' + dirId)
       var name
-
       if (dirId === '..') {
         // parent dir
         commit('updateCurrentPath', Helpers.parent_dir(state.currentPath))

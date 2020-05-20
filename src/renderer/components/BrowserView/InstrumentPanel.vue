@@ -8,8 +8,8 @@
       row
       justify-space-around
     >
-      {{panelData}}
-      {{selectedItem}}
+     <!--  {{panelData}}
+      {{selectedItem}} -->
       <v-flex
         class="grey darken-2"
         xs1

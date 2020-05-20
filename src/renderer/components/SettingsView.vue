@@ -173,6 +173,7 @@ export default {
   },
 
   mounted () {
+    console.log('settings mounted')
     this.readMidiPorts()
   }
 }
