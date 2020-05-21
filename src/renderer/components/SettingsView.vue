@@ -76,6 +76,11 @@
               label="Working directory"
             />
             <v-text-field
+              v-model="currentEnsoniqStorageDevice"
+              prepend-icon="mdi-folder-outline"
+              label="Ensoniq Storage Device"
+            />
+            <v-text-field
               v-model="currentEpslinPath"
               prepend-icon="mdi-link"
               label="Path to EpsLin executable"
@@ -110,6 +115,7 @@ export default {
       'midiOutput',
       'mediaDirectory',
       'workingDirectory',
+      'ensoniqStorageDevice',
       'epslin'
     ]),
 
@@ -133,6 +139,11 @@ export default {
       set (value) { this.updateWorkingDirectory(value) }
     },
 
+    currentEnsoniqStorageDevice: {
+      get () { return this.ensoniqStorageDevice },
+      set (value) { this.updateEnsoniqStorageDevice(value) }
+    },
+
     currentEpslinPath: {
       get () { return this.epslin },
       set (value) { this.updateEpslin(value) }
@@ -145,6 +156,7 @@ export default {
       updateWorkingDirectory: 'settings/updateWorkingDirectory',
       updateMidiInput: 'settings/updateMidiInput',
       updateMidiOutput: 'settings/updateMidiOutput',
+      updateEnsoniqStorageDevice: 'settings/updateEnsoniqStorageDevice',
       updateEpslin: 'settings/updateEpslin'
     }),
 
