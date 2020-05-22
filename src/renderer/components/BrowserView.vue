@@ -53,7 +53,7 @@
             <component
               :is="selectedPanel"
               :panelData="panelData"
-              :selectedItem=props
+              :selectedItem=props.item
             ></component>
           </template>
         </v-data-table>

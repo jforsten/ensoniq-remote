@@ -19,11 +19,11 @@
         :key="option.text"
       >
         <v-btn
-          @click="showProgress=!showProgress"
+          @click="click_handler(option.value)"
           block
           small
           class='black'
-        >{{option.value}}</v-btn>
+        >{{option.text}}</v-btn>
 
       </v-flex>
     </v-layout>
@@ -63,6 +63,12 @@ export default {
     return {
       showProgress: false,
       value: 0
+    }
+  },
+  methods: {
+    click_handler (pos) {
+      console.log('Load inst to pos:' + pos)
+      this.showProgress = !this.showProgress
     }
   }
 }
