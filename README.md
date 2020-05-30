@@ -2,6 +2,8 @@
 
 > An electron-vue project for remote sample upload to Ensoniq samplers
 
+**<span style="color:red">Project is Work-in-progress state! Main features are still missing. Stay tuned for first release!</span>**
+
 ![alt text](documentation/browser_view.JPG)
 
 Things to configue in setup view:
