@@ -27,27 +27,34 @@
 
       </v-flex>
     </v-layout>
-    <v-slide-y-transition>
-      <v-layout
-        row
-        v-if="showProgress"
+    <v-dialog
+      v-model="showProgress"
+      persistent
+      width="300"
+    >
+      <v-card
+        color="primary"
+        dark
       >
-        <v-flex class="grey darken-2">
+        <v-card-text
+          class="grey darken-2"
+        >
+          Processing...
           <v-progress-linear
-            background-color="grey darken-2"
-            color="error"
-            v-model="value"
-            height="15"
-            :active="showProgress"
-            :indeterminate="true"
-          />
-        </v-flex>
-      </v-layout>
-    </v-slide-y-transition>
+          indeterminate
+          color="white"
+          class="mb-0"         
+          ></v-progress-linear>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </v-card>
 </template>
 
 <script>
+
+import { DataSource } from '../../utils/datasource'
+
 export default {
   props: {
     panelData: {
@@ -68,7 +75,8 @@ export default {
   methods: {
     click_handler (pos) {
       console.log('Load inst to pos:' + pos)
-      this.showProgress = !this.showProgress
+      this.showProgress = true
+      DataSource.putInstrumentToEnsoniqStorage().then(() => { setTimeout(() => (this.showProgress = false), 4000) })
     }
   }
 }

@@ -5,6 +5,8 @@ import WebMidi from '../../webmidi'
 
 export const DataSource = {
 
+  // Storage
+
   fetchData (path) {
     var epslin = store.getters['settings/epslin']
     var currentMedia = store.getters['browser/currentMedia']
@@ -39,18 +41,34 @@ export const DataSource = {
     })
   },
 
-  loadSettings () {
-    if (localStorage.getItem('settings')) {
-      var allSettings = JSON.parse(localStorage.getItem('settings'))
-      if (allSettings !== undefined) {
-        store.dispatch('settings/setAllSettings', allSettings)
-      }
-    }
+  getInstrumentFromEnsoniqMedia () { },
+
+  clearWorkingDir () { },
+
+  clearEnsoniqStorage () { },
+
+  putInstrumentToEnsoniqStorage () {
+    var epslin = store.getters['settings/epslin']
+    // var currentMedia = store.getters['browser/currentMedia']
+    var workingDirectory = store.getters['settings/workingDirectory']
+    // var mediaDirectory = store.getters['settings/mediaDirectory']
+    var ensoniqStorageDevice = store.getters['settings/ensoniqStorageDevice']
+
+    return new Promise((resolve, reject) => {
+      const p = spawn(epslin, [ensoniqStorageDevice], { cwd: workingDirectory })
+      p.stdout.on('data', (data) => {
+        var str = new TextDecoder('utf-8').decode(data)
+        console.log(str)
+        resolve()
+      })
+      p.stderr.on('data', (data) => {
+        console.error('stderr: ' + data)
+        reject(data)
+      })
+    })
   },
 
-  saveSettings () {
-    localStorage.setItem('settings', JSON.stringify(store.getters['settings/allSettings']))
-  },
+  // Midi
 
   getMidiPorts () {
     console.log('getMidiPorts')
@@ -86,5 +104,23 @@ export const DataSource = {
       dict['name'] = i.name
       return dict
     })
+  },
+
+  sendLoadInstrumentCmdViaMidi () { },
+
+  // Settings
+
+  loadSettings () {
+    if (localStorage.getItem('settings')) {
+      var allSettings = JSON.parse(localStorage.getItem('settings'))
+      if (allSettings !== undefined) {
+        store.dispatch('settings/setAllSettings', allSettings)
+      }
+    }
+  },
+
+  saveSettings () {
+    localStorage.setItem('settings', JSON.stringify(store.getters['settings/allSettings']))
   }
+
 }

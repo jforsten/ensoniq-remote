@@ -116,7 +116,7 @@
         app
       >
         <v-spacer></v-spacer>
-        <span>v0.5</span>
+        <span>v0.8</span>
       </v-footer>
     </v-app>
   </div>
