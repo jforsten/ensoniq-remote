@@ -81,13 +81,13 @@ export default {
           commit('updateCurrentPathName', state.currentPathName + '/' + Helpers.capital_letter(name))
         }
       }
-      DataSource.fetchData(state.currentPath).then(items => { commit('updateItems', items) })
+      DataSource.getDirectoryInfoFromEnsoniaMedia(state.currentPath).then(items => { commit('updateItems', items) })
     },
 
     goParentDir ({commit, state}) {
       commit('updateCurrentPath', Helpers.parent_dir(state.currentPath))
       commit('updateCurrentPathName', Helpers.parent_dir(state.currentPathName))
-      DataSource.fetchData(state.currentPath).then(items => { commit('updateItems', items) })
+      DataSource.getDirectoryInfoFromEnsoniaMedia(state.currentPath).then(items => { commit('updateItems', items) })
     }
   }
 }
