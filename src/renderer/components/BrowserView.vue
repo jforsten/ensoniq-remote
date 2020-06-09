@@ -122,14 +122,14 @@ export default {
     panelData: function () {
       return {
         selectOptions: [
-          { text: '1', value: 1 },
-          { text: '2', value: 2 },
-          { text: '3', value: 3 },
-          { text: '4', value: 4 },
-          { text: '5', value: 5 },
-          { text: '6', value: 6 },
-          { text: '7', value: 7 },
-          { text: '8', value: 8 }
+          { text: '1', value: { path: this.currentPath, index: 1 } },
+          { text: '2', value: { path: this.currentPath, index: 2 } },
+          { text: '3', value: { path: this.currentPath, index: 3 } },
+          { text: '4', value: { path: this.currentPath, index: 4 } },
+          { text: '5', value: { path: this.currentPath, index: 5 } },
+          { text: '6', value: { path: this.currentPath, index: 6 } },
+          { text: '7', value: { path: this.currentPath, index: 7 } },
+          { text: '8', value: { path: this.currentPath, index: 8 } }
         ]
       }
     }

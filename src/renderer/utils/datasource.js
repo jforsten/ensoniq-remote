@@ -1,9 +1,7 @@
 import store from '../store/'
-
-import { spawn } from 'child_process'
-import WebMidi from '../../webmidi'
-
+import { sep } from 'path'
 import { EpsLin } from './epslin'
+import { Midi } from './midi'
 
 export const DataSource = {
 
@@ -15,9 +13,7 @@ export const DataSource = {
 
   getMediaList () {
     var mediaDirectory = store.getters['settings/mediaDirectory']
-
-    var fs = require('fs')
-    var mediaList = fs.readdirSync(mediaDirectory)
+    var mediaList = require('fs').readdirSync(mediaDirectory)
 
     return mediaList.map((name, index) => {
       var dict = {}
@@ -27,72 +23,49 @@ export const DataSource = {
     })
   },
 
-  getInstrumentFromEnsoniqMedia () { },
+  sendToEnsoniq (path, idx, filename, pos) {
+    return this.getInstrumentFromEnsoniqMedia(path, idx)
+      .then(() => this.clearEnsoniqStorage())
+      .then(() => this.putInstrumentToEnsoniqStorage(filename))
+      .then(() => this.requestInstrumentLoad(pos))
+      .then(() => this.deleteFileInWorkingDirectory(filename))
+  },
 
-  clearWorkingDir () { },
+  getInstrumentFromEnsoniqMedia (path, idx) {
+    return EpsLin.getEfe(path, idx)
+  },
 
-  clearEnsoniqStorage () { },
-
-  putInstrumentToEnsoniqStorage () {
-    var epslin = store.getters['settings/epslin']
-    // var currentMedia = store.getters['browser/currentMedia']
+  deleteFileInWorkingDirectory (filename) {
     var workingDirectory = store.getters['settings/workingDirectory']
-    // var mediaDirectory = store.getters['settings/mediaDirectory']
-    var ensoniqStorageDevice = store.getters['settings/ensoniqStorageDevice']
-
     return new Promise((resolve, reject) => {
-      const p = spawn(epslin, [ensoniqStorageDevice], { cwd: workingDirectory })
-      p.stdout.on('data', (data) => {
-        var str = new TextDecoder('utf-8').decode(data)
-        console.log(str)
+      try {
+        require('fs').unlinkSync(workingDirectory + sep + filename)
         resolve()
-      })
-      p.stderr.on('data', (data) => {
-        console.error('stderr: ' + data)
-        reject(data)
-      })
+      } catch (err) {
+      // handle the error
+        console.log('cannot delete file:' + filename + ' - Reason: ' + err)
+        reject(err)
+      }
     })
+  },
+
+  clearEnsoniqStorage () {
+    return EpsLin.clearEfes()
+  },
+
+  putInstrumentToEnsoniqStorage (filename) {
+    return EpsLin.putEfe(filename)
   },
 
   // Midi
 
   getMidiPorts () {
-    console.log('getMidiPorts')
-    return new Promise((resolve, reject) => {
-      if (WebMidi.enabled) {
-        resolve({ins: DataSource.internalGetMidiIns(), outs: DataSource.internalGetMidiOuts()})
-        return
-      }
-      WebMidi.enable(function (err) {
-        if (err) {
-          console.error('WebMidi could not be enabled.', err)
-          reject(err)
-        } else {
-          resolve({ins: DataSource.internalGetMidiIns(), outs: DataSource.internalGetMidiOuts()})
-        }
-      }, true)
-    })
+    return Midi.getPorts()
   },
 
-  internalGetMidiIns () {
-    return WebMidi.inputs.map(i => {
-      var dict = {}
-      dict['id'] = i.id
-      dict['name'] = i.name
-      return dict
-    })
+  requestInstrumentLoad (pos) {
+    return Midi.sendLoadInstrumentCmdViaMidi(pos)
   },
-
-  internalGetMidiOuts () {
-    return WebMidi.outputs.map(i => {
-      var dict = {}
-      dict['id'] = i.id
-      dict['name'] = i.name
-      return dict
-    })
-  },
-
-  sendLoadInstrumentCmdViaMidi () { },
 
   // Settings
 

@@ -2,43 +2,81 @@ import store from '../store/'
 import { spawn } from 'child_process'
 import { sep } from 'path'
 
-export const EpsLin = {
-  // Properties
+// Internal properties
+
+var settings = {
+  get epslinExecutable () { return store.getters['settings/epslin'] },
+  get workingDirectory () { return store.getters['settings/workingDirectory'] },
+  get ensoniqStorageDevice () { return store.getters['settings/ensoniqStorageDevice'] },
   get media () {
     var currentMedia = store.getters['browser/currentMedia']
     var mediaDirectory = store.getters['settings/mediaDirectory']
     return mediaDirectory + sep + currentMedia
-  },
+  }
+}
 
-  get epslin () {
-    return store.getters['settings/epslin']
-  },
+// Internal methods
 
-  get workingDirectory () {
-    return store.getters['settings/workingDirectory']
-  },
-
-  // Methods
-  wrapper (args) {
-    return new Promise((resolve, reject) => {
-      const p = spawn(this.epslin, args, { cwd: this.workingDirectory })
+const epslin = function (args, expectJson = false) {
+  return new Promise((resolve, reject) => {
+    const p = spawn(settings.epslinExecutable, args, { cwd: settings.workingDirectory })
+    if (expectJson === false) {
+      p.on('exit', (code) => {
+        resolve()
+      })
+    } else {
       p.stdout.on('data', (data) => {
         var jsonString = new TextDecoder('utf-8').decode(data)
         jsonString = jsonString.split('\\').join('\\\\')
         resolve(JSON.parse(jsonString).items)
       })
-      p.stderr.on('data', (data) => {
-        console.error('stderr: ' + data)
-        reject(data)
-      })
+    }
+    p.stderr.on('data', (data) => {
+      console.error('stderr: ' + data)
+      reject(data)
     })
-  },
+  })
+}
+
+// External API
+
+export const EpsLin = {
+
+  // Methods
 
   getDir (path) {
-    return this.wrapper([
+    console.log('EpsLin: getDir path:' + path)
+    return epslin([
       '-J',
       '-d' + path,
-      this.media
+      settings.media
+    ], true)
+  },
+
+  getEfe (path, idx) {
+    console.log('EpsLin: getEfe path:' + path + ' idx:' + idx)
+    return epslin([
+      '-d' + path,
+      '-g' + idx,
+      settings.media
+    ])
+  },
+
+  putEfe (filename) {
+    console.log('EpsLin: putEfe filename:' + filename)
+    return epslin([
+      '-p1',
+      settings.ensoniqStorageDevice,
+      filename
+    ])
+  },
+
+  clearEfes () {
+    console.log('EpsLin: clearEfes')
+    return epslin([
+      '-q',
+      '-fi',
+      settings.ensoniqStorageDevice
     ])
   }
 }
