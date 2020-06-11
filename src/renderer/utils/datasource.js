@@ -24,11 +24,14 @@ export const DataSource = {
   },
 
   sendToEnsoniq (path, idx, filename, pos) {
+    /*
     return this.getInstrumentFromEnsoniqMedia(path, idx)
       .then(() => this.clearEnsoniqStorage())
       .then(() => this.putInstrumentToEnsoniqStorage(filename))
-      .then(() => this.requestInstrumentLoad(pos))
+      .then(() => this.requestInstrumentLoad(1, pos))
       .then(() => this.deleteFileInWorkingDirectory(filename))
+      */
+    return this.requestInstrumentLoad(1, pos)
   },
 
   getInstrumentFromEnsoniqMedia (path, idx) {
@@ -63,8 +66,13 @@ export const DataSource = {
     return Midi.getPorts()
   },
 
-  requestInstrumentLoad (pos) {
-    return Midi.sendLoadInstrumentCmdViaMidi(pos)
+  requestInstrumentLoad (idx, pos) {
+    // var inputId = store.getters['settings/midiInput']
+    var outputId = store.getters['settings/midiOutput']
+    // return Midi.programChange(outputId, idx, pos)
+    // return Midi.loadGlobalParameters(outputId)
+    // Midi.setupInput(inputId)
+    return Midi.getInstumentData(outputId, 0)
   },
 
   // Settings

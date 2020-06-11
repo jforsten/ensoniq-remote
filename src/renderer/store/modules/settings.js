@@ -25,6 +25,8 @@ export default {
         epslin: state.epslin
       }
     },
+    midiInput: state => `${state.midiInput}`,
+    midiOutput: state => `${state.midiOutput}`,
     epslin: state => `${state.epslin}`,
     ensoniqStorageDevice: state => `${state.ensoniqStorageDevice}`,
     workingDirectory: state => `${state.workingDirectory}`,

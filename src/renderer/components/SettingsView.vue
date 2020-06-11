@@ -100,6 +100,7 @@
 
 import { mapState, mapActions } from 'Vuex'
 import { DataSource } from '../utils/datasource'
+import { Midi } from '../utils/midi'
 
 export default {
 
@@ -171,12 +172,16 @@ export default {
     },
 
     readMidiPorts () {
+      Midi.test()
+      // Midi.enable()
+      /*
       DataSource.getMidiPorts().then(ports => {
         this.midiInputs = ports.ins
         this.midiOutputs = ports.outs
       }).catch(err => {
         console.error('catch: ' + err)
       })
+      */
     },
 
     save () {
@@ -186,7 +191,9 @@ export default {
 
   mounted () {
     console.log('settings mounted')
-    this.readMidiPorts()
+    DataSource.loadSettings()
+    // setTimeout(() => { Midi.enable() }, 1000)
+    // this.readMidiPorts()
   }
 }
 </script>

@@ -5,11 +5,20 @@
     justify-center
   >
     <v-flex xs11>
-      <v-flex my-2>
-        <div class="grey darken-3">
+      <font color="grey">Instruments loaded in Ensoniq:</font>
+      <v-layout>
+      <v-flex pa-1 v-for="index in 8" :key="index">    
+        <v-card>
           <v-card-text>
-            <font color="grey">Path:</font> {{currentPathName}}
-          </v-card-text>
+            <font color="grey">{{index}}:</font> <font color="grey">EMPTY</font>  
+          </v-card-text> 
+        </v-card>
+      </v-flex>
+      </v-layout>
+      <v-flex my-4> </v-flex>
+      <v-flex>
+        <div class="grey darken-2">
+            {{currentPathName}}
         </div>
       </v-flex>
       <div
