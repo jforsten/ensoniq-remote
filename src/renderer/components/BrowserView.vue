@@ -10,7 +10,7 @@
       <v-flex pa-1 v-for="index in 8" :key="index">    
         <v-card>
           <v-card-text>
-            <font color="grey">{{index}}:</font> <font color="grey">EMPTY</font>  
+            <font color="grey">{{index}}:</font> <font :color="getNameColor(index)">{{getName(index)}}</font>  
           </v-card-text> 
         </v-card>
       </v-flex>
@@ -110,7 +110,7 @@ export default {
   },
 
   computed: {
-    ...mapState('browser', ['items', 'currentPath', 'currentPathName', 'currentMediaId', 'mediaList']),
+    ...mapState('browser', ['items', 'currentPath', 'currentPathName', 'currentMediaId', 'mediaList', 'deviceLoadedInstruments']),
 
     // Change name casing
     dataItems: function () {
@@ -148,11 +148,27 @@ export default {
 
     ...mapActions({
       addItems: 'browser/updateItems',
-      goDir: 'browser/goDir'
+      goDir: 'browser/goDir',
+      updateDeviceLoadedInstuments: 'browser/updateDeviceLoadedInstruments'
     }),
 
     goToRoot () {
       this.goDir('/')
+    },
+
+    updataLoadedDeviceInstrument (pos, name) {
+      this.updataLoadedDeviceInstrument(this.deviceLoadedInstruments[pos] = name)
+    },
+
+    getName (index) {
+      var name = this.deviceLoadedInstruments[index - 1]
+      return name === null ? '' : name
+    },
+
+    getNameColor (index) {
+      var name = this.deviceLoadedInstruments[index - 1]
+      if (name === null) return 'grey'
+      return 'white'
     },
 
     item_click_handler (item, expanded) {

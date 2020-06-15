@@ -1,51 +1,101 @@
-import WebMidi from '../../webmidi'
 
-var input
+var midi = null
+
+function init () {
+  if (midi !== null) close()
+  return navigator.requestMIDIAccess({ sysex: true })
+    .then(onMIDISuccess, onMIDIFailure)
+    .then(() => delay(500))
+}
+
+function close () {
+  var allInputs = midi.inputs.values()
+  for (var input = allInputs.next(); input && !input.done; input = allInputs.next()) {
+    input.value.onmidimessage = null
+  }
+}
+
+function addInputListener (input) {
+  if (input === undefined) {
+    console.log('Midi: No input to add listener!')
+    return
+  }
+  close()
+  input.onmidimessage = gotMIDImessage
+  console.log('Midi: Added listener to input:' + input.name)
+}
+
+// on success
+function onMIDISuccess (midiData) {
+  console.log('MIDI success')
+  // this is all our MIDI data
+  midi = midiData
+  var allInputs = midi.inputs.values()
+  var allOutputs = midi.outputs.values()
+
+  console.log('INPUTS:')
+  for (var input = allInputs.next(); input && !input.done; input = allInputs.next()) {
+    // input.value.onmidimessage = gotMIDImessage
+    console.log(input.value.name + ' ' + input.value.id)
+  }
+  console.log('OUTPUTS:')
+  for (var output = allOutputs.next(); output && !output.done; output = allOutputs.next()) {
+    console.log(output.value.name + ' ' + output.value.id)
+  }
+}
+
+function gotMIDImessage (messageData) {
+  console.log('data:' + messageData.data)
+  var name = ''
+  if (
+    messageData.data[0] === 0xF0 &&
+    messageData.data[1] === 0x0F &&
+    messageData.data.length === 974
+  ) {
+    var offset = 4
+    for (var i = 0; i < 12; i++) {
+      var char = (messageData.data[offset + i * 3] << 4) + (messageData.data[offset + (i * 3) + 1] >> 2)
+      // console.log('char:' + String.fromCharCode(char))
+      name += String.fromCharCode(char)
+    }
+    console.log('Name:' + name)
+  }
+}
+
+// on failure
+function onMIDIFailure () {
+  console.warn('Not recognising MIDI controller')
+}
+
+function getOutputById (outputId) {
+  return midi.outputs.get(outputId)
+}
+
+function getInputById (inputId) {
+  return midi.inputs.get(inputId)
+}
+
+function sendProgramChange (output, idx, pos) {
+  output.send([0xC0 + pos, idx])
+}
+
+function sendSysex (output, data) {
+  output.send(data)
+}
+
+function delay (ms) {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
 
 export const Midi = {
 
-  test () {
-
+  initialize (inputId) {
+    console.log('Midi: Initialize with input id:' + inputId)
+    return init().then(() => addInputListener(getInputById(inputId)))
   },
 
-  setup () {
-    input = WebMidi.getInputByName('USB Uno MIDI Interface')
-    console.log('input:' + input.name)
-    WebMidi.addListener('connected', function (e) {
-      console.log('connected:' + input.name)
-      input.addListener('pitchbend', 'all', function (e) {
-        console.log('Pitch value: ' + e.value)
-      })
-      input.addListener('sysex', 'all', function (e) {
-        console.log('sysex input:')
-        console.log(e)
-      })
-      console.log('Added listeners')
-    })
-  },
-
-  enable () {
-    if (WebMidi.enabled) {
-      console.log('enabled')
-      console.log('input--:' + input.name)
-      console.log('enable - enabled:' + WebMidi.enabled)
-      console.log('sysex:' + WebMidi.sysexEnabled)
-      console.log('inputs:' + WebMidi.inputs)
-      console.log('outputs:' + WebMidi.outputs)
-      setTimeout(this.setup, 100)
-      return
-    }
-    WebMidi.enable((err) => {
-      if (err) {
-        console.error('WebMidi could not be enabled.', err)
-      } else {
-        console.log('enable - enabled:' + WebMidi.enabled)
-        console.log('sysex:' + WebMidi.sysexEnabled)
-        console.log('inputs:' + WebMidi.inputs)
-        console.log('outputs:' + WebMidi.outputs)
-        setTimeout(this.setup, 100)
-      }
-    }, true)
+  close () {
+    close()
   },
 
   getPorts () {
@@ -55,51 +105,36 @@ export const Midi = {
   },
 
   internalGetMidiIns () {
-    return WebMidi.inputs.map(i => {
+    var inputs = []
+    midi.inputs.forEach(function (port) {
       var dict = {}
-      dict['id'] = i.id
-      dict['name'] = i.name
-      return dict
+      dict['id'] = port.id
+      dict['name'] = port.name
+      console.log(port)
+      inputs.push(dict)
     })
+    return inputs
   },
 
   internalGetMidiOuts () {
-    return WebMidi.outputs.map(i => {
+    var outputs = []
+    midi.outputs.forEach(function (port) {
       var dict = {}
-      dict['id'] = i.id
-      dict['name'] = i.name
-      return dict
+      dict['id'] = port.id
+      dict['name'] = port.name
+      console.log(port)
+      outputs.push(dict)
     })
-  },
-
-  setupInput (inputId) {
-    WebMidi.removeListener()
-    console.log('inputId:' + inputId)
-    var input = WebMidi.getInputById(inputId)
-    console.log('input:' + input.name)
-
-    try {
-      input.addListener('sysex', 'all', function (e) {
-        console.log('sysex input:')
-        console.log(e)
-      })
-      input.addListener('pitchbend', 'all', function (e) {
-        console.log('Pitch value: ' + e.value)
-      })
-      console.log('Listener added!')
-    } catch (err) {
-      console.log('err:' + err)
-    }
+    return outputs
   },
 
   programChange (outputId, idx, pos) {
     return new Promise((resolve) => {
       console.log('outputId:' + outputId)
-      var output = WebMidi.getOutputById(outputId)
-      console.log('output:' + output)
       console.log('ProgramChange - idx:' + idx + ' pos:' + pos + ' ...')
       try {
-        output.sendProgramChange(idx, pos)
+        var output = getOutputById(outputId)
+        sendProgramChange(output, idx, pos)
         console.log('..Sent!')
       } catch (err) {
         console.log('Midi error:' + err)
@@ -111,19 +146,19 @@ export const Midi = {
   loadGlobalParameters (outputId) {
     return new Promise((resolve) => {
       console.log('outputId:' + outputId)
-      var output = WebMidi.getOutputById(outputId)
+      var output = getOutputById(outputId)
       console.log('output:' + output)
       try {
         this.sendVirtualKey(output, 0x00)
-          .then(() => this.delay(200))
+          .then(() => delay(200))
           .then(() => this.sendVirtualKey(output, 0x11))
-          .then(() => this.delay(200))
+          .then(() => delay(200))
           .then(() => this.sendVirtualKey(output, 0x15))
-          .then(() => this.delay(200))
+          .then(() => delay(200))
           .then(() => this.sendVirtualKey(output, 0x33))
-          .then(() => this.delay(200))
+          .then(() => delay(200))
           .then(() => this.sendVirtualKey(output, 0x25))
-          .then(() => this.delay(200))
+          .then(() => delay(200))
           .then(() => {
             console.log('..Sent!')
             resolve()
@@ -138,13 +173,13 @@ export const Midi = {
   getInstumentData (outputId, pos) {
     return new Promise((resolve) => {
       console.log('outputId:' + outputId)
-      var output = WebMidi.getOutputById(outputId)
+      var output = getOutputById(outputId)
       console.log('output:' + output)
       try {
         this.getInstrument(output, pos)
-          .then(() => this.delay(500))
+          .then(() => delay(500))
           .then(() => this.sendStatusOk(output))
-          .then(() => this.delay(500))
+          .then(() => delay(500))
           .then(() => {
             console.log('..Sent!')
             resolve()
@@ -158,26 +193,22 @@ export const Midi = {
 
   sendVirtualKey (output, key) {
     return new Promise((resolve) => {
-      output.sendSysex([0x0f, 0x03], [0x00, 0x40, 0x00, key])
+      sendSysex(output, [0xf0, 0x0f, 0x03, 0x00, 0x40, 0x00, key, 0xf7])
       resolve()
     })
   },
 
   getInstrument (output, pos) {
     return new Promise((resolve) => {
-      output.sendSysex([0x0f, 0x03], [0x00, 0x03, 0x00, pos, 0x00, 0x00, 0x00, 0x01])
+      sendSysex(output, [0xf0, 0x0f, 0x03, 0x00, 0x03, 0x00, pos, 0x00, 0x00, 0x00, 0x01, 0xf7])
       resolve()
     })
   },
 
   sendStatusOk (output) {
     return new Promise((resolve) => {
-      output.sendSysex([0x0f, 0x03], [0x00, 0x01, 0x00, 0x00])
+      sendSysex(output, [0xf0, 0x0f, 0x03, 0x00, 0x01, 0x00, 0x00, 0xf7])
       resolve()
     })
-  },
-
-  delay (ms) {
-    return new Promise(resolve => setTimeout(resolve, ms))
   }
 }

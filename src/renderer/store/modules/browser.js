@@ -10,7 +10,8 @@ export default {
     currentPathName: '/',
     currentMediaId: '',
     currentMedia: '',
-    mediaList: []
+    mediaList: [],
+    deviceLoadedInstruments: [null, null, null, null, null, null, null, null]
   },
 
   getters: {
@@ -18,7 +19,8 @@ export default {
     currentPath: state => `${state.currentPath}`,
     currentMediaId: state => `${state.currentMediaId}`,
     currentMedia: state => `${state.currentMedia}`,
-    mediaList: state => `${state.mediaList}`
+    mediaList: state => `${state.mediaList}`,
+    deviceLoadedInstruments: state => `${state.deviceLoadedInstruments}`
   },
 
   mutations: {
@@ -38,6 +40,9 @@ export default {
     updateMediaList (state) {
       // ToDo change so that DataSource will call action..
       state.mediaList = DataSource.getMediaList()
+    },
+    updateDeviceLoadedInstruments (state, instruments) {
+      state.deviceLoadedInstruments = instruments
     }
   },
 
@@ -56,6 +61,10 @@ export default {
 
     updateMediaList (context) {
       context.commit('updateMediaList')
+    },
+
+    updateDeviceLoadedInstruments (context, instruments) {
+      context.commit('updateDeviceLoadedInstruments', instruments)
     },
 
     goDir ({commit, state}, dirId) {

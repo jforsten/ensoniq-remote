@@ -200,7 +200,7 @@ export default {
   mounted () {
     DataSource.loadSettings()
     this.updateMediaList()
-    DataSource.getMidiPorts()
+    DataSource.initializeMidi()
   }
 }
 </script>

@@ -72,7 +72,7 @@ export const DataSource = {
     // return Midi.programChange(outputId, idx, pos)
     // return Midi.loadGlobalParameters(outputId)
     // Midi.setupInput(inputId)
-    return Midi.getInstumentData(outputId, 0)
+    return Midi.getInstumentData(outputId, pos - 1)
   },
 
   // Settings
@@ -88,6 +88,12 @@ export const DataSource = {
 
   saveSettings () {
     localStorage.setItem('settings', JSON.stringify(store.getters['settings/allSettings']))
+  },
+
+  initializeMidi () {
+    var inputId = store.getters['settings/midiInput']
+    // TODO: Why first Midi init does not return inputs/outputs?
+    setTimeout(() => { Midi.initialize(inputId).then(() => { Midi.initialize(inputId) }) }, 100)
   }
 
 }
