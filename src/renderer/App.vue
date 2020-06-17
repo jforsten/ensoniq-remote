@@ -27,9 +27,9 @@
         </v-list>
       </v-navigation-drawer>
       <v-toolbar
-        fixed
+        extended
         app
-        :clipped-left="clipped"
+        height=70px
       >
 
         <v-toolbar-side-icon @click.native.stop="drawer = !drawer"></v-toolbar-side-icon>
@@ -48,13 +48,20 @@
         <!-- <v-btn icon @click.native.stop="rightDrawer = !rightDrawer">
           <v-icon>menu</v-icon>
         </v-btn> -->
-        <v-layout>
+        <v-container 
+          fill-height
+          fluid
+          justify-start
+          pa-0
+          ma-0
+        >
+        <v-layout row wrap>
           <v-flex
             xs5
-            mr-2
             ml-2
             pt-2
           >
+            <v-layout>
             <v-select
               @input="changeMedia"
               v-model="currentSelectedMediaId"
@@ -63,34 +70,53 @@
               item-value="id"
               label="Ensoniq media file"
             />
-          </v-flex>
-          <v-flex xs4>
-            <v-layout
-              row
-              pt-3
+         
+            <v-btn
+              icon
+              @click="previousMedia"
             >
-              <v-btn
-                icon
-                @click="previousMedia"
-              >
-                <v-icon>remove</v-icon>
-              </v-btn>
-              <v-btn
-                icon
-                @click="nextMedia"
-              >
-                <v-icon>add</v-icon>
-              </v-btn>
-              <v-btn
-                icon
-                @click="refreshMedia"
-              >
-                <v-icon>sync</v-icon>
-              </v-btn>
+              <v-icon>remove</v-icon>
+            </v-btn>
+            <v-btn
+              icon
+              @click="nextMedia"
+            >
+              <v-icon>add</v-icon>
+            </v-btn>
+            <v-btn
+              icon
+              @click="refreshMedia"
+            >
+              <v-icon>sync</v-icon>
+            </v-btn>
+            </v-layout>
+          </v-flex>
+           <v-flex xs12>
+            <v-flex pa-0 px-1>
+              <font color="grey">Instruments loaded in Ensoniq:</font>
+            </v-flex>
+            <v-layout row> 
+              <v-flex py-0 xs2 mx-1 v-for="index in 8" :key="index">    
+                <v-card elevation=8 hover height=30px>
+                  <v-flex px-1 mx-1 py-1>
+                    <font color="grey">{{index}}:</font> <font :color="getNameColor(index)">{{getName(index)}}</font>  
+                  </v-flex>
+                </v-card> 
+              </v-flex>
+              <v-flex pa-0 ma-0 xs0>
+                <v-btn
+                  small
+                  icon
+                  @click="getDeviceLoadedInstruments"
+                >
+                  <v-icon>sync</v-icon>
+                </v-btn>
+              </v-flex>
             </v-layout>
           </v-flex>
         </v-layout>
-      </v-toolbar>
+        </v-container>
+        </v-toolbar>
       <v-content>
         <v-container
           fluid
@@ -145,7 +171,7 @@ export default {
   }),
 
   computed: {
-    ...mapState('browser', ['currentMediaId', 'mediaList']),
+    ...mapState('browser', ['currentMediaId', 'mediaList', 'deviceLoadedInstruments']),
 
     currentSelectedMediaId: {
       get () {
@@ -194,6 +220,24 @@ export default {
           offset: 0,
           easing: 'easeInOutCubic'
         })
+    },
+    updataLoadedDeviceInstrument (pos, name) {
+      this.updataLoadedDeviceInstrument(this.deviceLoadedInstruments[pos] = name)
+    },
+
+    getDeviceLoadedInstruments () {
+
+    },
+
+    getName (index) {
+      var name = this.deviceLoadedInstruments[index - 1]
+      return name === null ? 'EMPTY' : name
+    },
+
+    getNameColor (index) {
+      var name = this.deviceLoadedInstruments[index - 1]
+      if (name === null) return 'grey'
+      return 'white'
     }
   },
 

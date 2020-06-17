@@ -1,28 +1,24 @@
 <template>
+<v-container 
+  fill-height
+  fluid
+  justify-start
+  pa-0
+  ma-0
+>
   <v-layout
     row
     wrap
-    justify-center
   >
-    <v-flex xs11>
-      <font color="grey">Instruments loaded in Ensoniq:</font>
-      <v-layout>
-      <v-flex pa-1 v-for="index in 8" :key="index">    
-        <v-card>
-          <v-card-text>
-            <font color="grey">{{index}}:</font> <font :color="getNameColor(index)">{{getName(index)}}</font>  
-          </v-card-text> 
-        </v-card>
-      </v-flex>
-      </v-layout>
-      <v-flex my-4> </v-flex>
+    <v-flex xs12 fill-height py-0>
       <v-flex>
         <div class="grey darken-2">
+          <v-flex px-1>
             {{currentPathName}}
+          </v-flex>
         </div>
       </v-flex>
-      <div
-        remove_this____style="max-height:calc(100vh - 220px); overflow-y: auto"
+      <div  
         ref="scrollView"
       >
         <v-data-table
@@ -30,7 +26,7 @@
           :items="dataItems"
           item-key="index"
           hide-actions
-          _remove_this_part___style="max-height: 300px; overflow-y: auto"
+          
         >
           <template
             slot="items"
@@ -69,6 +65,7 @@
       </div>
     </v-flex>
   </v-layout>
+</v-container>
 </template>
 
 <script>
@@ -160,15 +157,8 @@ export default {
       this.updataLoadedDeviceInstrument(this.deviceLoadedInstruments[pos] = name)
     },
 
-    getName (index) {
-      var name = this.deviceLoadedInstruments[index - 1]
-      return name === null ? '' : name
-    },
+    getDeviceLoadedInstruments () {
 
-    getNameColor (index) {
-      var name = this.deviceLoadedInstruments[index - 1]
-      if (name === null) return 'grey'
-      return 'white'
     },
 
     item_click_handler (item, expanded) {
@@ -216,6 +206,7 @@ export default {
 </script>
 
 <style scoped>
+
 .centered {
   display: flex;
   justify-content: center;
@@ -233,4 +224,5 @@ export default {
 .link-btn {
   width: 150px;
 }
+
 </style>
