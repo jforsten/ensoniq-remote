@@ -16,6 +16,30 @@ export const Helpers = {
     var parentPath = pathParts
     if (parentPath === '') parentPath = '/'
     return parentPath
-  }
+  },
 
+  promiseTimeout (ms, promise) {
+    // Create a promise that rejects in <ms> milliseconds
+    var id = null
+    let timeout = new Promise((resolve, reject) => {
+      id = setTimeout(() => {
+        clearTimeout(id)
+        console.warn('TIMEOUT')
+        reject(Error('Timeout'))
+      }, ms)
+    })
+
+    // Returns a race between our timeout and the passed in promise
+    return Promise.race([
+      promise,
+      timeout
+    ]).then((result) => {
+      clearTimeout(id)
+      return result
+    })
+  },
+
+  delay (ms) {
+    return new Promise(resolve => setTimeout(resolve, ms))
+  }
 }

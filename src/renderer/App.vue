@@ -30,6 +30,7 @@
         extended
         app
         height=70px
+        :key="componentKey"
       >
 
         <v-toolbar-side-icon @click.native.stop="drawer = !drawer"></v-toolbar-side-icon>
@@ -75,19 +76,19 @@
               icon
               @click="previousMedia"
             >
-              <v-icon>remove</v-icon>
+              <v-icon>mdi-minus</v-icon>
             </v-btn>
             <v-btn
               icon
               @click="nextMedia"
             >
-              <v-icon>add</v-icon>
+              <v-icon>mdi-plus</v-icon>
             </v-btn>
             <v-btn
               icon
               @click="refreshMedia"
             >
-              <v-icon>sync</v-icon>
+              <v-icon>mdi-autorenew</v-icon>
             </v-btn>
             </v-layout>
           </v-flex>
@@ -97,20 +98,34 @@
             </v-flex>
             <v-layout row> 
               <v-flex py-0 xs2 mx-1 v-for="index in 8" :key="index">    
-                <v-card elevation=8 hover height=30px>
-                  <v-flex px-1 mx-1 py-1>
-                    <font color="grey">{{index}}:</font> <font :color="getNameColor(index)">{{getName(index)}}</font>  
+                <v-card elevation=8 hover height=30px :key="deviceLoadedInstruments[index]">
+                  <v-flex px-1 mx-1 my-1 py-2>
+                    <div
+                      class="text-no-wrap caption"
+                      style="width: 8rem;"
+                    >
+                      <font color="grey">{{index}}:</font> <font :color="getNameColor(index)">{{getName(index)}}</font>  
+                    </div>
                   </v-flex>
                 </v-card> 
               </v-flex>
               <v-flex pa-0 ma-0 xs0>
+                 <v-progress-circular
+                  v-if="progress"
+                  :size="35"
+                  :width="2"
+                  color="primary"
+                  indeterminate
+                ></v-progress-circular>
                 <v-btn
+                  v-else
                   small
                   icon
                   @click="getDeviceLoadedInstruments"
                 >
-                  <v-icon>sync</v-icon>
+                  <v-icon>mdi-sync</v-icon>
                 </v-btn>
+                
               </v-flex>
             </v-layout>
           </v-flex>
@@ -157,21 +172,24 @@ export default {
   name: 'ensoniq-remote',
 
   data: () => ({
+    deviceLoadedInstruments: [null, null, null, null, null, null, null, null],
     clipped: true,
     drawer: false,
     fixed: true,
     items: [
       { icon: 'mdi-playlist-music', title: 'Browser', to: '/' },
-      { icon: 'settings', title: 'Settings', to: '/settings' }
+      { icon: 'mdi-settings', title: 'Settings', to: '/settings' }
     ],
     miniVariant: true,
     right: true,
     rightDrawer: false,
-    title: 'Ensoniq remote'
+    title: 'Ensoniq remote',
+    componentKey: 0,
+    progress: false
   }),
 
   computed: {
-    ...mapState('browser', ['currentMediaId', 'mediaList', 'deviceLoadedInstruments']),
+    ...mapState('browser', ['currentMediaId', 'mediaList']),
 
     currentSelectedMediaId: {
       get () {
@@ -221,12 +239,31 @@ export default {
           easing: 'easeInOutCubic'
         })
     },
-    updataLoadedDeviceInstrument (pos, name) {
-      this.updataLoadedDeviceInstrument(this.deviceLoadedInstruments[pos] = name)
+    updateLoadedDeviceInstrument (pos, name) {
+      this.deviceLoadedInstruments[pos - 1] = name
+      console.log('update data from callback - pos: ' + pos + ' name:' + name)
+      console.log(this.deviceLoadedInstruments)
+      this.componentKey++
     },
 
     getDeviceLoadedInstruments () {
+      /*
+      DataSource.getInstrumentData(3)
+        .then((name) => { this.updateLoadedDeviceInstrument(3, name) })
+        .catch(() => { console.warn('Cannot get instrument data!') })
+        */
+      this.progress = true
+      DataSource.getAllInstrumentData()
+        .then((names) => {
+          for (let index = 0; index < names.length; index++) {
+            this.updateLoadedDeviceInstrument(index + 1, names[index])
+            this.progress = false
+          }
+        }).catch((e) => { this.progress = false })
+    },
 
+    getInstumentCallback (pos, name) {
+      this.updateLoadedDeviceInstrument(pos, name)
     },
 
     getName (index) {
@@ -250,6 +287,5 @@ export default {
 </script>
 
 <style>
-@import url("https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons");
 /* Global CSS */
 </style>

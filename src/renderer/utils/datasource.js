@@ -2,6 +2,7 @@ import store from '../store/'
 import { sep } from 'path'
 import { EpsLin } from './epslin'
 import { Midi } from './midi'
+import { Helpers } from './helpers'
 
 export const DataSource = {
 
@@ -23,7 +24,7 @@ export const DataSource = {
     })
   },
 
-  sendToEnsoniq (path, idx, filename, pos) {
+  sendToEnsoniq (path, idx, filename, pos, callback) {
     /*
     return this.getInstrumentFromEnsoniqMedia(path, idx)
       .then(() => this.clearEnsoniqStorage())
@@ -31,7 +32,7 @@ export const DataSource = {
       .then(() => this.requestInstrumentLoad(1, pos))
       .then(() => this.deleteFileInWorkingDirectory(filename))
       */
-    return this.requestInstrumentLoad(1, pos)
+    return this.requestInstrumentLoad(1, pos, callback)
   },
 
   getInstrumentFromEnsoniqMedia (path, idx) {
@@ -66,13 +67,45 @@ export const DataSource = {
     return Midi.getPorts()
   },
 
-  requestInstrumentLoad (idx, pos) {
+  requestInstrumentLoad (idx, pos, callback) {
     // var inputId = store.getters['settings/midiInput']
     var outputId = store.getters['settings/midiOutput']
     // return Midi.programChange(outputId, idx, pos)
     // return Midi.loadGlobalParameters(outputId)
     // Midi.setupInput(inputId)
-    return Midi.getInstumentData(outputId, pos - 1)
+    return Midi.getInstumentData(outputId, pos - 1, callback)
+  },
+
+  getInstrumentData (pos) {
+    console.log('getInstrument - ' + pos)
+    var outputId = store.getters['settings/midiOutput']
+    var promise = new Promise((resolve) => {
+      Midi.getInstumentData(outputId, pos, (pos, name) => {
+        console.log('CALLBACK for pos:' + pos)
+        resolve(name)
+      })
+    })
+    return Helpers.promiseTimeout(5000, promise)
+  },
+
+  getAllInstrumentData () {
+    var names = [null, null, null, null, null, null, null, null]
+    return DataSource.getInstrumentData(1)
+      .then((name) => { names[0] = name })
+      .then(() => DataSource.getInstrumentData(2))
+      .then((name) => { names[1] = name })
+      .then(() => DataSource.getInstrumentData(3))
+      .then((name) => { names[2] = name })
+      .then(() => DataSource.getInstrumentData(4))
+      .then((name) => { names[3] = name })
+      .then(() => DataSource.getInstrumentData(5))
+      .then((name) => { names[4] = name })
+      .then(() => DataSource.getInstrumentData(6))
+      .then((name) => { names[5] = name })
+      .then(() => DataSource.getInstrumentData(7))
+      .then((name) => { names[6] = name })
+      .then(() => DataSource.getInstrumentData(8))
+      .then((name) => { names[7] = name; return names })
   },
 
   // Settings
@@ -93,7 +126,7 @@ export const DataSource = {
   initializeMidi () {
     var inputId = store.getters['settings/midiInput']
     // TODO: Why first Midi init does not return inputs/outputs?
-    setTimeout(() => { Midi.initialize(inputId).then(() => { Midi.initialize(inputId) }) }, 100)
+    setTimeout(() => { Midi.initialize(inputId).then(() => { Midi.initialize(inputId) }) }, 500)
   }
 
 }

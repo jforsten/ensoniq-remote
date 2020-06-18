@@ -100,7 +100,6 @@
 
 import { mapState, mapActions } from 'Vuex'
 import { DataSource } from '../utils/datasource'
-// import { Midi } from '../utils/midi'
 
 export default {
 

@@ -76,7 +76,7 @@ export default {
     click_handler (data) {
       console.log('Load inst to pos:' + data.index)
       this.showProgress = true
-      DataSource.sendToEnsoniq(data.path, this.selectedItem.index, this.selectedItem.filename, data.index)
+      DataSource.sendToEnsoniq(data.path, this.selectedItem.index, this.selectedItem.filename, data.index, (a, b) => {})
         .then(() => { this.showProgress = false })
       // DataSource.getInstrumentFromEnsoniqMedia(data.path, this.selectedItem.index).then(() => { this.showProgress = false })
     }

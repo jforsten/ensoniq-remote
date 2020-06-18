@@ -1,14 +1,15 @@
 import { EnsoniqType } from './ensoniqType'
 
 export const TypeIcon = {
-  Instrument: 'music_note',
-  Directory: 'folder',
-  OS: 'memory',
-  Bank: 'dashboard',
-  Sequence: 'queue_music',
-  Song: 'library_music',
-  Macro: 'build',
-  Parent_Directory: 'arrow_upward',
+  Instrument: 'mdi-pulse',
+  Directory: 'mdi-folder',
+  OS: 'mdi-memory',
+  Bank: 'mdi-collage',
+  Sequence: 'mdi-music-note',
+  Song: 'mdi-music',
+  Macro: 'mdi-wrench',
+  Parent_Directory: 'mdi-arrow-up',
+  Effect: 'mdi-function-variant',
 
   get_icon (itemTypeId) {
     switch (itemTypeId) {
@@ -44,7 +45,9 @@ export const TypeIcon = {
       case EnsoniqType.E16_Song:
       case EnsoniqType.ASR_Song:
         return TypeIcon.Song
-
+      case EnsoniqType.E16_Effect:
+      case EnsoniqType.ASR_Effect:
+        return TypeIcon.Effect
       default:
         return ''
     }
