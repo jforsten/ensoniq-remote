@@ -10,6 +10,31 @@
       >
         <div class="headline">Settings</div>
       </v-flex>
+
+      <v-flex
+        xs6
+        mt-5
+        mb-4
+      >
+        <div class="subheading">Device</div>
+      </v-flex>
+       <v-layout row>
+        <v-flex
+          xs3
+          mx-4
+        >
+          <v-select
+            v-model="currentEnsoniqDevice"
+            :items="ensoniqDevices"
+            item-text="name"
+            item-value="id"
+            prepend-icon="mdi-piano"
+            box
+            label="Ensoniq device type"
+          />
+        </v-flex>
+       </v-layout>
+
       <v-flex
         xs6
         mt-5
@@ -111,6 +136,7 @@ export default {
   },
   computed: {
     ...mapState('settings', [
+      'ensoniqDevice',
       'midiInput',
       'midiOutput',
       'mediaDirectory',
@@ -118,6 +144,15 @@ export default {
       'ensoniqStorageDevice',
       'epslin'
     ]),
+
+    ensoniqDevices: {
+      get () { return DataSource.getEnsoniqDevices() }
+    },
+
+    currentEnsoniqDevice: {
+      get () { return this.ensoniqDevice },
+      set (value) { this.updateEnsoniqDevice(value) }
+    },
 
     currentMidiInput: {
       get () { return this.midiInput },
@@ -152,6 +187,7 @@ export default {
   },
   methods: {
     ...mapActions({
+      updateEnsoniqDevice: 'settings/updateEnsoniqDevice',
       updateMediaDirectory: 'settings/updateMediaDirectory',
       updateWorkingDirectory: 'settings/updateWorkingDirectory',
       updateMidiInput: 'settings/updateMidiInput',

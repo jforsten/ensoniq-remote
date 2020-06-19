@@ -159,7 +159,7 @@
        <v-flex shrink pa-2>
         <font color="grey">
         <v-icon small color="grey darken-2">mdi-piano</v-icon>
-        ASR-10 
+        {{ensoniqDevice}} 
         <v-icon small color="grey darken-2">mdi-power-on</v-icon>
         <v-icon small color="grey darken-2">mdi-login-variant</v-icon>
     
@@ -213,6 +213,7 @@ export default {
       'mediaList'
     ]),
     ...mapState('settings', [
+      'ensoniqDevice',
       'midiInput',
       'midiOutput',
       'mediaDirectory',

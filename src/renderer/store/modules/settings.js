@@ -4,9 +4,9 @@ export default {
   namespaced: true,
 
   state: {
+    ensoniqDevice: undefined,
     midiInput: undefined,
     midiOutput: undefined,
-
     mediaDirectory: '/Users/jforsten/Projects/epslin/media',
     workingDirectory: '/Users/jforsten/Projects/epslin/temp',
     ensoniqStorageDevice: '/dev/ensoniqDevice',
@@ -14,9 +14,9 @@ export default {
   },
 
   getters: {
-
     allSettings: state => {
       return {
+        ensoniqDevice: state.ensoniqDevice,
         midiInput: state.midiInput,
         midiOutput: state.midiOutput,
         mediaDirectory: state.mediaDirectory,
@@ -25,6 +25,7 @@ export default {
         epslin: state.epslin
       }
     },
+    ensoniqDevice: state => `${state.ensoniqDevice}`,
     midiInput: state => `${state.midiInput}`,
     midiOutput: state => `${state.midiOutput}`,
     epslin: state => `${state.epslin}`,
@@ -35,12 +36,16 @@ export default {
 
   mutations: {
     setAllSettings (state, settings) {
+      state.ensoniqDevice = settings.ensoniqDevice
       state.midiInput = settings.midiInput
       state.midiOutput = settings.midiOutput
       state.mediaDirectory = settings.mediaDirectory
       state.workingDirectory = settings.workingDirectory
       state.ensoniqStorageDevice = settings.ensoniqStorageDevice
       state.epslin = settings.epslin
+    },
+    updateEnsoniqDevice (state, dev) {
+      state.ensoniqDevice = dev
     },
     updateMidiInput (state, input) {
       state.midiInput = input
@@ -63,15 +68,15 @@ export default {
   },
 
   actions: {
-
     setAllSettings ({commit}, settings) {
       commit('setAllSettings', settings)
     },
-
     updateMidiInput ({commit}, id) {
       commit('updateMidiInput', id)
     },
-
+    updateEnsoniqDevice ({commit}, dev) {
+      commit('updateEnsoniqDevice', dev)
+    },
     updateMidiOutput ({commit}, id) {
       commit('updateMidiOutput', id)
     },

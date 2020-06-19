@@ -3,6 +3,7 @@ import { sep } from 'path'
 import { EpsLin } from './epslin'
 import { Midi } from './midi'
 import { Helpers } from './helpers'
+import { EnsoniqDeviceType } from './ensoniqDeviceType'
 
 export const DataSource = {
 
@@ -59,6 +60,12 @@ export const DataSource = {
 
   putInstrumentToEnsoniqStorage (filename) {
     return EpsLin.putEfe(filename)
+  },
+
+  getEnsoniqDevices () {
+    return Object.keys(EnsoniqDeviceType).map(key => {
+      return {id: key, name: EnsoniqDeviceType[key]}
+    })
   },
 
   // Midi
@@ -126,8 +133,9 @@ export const DataSource = {
     if (localStorage.getItem('settings')) {
       var allSettings = JSON.parse(localStorage.getItem('settings'))
       if (allSettings !== undefined) {
-        store.dispatch('settings/setAllSettings', allSettings)
+        return store.dispatch('settings/setAllSettings', allSettings)
       }
+      return Promise.resolve()
     }
   },
 
