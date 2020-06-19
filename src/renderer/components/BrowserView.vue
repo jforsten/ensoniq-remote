@@ -72,7 +72,7 @@
 
 import { mapState, mapActions } from 'Vuex'
 import { TypeIcon } from '../utils/typeIcon'
-import { EnsoniqType } from '../utils/ensoniqType'
+import { EnsoniqFileType } from '../utils/ensoniqFileType'
 import { Helpers } from '../utils/helpers'
 import InstrumentPanel from './BrowserView/InstrumentPanel'
 
@@ -165,7 +165,7 @@ export default {
       if (expanded) return false
 
       switch (item.type_id) {
-        case EnsoniqType.Instrument:
+        case EnsoniqFileType.Instrument:
           var itemsCount = this.dataItems.length
           if (itemsCount > 0 && this.dataItems[itemsCount - 1].index === item.index) {
             setTimeout(() => {
@@ -173,11 +173,11 @@ export default {
             }, 200)
           }
           return true
-        case EnsoniqType.Directory:
+        case EnsoniqFileType.Directory:
           this.goDir(item.index)
           this.scrollToTop()
           return false
-        case EnsoniqType.Parent_Directory:
+        case EnsoniqFileType.Parent_Directory:
           this.goDir('..')
           this.scrollToTop()
           return false

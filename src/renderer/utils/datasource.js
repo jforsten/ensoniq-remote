@@ -108,6 +108,18 @@ export const DataSource = {
       .then((name) => { names[7] = name; return names })
   },
 
+  getCurrentMidiInputName () {
+    var inputId = store.getters['settings/midiInput']
+    if (inputId === undefined) return '-'
+    return Midi.getInputName(inputId)
+  },
+
+  getCurrentMidiOutputName () {
+    var outputId = store.getters['settings/midiOutput']
+    if (outputId === undefined) return '-'
+    return Midi.getOutputName(outputId)
+  },
+
   // Settings
 
   loadSettings () {
@@ -126,7 +138,9 @@ export const DataSource = {
   initializeMidi () {
     var inputId = store.getters['settings/midiInput']
     // TODO: Why first Midi init does not return inputs/outputs?
-    setTimeout(() => { Midi.initialize(inputId).then(() => { Midi.initialize(inputId) }) }, 500)
+    return Helpers.delay(500)
+      .then(() => { return Midi.initialize(inputId) })
+      .then(() => { return Midi.initialize(inputId) })
   }
 
 }

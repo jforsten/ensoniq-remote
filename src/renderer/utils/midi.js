@@ -151,6 +151,21 @@ function getInputById (inputId) {
   return midi.inputs.get(inputId)
 }
 
+function getOutputNameById (outputId) {
+  if (midi === null || outputId === undefined) { return '' }
+  return midi.outputs.get(outputId).name
+}
+
+function getInputNameById (inputId) {
+  console.warn('id:' + inputId)
+  if (midi === null || inputId === undefined) { return '' }
+  console.log(midi.inputs)
+  var input = midi.inputs.get(inputId)
+  console.log(input)
+  console.log(input.name)
+  return input.name
+}
+
 function sendProgramChange (output, idx, pos) {
   output.send([0xC0 + pos, idx])
 }
@@ -202,6 +217,14 @@ export const Midi = {
     return new Promise((resolve, reject) => {
       resolve({ins: Midi.internalGetMidiIns(), outs: Midi.internalGetMidiOuts()})
     })
+  },
+
+  getInputName (inputId) {
+    return getInputNameById(inputId)
+  },
+
+  getOutputName (outputId) {
+    return getOutputNameById(outputId)
   },
 
   setGetInstrumentDataCallback (callback) {

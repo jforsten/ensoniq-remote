@@ -1,4 +1,4 @@
-export const EnsoniqType = {
+export const EnsoniqFileType = {
   EPS_OS: 1,
   Directory: 2,
   Instrument: 3,

@@ -156,8 +156,24 @@
         :fixed="fixed"
         app
       >
-        <v-spacer></v-spacer>
-        <span>v0.8</span>
+       <v-flex shrink pa-2>
+        <font color="grey">
+        <v-icon small color="grey darken-2">mdi-piano</v-icon>
+        ASR-10 
+        <v-icon small color="grey darken-2">mdi-power-on</v-icon>
+        <v-icon small color="grey darken-2">mdi-login-variant</v-icon>
+    
+        {{midiInputName}}
+        <v-icon small color="grey darken-2">mdi-power-on</v-icon>
+
+        <v-icon small color="grey darken-2">mdi-logout-variant</v-icon>
+        {{midiOutputName}}
+        </font>
+        </v-flex>
+        <v-spacer></v-spacer> 
+        <v-flex shrink pa-2>      
+        <font color="grey">Version: 0.8</font>
+        </v-flex>
       </v-footer>
     </v-app>
   </div>
@@ -167,6 +183,7 @@
 
 import { mapState, mapActions } from 'Vuex'
 import { DataSource } from './utils/datasource'
+import { Midi } from './utils/midi'
 
 export default {
   name: 'ensoniq-remote',
@@ -185,12 +202,46 @@ export default {
     rightDrawer: false,
     title: 'Ensoniq remote',
     componentKey: 0,
-    progress: false
+    progress: false,
+    midiInputName: '<none>',
+    midiOutputName: '<none>'
   }),
 
   computed: {
-    ...mapState('browser', ['currentMediaId', 'mediaList']),
+    ...mapState('browser', [
+      'currentMediaId',
+      'mediaList'
+    ]),
+    ...mapState('settings', [
+      'midiInput',
+      'midiOutput',
+      'mediaDirectory',
+      'workingDirectory',
+      'ensoniqStorageDevice',
+      'epslin'
+    ]),
 
+    currentMidi: {
+      get () {
+        var name = Midi.getInputName(this.midiInput)
+        console.warn('port:' + this.midiInput + 'NAME:' + name)
+        return name
+      }
+    },
+    currentMidiInput: {
+      get () {
+        var input = DataSource.getCurrentMidiInputName()
+        if (input === null) return '-'
+        return input
+      }
+    },
+    currentMidiOutput: {
+      get () {
+        var output = DataSource.getCurrentMidiOutputName()
+        if (output === null) return '-'
+        return output
+      }
+    },
     currentSelectedMediaId: {
       get () {
         return this.currentMediaId
@@ -247,11 +298,6 @@ export default {
     },
 
     getDeviceLoadedInstruments () {
-      /*
-      DataSource.getInstrumentData(3)
-        .then((name) => { this.updateLoadedDeviceInstrument(3, name) })
-        .catch(() => { console.warn('Cannot get instrument data!') })
-        */
       this.progress = true
       DataSource.getAllInstrumentData()
         .then((names) => {
@@ -282,6 +328,11 @@ export default {
     DataSource.loadSettings()
     this.updateMediaList()
     DataSource.initializeMidi()
+      .then(() => {
+        console.log('REFRESH MIDI NAMES')
+        this.midiInputName = this.currentMidiInput
+        this.midiOutputName = this.currentMidiOutput
+      })
   }
 }
 </script>
