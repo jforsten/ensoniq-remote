@@ -184,6 +184,7 @@
 import { mapState, mapActions } from 'Vuex'
 import { DataSource } from './utils/datasource'
 import { Midi } from './utils/midi'
+import { Helpers } from './utils/helpers'
 
 export default {
   name: 'ensoniq-remote',
@@ -327,8 +328,9 @@ export default {
 
   mounted () {
     DataSource.loadSettings()
-    this.updateMediaList()
-    DataSource.initializeMidi()
+      .then(() => Helpers.delay(1000))
+      .then(() => { this.updateMediaList() })
+      .then(() => DataSource.initializeMidi())
       .then(() => {
         console.log('REFRESH MIDI NAMES')
         this.midiInputName = this.currentMidiInput
