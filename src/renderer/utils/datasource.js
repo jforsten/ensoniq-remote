@@ -25,15 +25,12 @@ export const DataSource = {
     })
   },
 
-  sendToEnsoniq (path, idx, filename, pos, callback) {
-    /*
+  sendToEnsoniq (path, idx, filename, pos) {
     return this.getInstrumentFromEnsoniqMedia(path, idx)
       .then(() => this.clearEnsoniqStorage())
       .then(() => this.putInstrumentToEnsoniqStorage(filename))
       .then(() => this.requestInstrumentLoad(1, pos))
       .then(() => this.deleteFileInWorkingDirectory(filename))
-      */
-    return this.requestInstrumentLoad(1, pos, callback)
   },
 
   getInstrumentFromEnsoniqMedia (path, idx) {
@@ -55,7 +52,7 @@ export const DataSource = {
   },
 
   clearEnsoniqStorage () {
-    return EpsLin.clearEfes()
+    return EpsLin.eraseEfe()
   },
 
   putInstrumentToEnsoniqStorage (filename) {
@@ -74,25 +71,23 @@ export const DataSource = {
     return Midi.getPorts()
   },
 
-  requestInstrumentLoad (idx, pos, callback) {
+  requestInstrumentLoad (idx, pos) {
     // var inputId = store.getters['settings/midiInput']
     var outputId = store.getters['settings/midiOutput']
-    // return Midi.programChange(outputId, idx, pos)
-    // return Midi.loadGlobalParameters(outputId)
-    // Midi.setupInput(inputId)
-    return Midi.getInstumentData(outputId, pos - 1, callback)
+
+    return Midi.loadGlobalParameters(outputId)
+      .then(() => Midi.prepareLoadInstrument(outputId))
+      .then(() => Midi.programChange(outputId, idx, pos))
+      .then(() => this.getInstrumentData(pos))
   },
 
   getInstrumentData (pos) {
-    console.log('getInstrument - ' + pos)
     var outputId = store.getters['settings/midiOutput']
-    var promise = new Promise((resolve) => {
-      Midi.getInstumentData(outputId, pos, (pos, name) => {
-        console.log('CALLBACK for pos:' + pos)
-        resolve(name)
-      })
+    return new Promise((resolve, reject) => {
+      console.log('call midi.getinstdata')
+      Midi.getInstumentData(outputId, pos, (pos, name) => { resolve(name) },
+        (err) => { reject(err) })
     })
-    return Helpers.promiseTimeout(5000, promise)
   },
 
   getAllInstrumentData () {

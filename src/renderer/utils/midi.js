@@ -9,11 +9,11 @@ const MIDI_STATE = {
 
 var midi = null
 var midiState = MIDI_STATE.IDLE
-var putInstrumentPos = -1
 var midiOut = null
-var getInstrumentDataCallback = function (pos, name) {
-
-}
+var putInstrumentPos = -1
+var getInstrumentTimerId = null
+var getInstrumentDataCallback = function (pos, name) { }
+var getInstrumentFailureCallback = function (pos, name) { }
 
 function init () {
   if (midi !== null) close()
@@ -58,9 +58,6 @@ function onMIDISuccess (midiData) {
 }
 
 function gotMIDImessage (messageData) {
-  console.log('data:' + messageData.data)
-  console.log('midi state:' + midiState)
-
   var name = ''
 
   // In case of disk access, Ensoniq returns "disk access in progress" = 0x14
@@ -71,9 +68,10 @@ function gotMIDImessage (messageData) {
     messageData.data[4] === 0x01 &&
     messageData.data[6] === 0x14
   ) {
-    console.log('<< Disk access in progress:' + putInstrumentPos)
     midiState = MIDI_STATE.GET_INSTRUMENT_WAITING_DISK_ACCESS
     setTimeout(() => { getInstrument(midiOut, putInstrumentPos) }, 1000)
+    clearTimeout(getInstrumentTimerId)
+    getInstrumentTimerId = setTimeout(() => { getInstrumentFailureCallback('Timeout') }, 3000)
     return
   }
 
@@ -85,8 +83,8 @@ function gotMIDImessage (messageData) {
     messageData.data[4] === 0x01 &&
     messageData.data[6] === 0x05
   ) {
-    console.log('<< No instrument in pos:' + putInstrumentPos)
     midiState = MIDI_STATE.IDLE
+    clearTimeout(getInstrumentTimerId)
     getInstrumentDataCallback(putInstrumentPos, null)
     return
   }
@@ -99,7 +97,6 @@ function gotMIDImessage (messageData) {
       messageData.data[4] === 0x01 &&
       messageData.data[6] === 0x00
   ) {
-    console.log('<< ACK')
     midiState = MIDI_STATE.GET_INSTRUMENT_READY_FOR_RESPONSE
     return
   }
@@ -111,7 +108,6 @@ function gotMIDImessage (messageData) {
     messageData.data[1] === 0x0F &&
     messageData.data[4] === 0x0C
   ) {
-    console.log('<< Put instrument in pos:' + putInstrumentPos)
     putInstrumentPos = messageData.data[6] + 1
     midiState = MIDI_STATE.PUT_INSTRUMENT_RECEIVED
     sendStatusOk(midiOut)
@@ -125,20 +121,18 @@ function gotMIDImessage (messageData) {
     messageData.data[1] === 0x0F &&
     messageData.data.length === 974
   ) {
-    console.log('<< Instrument DATA in pos:' + putInstrumentPos)
     var offset = 4
     for (var i = 0; i < 12; i++) {
       var char = (messageData.data[offset + i * 3] << 4) + (messageData.data[offset + (i * 3) + 1] >> 2)
       name += String.fromCharCode(char)
     }
-    console.log('Pos:' + putInstrumentPos + ' Name:' + name)
     midiState = MIDI_STATE.IDLE
     putInstrumentPos = -1
+    clearTimeout(getInstrumentTimerId)
     getInstrumentDataCallback(putInstrumentPos, name)
   }
 }
 
-// on failure
 function onMIDIFailure () {
   console.warn('Not recognising MIDI controller')
 }
@@ -183,7 +177,6 @@ function sendVirtualKey (output, key) {
 
 function getInstrument (output, pos) {
   return new Promise((resolve) => {
-    console.log('-- Get instrument...')
     sendSysex(output, [0xf0, 0x0f, 0x03, 0x00, 0x03, 0x00, pos - 1, 0x00, 0x00, 0x00, 0x01, 0xf7])
     midiState = MIDI_STATE.GET_INSTRUMENT_SENT
     resolve()
@@ -192,7 +185,6 @@ function getInstrument (output, pos) {
 
 function sendStatusOk (output) {
   return new Promise((resolve) => {
-    console.log('-- Send status ok...')
     sendSysex(output, [0xf0, 0x0f, 0x03, 0x00, 0x01, 0x00, 0x00, 0xf7])
     resolve()
   })
@@ -202,6 +194,7 @@ function delay (ms) {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
 
+// Public API
 export const Midi = {
 
   initialize (inputId) {
@@ -214,7 +207,7 @@ export const Midi = {
   },
 
   getPorts () {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       resolve({ins: Midi.internalGetMidiIns(), outs: Midi.internalGetMidiOuts()})
     })
   },
@@ -256,58 +249,76 @@ export const Midi = {
   },
 
   programChange (outputId, idx, pos) {
-    return new Promise((resolve) => {
-      console.log('outputId:' + outputId)
-      console.log('ProgramChange - idx:' + idx + ' pos:' + pos + ' ...')
+    return new Promise((resolve, reject) => {
       try {
         var output = getOutputById(outputId)
-        sendProgramChange(output, idx, pos)
-        console.log('..Sent!')
+        sendProgramChange(output, idx, pos - 1)
+        setTimeout(() => { resolve() }, 300)
       } catch (err) {
-        console.log('Midi error:' + err)
+        console.error('Midi error:' + err)
+        reject(err)
       }
-      resolve()
+    }).then(() => delay(200))
+  },
+
+  prepareLoadInstrument (outputId) {
+    return new Promise((resolve, reject) => {
+      var output = getOutputById(outputId)
+      try {
+        sendVirtualKey(output, 0x14) // LOAD
+          .then(() => delay(200))
+          .then(() => sendVirtualKey(output, 0x17)) // INSTRUMENT
+          .then(() => delay(200))
+          .then(() => {
+            resolve()
+          })
+      } catch (err) {
+        console.error('Midi error:' + err)
+        reject(err)
+      }
     })
   },
 
   loadGlobalParameters (outputId) {
-    return new Promise((resolve) => {
-      console.log('outputId:' + outputId)
+    return new Promise((resolve, reject) => {
       var output = getOutputById(outputId)
-      console.log('output:' + output)
       try {
-        sendVirtualKey(output, 0x00)
+        sendVirtualKey(output, 0x00) // INST 1
           .then(() => delay(200))
-          .then(() => sendVirtualKey(output, 0x11))
+          .then(() => sendVirtualKey(output, 0x11)) // COMMAND
           .then(() => delay(200))
-          .then(() => sendVirtualKey(output, 0x15))
+          .then(() => sendVirtualKey(output, 0x15)) // SYSTEM
           .then(() => delay(200))
-          .then(() => sendVirtualKey(output, 0x33))
+          .then(() => sendVirtualKey(output, 0x33)) // ENV3
           .then(() => delay(200))
-          .then(() => sendVirtualKey(output, 0x25))
+          .then(() => sendVirtualKey(output, 0x25)) // ENTER
           .then(() => delay(200))
           .then(() => {
-            console.log('..Sent!')
             resolve()
           })
       } catch (err) {
-        console.log('Midi error:' + err)
-        resolve()
+        console.error('Midi error:' + err)
+        reject(err)
       }
     })
   },
 
-  getInstumentData (outputId, pos, callback) {
+  getInstumentData (outputId, pos, success, failure) {
     putInstrumentPos = pos
-    getInstrumentDataCallback = callback
-    console.log('outputId:' + outputId)
+    getInstrumentDataCallback = success
+    getInstrumentFailureCallback = failure
+
     var output = getOutputById(outputId)
     midiOut = output
-    console.log('output:' + output)
+
+    getInstrumentTimerId = setTimeout(() => { failure() }, 2000)
+
     try {
       getInstrument(output, pos)
     } catch (err) {
-      console.log('Midi error:' + err)
+      console.error('Midi error:' + err)
+      clearTimeout(getInstrumentTimerId)
+      failure(err)
     }
   }
 }

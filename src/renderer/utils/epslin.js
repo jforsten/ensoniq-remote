@@ -71,11 +71,10 @@ export const EpsLin = {
     ])
   },
 
-  clearEfes () {
+  eraseEfe () {
     console.log('EpsLin: clearEfes')
     return epslin([
-      '-q',
-      '-fi',
+      '-e1',
       settings.ensoniqStorageDevice
     ])
   }
