@@ -1,5 +1,6 @@
 import { Helpers } from '../../utils/helpers.js'
 import { DataSource } from '../../utils/datasource'
+import Vue from 'vue'
 
 export default {
   namespaced: true,
@@ -12,6 +13,7 @@ export default {
     currentMedia: '',
     mediaList: [],
     deviceLoadedInstruments: [null, null, null, null, null, null, null, null]
+
   },
 
   getters: {
@@ -43,7 +45,12 @@ export default {
     },
     updateDeviceLoadedInstruments (state, instruments) {
       state.deviceLoadedInstruments = instruments
+    },
+    updateDeviceLoadedInstrument (state, data) {
+      console.log(data)
+      Vue.set(state.deviceLoadedInstruments, data.pos - 1, data.name)
     }
+
   },
 
   actions: {

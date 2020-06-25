@@ -127,9 +127,9 @@ function gotMIDImessage (messageData) {
       name += String.fromCharCode(char)
     }
     midiState = MIDI_STATE.IDLE
-    putInstrumentPos = -1
     clearTimeout(getInstrumentTimerId)
     getInstrumentDataCallback(putInstrumentPos, name)
+    putInstrumentPos = -1
   }
 }
 
@@ -311,7 +311,7 @@ export const Midi = {
     var output = getOutputById(outputId)
     midiOut = output
 
-    getInstrumentTimerId = setTimeout(() => { failure() }, 2000)
+    getInstrumentTimerId = setTimeout(() => { failure('Timeout') }, 3000)
 
     try {
       getInstrument(output, pos)

@@ -72,9 +72,7 @@ export const DataSource = {
   },
 
   requestInstrumentLoad (idx, pos) {
-    // var inputId = store.getters['settings/midiInput']
     var outputId = store.getters['settings/midiOutput']
-
     return Midi.loadGlobalParameters(outputId)
       .then(() => Midi.prepareLoadInstrument(outputId))
       .then(() => Midi.programChange(outputId, idx, pos))
@@ -85,29 +83,24 @@ export const DataSource = {
     var outputId = store.getters['settings/midiOutput']
     return new Promise((resolve, reject) => {
       console.log('call midi.getinstdata')
-      Midi.getInstumentData(outputId, pos, (pos, name) => { resolve(name) },
+      Midi.getInstumentData(outputId, pos,
+        (position, name) => {
+          store.commit('browser/updateDeviceLoadedInstrument', {pos: pos, name: name})
+          resolve(name)
+        },
         (err) => { reject(err) })
     })
   },
 
   getAllInstrumentData () {
-    var names = [null, null, null, null, null, null, null, null]
     return DataSource.getInstrumentData(1)
-      .then((name) => { names[0] = name })
       .then(() => DataSource.getInstrumentData(2))
-      .then((name) => { names[1] = name })
       .then(() => DataSource.getInstrumentData(3))
-      .then((name) => { names[2] = name })
       .then(() => DataSource.getInstrumentData(4))
-      .then((name) => { names[3] = name })
       .then(() => DataSource.getInstrumentData(5))
-      .then((name) => { names[4] = name })
       .then(() => DataSource.getInstrumentData(6))
-      .then((name) => { names[5] = name })
       .then(() => DataSource.getInstrumentData(7))
-      .then((name) => { names[6] = name })
       .then(() => DataSource.getInstrumentData(8))
-      .then((name) => { names[7] = name; return names })
   },
 
   getCurrentMidiInputName () {

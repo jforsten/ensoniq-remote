@@ -30,7 +30,6 @@
         extended
         app
         height=70px
-        :key="componentKey"
       >
 
         <v-toolbar-side-icon @click.native.stop="drawer = !drawer"></v-toolbar-side-icon>
@@ -98,7 +97,7 @@
             </v-flex>
             <v-layout row> 
               <v-flex py-0 xs2 mx-1 v-for="index in 8" :key="index">    
-                <v-card elevation=8 hover height=30px :key="deviceLoadedInstruments[index]">
+                <v-card elevation=8 hover height="30px">
                   <v-flex px-1 mx-1 my-1 py-2>
                     <div
                       class="text-no-wrap caption"
@@ -172,7 +171,7 @@
         </v-flex>
         <v-spacer></v-spacer> 
         <v-flex shrink pa-2>      
-        <font color="grey">Version: 0.8</font>
+        <font color="grey">Version: 0.9</font>
         </v-flex>
       </v-footer>
     </v-app>
@@ -190,7 +189,7 @@ export default {
   name: 'ensoniq-remote',
 
   data: () => ({
-    deviceLoadedInstruments: [null, null, null, null, null, null, null, null],
+    // deviceLoadedInstruments: [null, null, null, null, null, null, null, null],
     clipped: true,
     drawer: false,
     fixed: true,
@@ -202,7 +201,6 @@ export default {
     right: true,
     rightDrawer: false,
     title: 'Ensoniq remote',
-    componentKey: 0,
     progress: false,
     midiInputName: '<none>',
     midiOutputName: '<none>'
@@ -210,6 +208,7 @@ export default {
 
   computed: {
     ...mapState('browser', [
+      'deviceLoadedInstruments',
       'currentMediaId',
       'mediaList'
     ]),
@@ -280,6 +279,7 @@ export default {
       this.updateCurrentMediaId(id)
       this.goToRoot()
     },
+
     refreshMedia () {
       console.log(this.$refs)
       this.updateMediaList()
@@ -292,26 +292,16 @@ export default {
           easing: 'easeInOutCubic'
         })
     },
-    updateLoadedDeviceInstrument (pos, name) {
-      this.deviceLoadedInstruments[pos - 1] = name
-      console.log('update data from callback - pos: ' + pos + ' name:' + name)
-      console.log(this.deviceLoadedInstruments)
-      this.componentKey++
-    },
 
     getDeviceLoadedInstruments () {
       this.progress = true
       DataSource.getAllInstrumentData()
-        .then((names) => {
-          for (let index = 0; index < names.length; index++) {
-            this.updateLoadedDeviceInstrument(index + 1, names[index])
-            this.progress = false
-          }
-        }).catch((e) => { this.progress = false })
-    },
-
-    getInstumentCallback (pos, name) {
-      this.updateLoadedDeviceInstrument(pos, name)
+        .then(() => {
+          this.progress = false
+        }).catch((err) => {
+          console.error('Error fetching instrument data:' + err)
+          this.progress = false
+        })
     },
 
     getName (index) {
