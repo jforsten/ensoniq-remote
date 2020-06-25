@@ -96,8 +96,13 @@
               <font color="grey">Instruments loaded in Ensoniq:</font>
             </v-flex>
             <v-layout row> 
-              <v-flex py-0 xs2 mx-1 v-for="index in 8" :key="index">    
-                <v-card elevation=8 hover height="30px">
+              <v-flex 
+              xs3 
+              mx-1
+              justify-space-between="true"
+              v-for="index in 8" :key="index+1"
+            >    
+               <!--  <v-card elevation=8 hover height="30px">
                   <v-flex px-1 mx-1 my-1 py-2>
                     <div
                       class="text-no-wrap caption"
@@ -106,9 +111,19 @@
                       <font color="grey">{{index}}:</font> <font :color="getNameColor(index)">{{getName(index)}}</font>  
                     </div>
                   </v-flex>
-                </v-card> 
+                </v-card>  -->
+                <v-btn 
+                  small
+                  block
+                  outline
+                  letft
+                  color="grey darken-3"
+                  @click="instrumentButtonClicked (index)"
+                > 
+                  <font size="1px" :color="getNameColor(index)">{{getName(index)}}</font>
+                </v-btn>
               </v-flex>
-              <v-flex pa-0 ma-0 xs0>
+              <v-flex px-3 xs0>
                  <v-progress-circular
                   v-if="progress"
                   :size="35"
@@ -124,7 +139,6 @@
                 >
                   <v-icon>mdi-sync</v-icon>
                 </v-btn>
-                
               </v-flex>
             </v-layout>
           </v-flex>
@@ -313,6 +327,9 @@ export default {
       var name = this.deviceLoadedInstruments[index - 1]
       if (name === null) return 'grey'
       return 'white'
+    },
+    instrumentButtonClicked (pos) {
+      console.log('click:' + pos)
     }
   },
 

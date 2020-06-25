@@ -1,31 +1,32 @@
 
 <template>
-  <v-card
-    flat
-    class="grey darken-2"
-  >
-    <v-layout
-      row
-      justify-space-around
-    >
-     <!--  {{panelData}}
-      {{selectedItem}} -->
-      <v-flex
-        class="grey darken-2"
-        xs1
-        align-center
-        justify-space-between="true"
-        v-for="option in panelData.selectOptions"
-        :key="option.text"
-      >
+  <v-card flat class="grey darken-2">
+    <v-layout row>
+      <v-flex mx-1 shrink align-self-center>
+        <v-icon color="grey" >mdi-subdirectory-arrow-right</v-icon>
+      </v-flex>
+      <v-flex px-0 py-0 my-1 shrink>
         <v-btn
+          v-for="option in panelData.selectOptions"
+          :key="option.text"
           @click="click_handler(option.value)"
-          block
           small
           class='black'
-        >{{option.text}}</v-btn>
-
+        >
+          {{option.text}}
+        </v-btn>
       </v-flex>
+      <v-spacer> </v-spacer>
+
+      <!-- <v-flex shrink px-2 py-0 my-1>
+        <v-btn class='black' small icon> 
+          <v-icon small>mdi-download</v-icon>
+        </v-btn>
+        <v-btn class='black' small icon> 
+          <v-icon small>mdi-delete</v-icon>
+        </v-btn>
+      </v-flex> -->
+
     </v-layout>
     <v-dialog
       v-model="showProgress"
