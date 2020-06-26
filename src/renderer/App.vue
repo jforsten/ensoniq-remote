@@ -121,10 +121,13 @@
                     <v-btn 
                       small
                       block
+                      :disabled="progress"
                       :outline="getButtonMode(index)"
                       :color="getButtonColor(index)"
                       v-on="getButtonMenuMode(index) ? null : on"
                       @click="instrumentButtonClicked(index)"
+                      @mousedown.right="instrumentButtonRightClicked(index, $event)"
+                      @mouseup.right="instrumentButtonRightClicked(index, $event)"
                     > 
                       <font size="1px" :color="getNameColor(index)">{{getName(index)}}</font>
                     </v-btn>
@@ -235,7 +238,8 @@ export default {
     menuItems: [
       { title: 'COPY', icon: 'mdi-content-copy' },
       { title: 'DELETE', icon: 'mdi-delete' }
-    ]
+    ],
+    noteValue: 0
   }),
 
   computed: {
@@ -358,10 +362,11 @@ export default {
 
     getButtonMenuMode (index) {
       return (this.deviceLoadedInstruments[index - 1] === null) || // No menu for empty instruments or...
-      (this.selectMode && index === this.sourceButtonIndex) // ... source instrument when copying
+      this.selectMode // ... when copying
     },
 
     instrumentButtonClicked (pos) {
+      console.log(pos)
       if (this.selectMode) {
         // Clicking source button will cancel the copy
         if (pos === this.sourceButtonIndex) { this.selectMode = false; return }
@@ -372,6 +377,30 @@ export default {
         return
       }
       this.sourceButtonIndex = pos
+    },
+
+    instrumentButtonRightClicked (pos, e) {
+      console.warn(e)
+      console.warn('RIGHT:' + pos)
+      if (e.type === 'mousedown') {
+        var relativeX = 0
+        if (e.target.nodeName === 'BUTTON') {
+          relativeX = (1 - ((e.target.offsetLeft + e.target.offsetWidth - e.clientX) / e.target.offsetWidth))
+        }
+
+        if (e.target.nodeName === 'DIV') {
+          relativeX = (1 - ((e.target.parentElement.offsetLeft + e.target.parentElement.offsetWidth - e.clientX) / e.target.parentElement.offsetWidth))
+        }
+
+        if (e.target.nodeName === 'FONT') {
+          relativeX = (1 - ((e.target.parentElement.parentElement.offsetLeft + e.target.parentElement.parentElement.offsetWidth - e.clientX) / e.target.parentElement.parentElement.offsetWidth))
+        }
+
+        console.log('hit button - pos:' + relativeX)
+        this.noteValue = Math.round((relativeX * 0.5 + 0.25) * 0x7f)
+      }
+
+      DataSource.playInstrument(pos, this.noteValue, e.type === 'mousedown' ? 0x7f : 0x00)
     },
 
     menuItemClicked (title) {

@@ -29,15 +29,19 @@ export const DataSource = {
     return this.getInstrumentFromEnsoniqMedia(path, idx)
       .then(() => this.clearEnsoniqStorage())
       .then(() => this.putInstrumentToEnsoniqStorage(filename))
+      .then(() => Helpers.delay(300))
       .then(() => this.requestInstrumentLoad(1, pos))
       .then(() => this.deleteFileInWorkingDirectory(filename))
+      .then(() => { console.log('DataSource: Sent to ensoniq - all done!') })
   },
 
   getInstrumentFromEnsoniqMedia (path, idx) {
+    console.log('DataSource: getInstrumentFromEnsoniqMedia')
     return EpsLin.getEfe(path, idx)
   },
 
   deleteFileInWorkingDirectory (filename) {
+    console.log('DataSource: deleteFileInWorkingDirectory')
     var workingDirectory = store.getters['settings/workingDirectory']
     return new Promise((resolve, reject) => {
       try {
@@ -52,10 +56,12 @@ export const DataSource = {
   },
 
   clearEnsoniqStorage () {
+    console.log('DataSource: ClearEnsoniqStorage')
     return EpsLin.eraseEfe()
   },
 
   putInstrumentToEnsoniqStorage (filename) {
+    console.log('DataSource: putInstrumentToEnsoniqMedia')
     return EpsLin.putEfe(filename)
   },
 
@@ -72,6 +78,7 @@ export const DataSource = {
   },
 
   requestInstrumentLoad (idx, pos) {
+    console.log('DataSource: requestInstrumentLoad')
     var outputId = store.getters['settings/midiOutput']
     return Midi.loadGlobalParameters(outputId)
       .then(() => Midi.prepareLoadInstrument(outputId))
@@ -101,8 +108,14 @@ export const DataSource = {
   copyInstrument (from, to) {
     var outputId = store.getters['settings/midiOutput']
     return Midi.deleteInstrument(outputId, to)
+      .then(() => Midi.prepareCopyInstrument(outputId, from))
       .then(() => Midi.copyInstrument(outputId, from, to))
       .then(() => this.getInstrumentData(to))
+  },
+
+  playInstrument (pos, note, volume) {
+    var outputId = store.getters['settings/midiOutput']
+    return Midi.playInstrument(outputId, pos, note, volume)
   },
 
   getAllInstrumentData () {
