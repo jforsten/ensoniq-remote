@@ -355,6 +355,9 @@ export default {
       if (this.selectMode) {
         console.log('Copying from ' + this.sourceButtonIndex + ' to ' + pos)
         this.selectMode = false
+        this.progress = true
+        DataSource.copyInstrument(this.sourceButtonIndex, pos)
+          .then(() => { this.progress = false })
         return
       }
       this.sourceButtonIndex = pos

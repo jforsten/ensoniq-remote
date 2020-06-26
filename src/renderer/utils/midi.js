@@ -59,7 +59,8 @@ function onMIDISuccess (midiData) {
 
 function gotMIDImessage (messageData) {
   var name = ''
-
+  console.log('MIDI <<<')
+  console.log(messageData)
   // In case of disk access, Ensoniq returns "disk access in progress" = 0x14
   if (
     (midiState === MIDI_STATE.GET_INSTRUMENT_SENT || midiState === MIDI_STATE.GET_INSTRUMENT_WAITING_DISK_ACCESS) &&
@@ -170,7 +171,11 @@ function sendSysex (output, data) {
 
 function sendVirtualKey (output, key) {
   return new Promise((resolve) => {
-    sendSysex(output, [0xf0, 0x0f, 0x03, 0x00, 0x40, 0x00, key, 0xf7])
+    sendSysex(output, [
+      0xf0, 0x0f, 0x03, 0x00,
+      0x40, 0x00, key,
+      0xf7
+    ])
     resolve()
   })
 }
@@ -189,7 +194,11 @@ function getInstrument (output, pos) {
 
 function sendStatusOk (output) {
   return new Promise((resolve) => {
-    sendSysex(output, [0xf0, 0x0f, 0x03, 0x00, 0x01, 0x00, 0x00, 0xf7])
+    sendSysex(output, [
+      0xf0, 0x0f, 0x03, 0x00,
+      0x01, 0x00, 0x00,
+      0xf7
+    ])
     resolve()
   })
 }
@@ -199,6 +208,17 @@ function deleteInstrument (output, pos) {
     sendSysex(output, [
       0xf0, 0x0f, 0x03, 0x00,
       0x1c, 0x00, pos - 1, 0x00, 0x00, 0x00, 0x01,
+      0xf7
+    ])
+    resolve()
+  })
+}
+
+function copyInstrument (output, from, to) {
+  return new Promise((resolve) => {
+    sendSysex(output, [
+      0xf0, 0x0f, 0x03, 0x00,
+      0x12, 0x00, from - 1, 0x00, 0x00, 0x00, 0x01, 0x00, to - 1, 0x00, 0x00, 0x00, 0x00,
       0xf7
     ])
     resolve()
@@ -342,6 +362,19 @@ export const Midi = {
       try {
         var output = getOutputById(outputId)
         deleteInstrument(output, pos)
+        setTimeout(() => { resolve() }, 300)
+      } catch (err) {
+        console.error('Midi error:' + err)
+        reject(err)
+      }
+    }).then(() => delay(200))
+  },
+
+  copyInstrument (outputId, from, to) {
+    return new Promise((resolve, reject) => {
+      try {
+        var output = getOutputById(outputId)
+        copyInstrument(output, from, to)
         setTimeout(() => { resolve() }, 300)
       } catch (err) {
         console.error('Midi error:' + err)

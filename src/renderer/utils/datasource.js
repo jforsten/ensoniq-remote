@@ -98,6 +98,13 @@ export const DataSource = {
       .then(() => this.getInstrumentData(pos))
   },
 
+  copyInstrument (from, to) {
+    var outputId = store.getters['settings/midiOutput']
+    return Midi.deleteInstrument(outputId, to)
+      .then(() => Midi.copyInstrument(outputId, from, to))
+      .then(() => this.getInstrumentData(to))
+  },
+
   getAllInstrumentData () {
     return DataSource.getInstrumentData(1)
       .then(() => DataSource.getInstrumentData(2))
