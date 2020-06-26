@@ -122,8 +122,8 @@
                       small
                       block
                       :outline="getButtonMode(index)"
-                      color="grey darken-1"
-                      v-on="selectMode ? null : on"
+                      :color="getButtonColor(index)"
+                      v-on="getButtonMenuMode(index) ? null : on"
                       @click="instrumentButtonClicked(index)"
                     > 
                       <font size="1px" :color="getNameColor(index)">{{getName(index)}}</font>
@@ -326,6 +326,7 @@ export default {
     },
 
     getDeviceLoadedInstruments () {
+      this.selectMode = false
       this.progress = true
       DataSource.getAllInstrumentData()
         .then(() => {
@@ -338,22 +339,32 @@ export default {
 
     getName (index) {
       var name = this.deviceLoadedInstruments[index - 1]
-      return name === null ? 'EMPTY' : name
+      return name === null ? '<none>' : name
     },
 
     getNameColor (index) {
       var name = this.deviceLoadedInstruments[index - 1]
-      if (name === null) return ''
+      if (name === null) return this.selectMode ? 'grey' : ''
       return 'white'
+    },
+
+    getButtonColor (index) {
+      return (this.deviceLoadedInstruments[index - 1] === null) ? 'grey darken-3' : 'grey darken-1'
     },
 
     getButtonMode (index) {
       return !(this.selectMode && index !== this.sourceButtonIndex)
     },
 
+    getButtonMenuMode (index) {
+      return (this.deviceLoadedInstruments[index - 1] === null) || // No menu for empty instruments or...
+      (this.selectMode && index === this.sourceButtonIndex) // ... source instrument when copying
+    },
+
     instrumentButtonClicked (pos) {
       if (this.selectMode) {
-        console.log('Copying from ' + this.sourceButtonIndex + ' to ' + pos)
+        // Clicking source button will cancel the copy
+        if (pos === this.sourceButtonIndex) { this.selectMode = false; return }
         this.selectMode = false
         this.progress = true
         DataSource.copyInstrument(this.sourceButtonIndex, pos)
@@ -361,17 +372,14 @@ export default {
         return
       }
       this.sourceButtonIndex = pos
-      console.log('click:' + pos)
     },
 
     menuItemClicked (title) {
       console.log(title)
       if (title === 'COPY') {
-        console.log('Copy:' + this.sourceButtonIndex)
         this.selectMode = true
       }
       if (title === 'DELETE') {
-        console.log('Delete:' + this.sourceButtonIndex)
         this.progress = true
         DataSource.deleteInstrument(this.sourceButtonIndex)
           .then(() => { this.progress = false })
@@ -385,10 +393,10 @@ export default {
       .then(() => { this.updateMediaList() })
       .then(() => DataSource.initializeMidi())
       .then(() => {
-        console.log('REFRESH MIDI NAMES')
         this.midiInputName = this.currentMidiInput
         this.midiOutputName = this.currentMidiOutput
       })
+      .then(() => this.getDeviceLoadedInstruments())
   }
 }
 </script>
