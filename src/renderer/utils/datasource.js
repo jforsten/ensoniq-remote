@@ -92,6 +92,12 @@ export const DataSource = {
     })
   },
 
+  deleteInstrument (pos) {
+    var outputId = store.getters['settings/midiOutput']
+    return Midi.deleteInstrument(outputId, pos)
+      .then(() => this.getInstrumentData(pos))
+  },
+
   getAllInstrumentData () {
     return DataSource.getInstrumentData(1)
       .then(() => DataSource.getInstrumentData(2))

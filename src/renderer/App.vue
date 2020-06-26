@@ -97,11 +97,11 @@
             </v-flex>
             <v-layout row> 
               <v-flex 
-              xs3 
-              mx-1
-              justify-space-between="true"
-              v-for="index in 8" :key="index+1"
-            >    
+                xs3 
+                mx-1
+                justify-space-between="true"
+                v-for="index in 8" :key="index+1"
+              >    
                <!--  <v-card elevation=8 hover height="30px">
                   <v-flex px-1 mx-1 my-1 py-2>
                     <div
@@ -112,27 +112,40 @@
                     </div>
                   </v-flex>
                 </v-card>  -->
-                <v-btn 
-                  small
-                  block
-                  outline
-                  letft
-                  color="grey darken-3"
-                  @click="instrumentButtonClicked (index)"
-                > 
-                  <font size="1px" :color="getNameColor(index)">{{getName(index)}}</font>
-                </v-btn>
+                <v-menu 
+                  offset-y
+                   transition="slide-y-transition"
+                  bottom
+                >
+                  <template v-slot:activator="{ on }">
+                    <v-btn 
+                      small
+                      block
+                      :outline="getButtonMode(index)"
+                      color="grey darken-1"
+                      v-on="selectMode ? null : on"
+                      @click="instrumentButtonClicked(index)"
+                    > 
+                      <font size="1px" :color="getNameColor(index)">{{getName(index)}}</font>
+                    </v-btn>
+                  </template>
+                  <v-list dense>
+                    <v-list-tile
+                      v-for="(item, menuIndex) in menuItems"
+                      :key="menuIndex"
+                      @click="menuItemClicked(item.title)"
+                    >
+                      <v-list-tile-title>
+                        <v-icon small>{{ item.icon }}</v-icon>
+                        {{ item.title }}
+                      </v-list-tile-title>
+                    </v-list-tile>
+                  </v-list>
+                </v-menu>
               </v-flex>
               <v-flex px-3 xs0>
-                 <v-progress-circular
-                  v-if="progress"
-                  :size="35"
-                  :width="2"
-                  color="primary"
-                  indeterminate
-                ></v-progress-circular>
                 <v-btn
-                  v-else
+                  :loading="progress"
                   small
                   icon
                   @click="getDeviceLoadedInstruments"
@@ -203,7 +216,6 @@ export default {
   name: 'ensoniq-remote',
 
   data: () => ({
-    // deviceLoadedInstruments: [null, null, null, null, null, null, null, null],
     clipped: true,
     drawer: false,
     fixed: true,
@@ -216,8 +228,14 @@ export default {
     rightDrawer: false,
     title: 'Ensoniq remote',
     progress: false,
+    selectMode: false,
+    sourceButtonIndex: 4,
     midiInputName: '<none>',
-    midiOutputName: '<none>'
+    midiOutputName: '<none>',
+    menuItems: [
+      { title: 'COPY', icon: 'mdi-content-copy' },
+      { title: 'DELETE', icon: 'mdi-delete' }
+    ]
   }),
 
   computed: {
@@ -325,11 +343,36 @@ export default {
 
     getNameColor (index) {
       var name = this.deviceLoadedInstruments[index - 1]
-      if (name === null) return 'grey'
+      if (name === null) return ''
       return 'white'
     },
+
+    getButtonMode (index) {
+      return !(this.selectMode && index !== this.sourceButtonIndex)
+    },
+
     instrumentButtonClicked (pos) {
+      if (this.selectMode) {
+        console.log('Copying from ' + this.sourceButtonIndex + ' to ' + pos)
+        this.selectMode = false
+        return
+      }
+      this.sourceButtonIndex = pos
       console.log('click:' + pos)
+    },
+
+    menuItemClicked (title) {
+      console.log(title)
+      if (title === 'COPY') {
+        console.log('Copy:' + this.sourceButtonIndex)
+        this.selectMode = true
+      }
+      if (title === 'DELETE') {
+        console.log('Delete:' + this.sourceButtonIndex)
+        this.progress = true
+        DataSource.deleteInstrument(this.sourceButtonIndex)
+          .then(() => { this.progress = false })
+      }
     }
   },
 

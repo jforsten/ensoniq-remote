@@ -177,7 +177,11 @@ function sendVirtualKey (output, key) {
 
 function getInstrument (output, pos) {
   return new Promise((resolve) => {
-    sendSysex(output, [0xf0, 0x0f, 0x03, 0x00, 0x03, 0x00, pos - 1, 0x00, 0x00, 0x00, 0x01, 0xf7])
+    sendSysex(output, [
+      0xf0, 0x0f, 0x03, 0x00,
+      0x03, 0x00, pos - 1, 0x00, 0x00, 0x00, 0x01,
+      0xf7
+    ])
     midiState = MIDI_STATE.GET_INSTRUMENT_SENT
     resolve()
   })
@@ -186,6 +190,17 @@ function getInstrument (output, pos) {
 function sendStatusOk (output) {
   return new Promise((resolve) => {
     sendSysex(output, [0xf0, 0x0f, 0x03, 0x00, 0x01, 0x00, 0x00, 0xf7])
+    resolve()
+  })
+}
+
+function deleteInstrument (output, pos) {
+  return new Promise((resolve) => {
+    sendSysex(output, [
+      0xf0, 0x0f, 0x03, 0x00,
+      0x1c, 0x00, pos - 1, 0x00, 0x00, 0x00, 0x01,
+      0xf7
+    ])
     resolve()
   })
 }
@@ -320,5 +335,18 @@ export const Midi = {
       clearTimeout(getInstrumentTimerId)
       failure(err)
     }
+  },
+
+  deleteInstrument (outputId, pos) {
+    return new Promise((resolve, reject) => {
+      try {
+        var output = getOutputById(outputId)
+        deleteInstrument(output, pos)
+        setTimeout(() => { resolve() }, 300)
+      } catch (err) {
+        console.error('Midi error:' + err)
+        reject(err)
+      }
+    }).then(() => delay(200))
   }
 }
