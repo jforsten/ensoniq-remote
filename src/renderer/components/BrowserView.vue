@@ -166,12 +166,14 @@ export default {
 
       switch (item.type_id) {
         case EnsoniqFileType.Instrument:
-          var itemsCount = this.dataItems.length
+          // var itemsCount = this.dataItems.length
+          /*
           if (itemsCount > 0 && this.dataItems[itemsCount - 1].index === item.index) {
             setTimeout(() => {
               this.scrollTo(Infinity, 500)
             }, 200)
           }
+          */
           return true
         case EnsoniqFileType.Directory:
           this.goDir(item.index)
