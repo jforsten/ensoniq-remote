@@ -4,19 +4,21 @@ export default {
   namespaced: true,
 
   state: {
-    ensoniqDevice: undefined,
+    ensoniqDevice: 'ASR10',
+    baseChannel: 1,
     midiInput: undefined,
     midiOutput: undefined,
     mediaDirectory: '/Users/jforsten/Projects/epslin/media',
-    workingDirectory: '/Users/jforsten/Projects/epslin/temp',
+    workingDirectory: './workingDir',
     ensoniqStorageDevice: '/dev/ensoniqDevice',
-    epslin: '/Users/jforsten/Projects/epslin/epslin'
+    epslin: 'epslin'
   },
 
   getters: {
     allSettings: state => {
       return {
         ensoniqDevice: state.ensoniqDevice,
+        baseChannel: state.baseChannel,
         midiInput: state.midiInput,
         midiOutput: state.midiOutput,
         mediaDirectory: state.mediaDirectory,
@@ -26,6 +28,7 @@ export default {
       }
     },
     ensoniqDevice: state => `${state.ensoniqDevice}`,
+    baseChannel: state => `${state.baseChannel}`,
     midiInput: state => `${state.midiInput}`,
     midiOutput: state => `${state.midiOutput}`,
     epslin: state => `${state.epslin}`,
@@ -37,6 +40,7 @@ export default {
   mutations: {
     setAllSettings (state, settings) {
       state.ensoniqDevice = settings.ensoniqDevice
+      state.baseChannel = settings.baseChannel
       state.midiInput = settings.midiInput
       state.midiOutput = settings.midiOutput
       state.mediaDirectory = settings.mediaDirectory
@@ -46,6 +50,9 @@ export default {
     },
     updateEnsoniqDevice (state, dev) {
       state.ensoniqDevice = dev
+    },
+    updateBaseChannel (state, channel) {
+      state.baseChannel = channel
     },
     updateMidiInput (state, input) {
       state.midiInput = input
@@ -71,11 +78,14 @@ export default {
     setAllSettings ({commit}, settings) {
       commit('setAllSettings', settings)
     },
-    updateMidiInput ({commit}, id) {
-      commit('updateMidiInput', id)
-    },
     updateEnsoniqDevice ({commit}, dev) {
       commit('updateEnsoniqDevice', dev)
+    },
+    updateBaseChannel ({commit}, channel) {
+      commit('updateBaseChannel', channel)
+    },
+    updateMidiInput ({commit}, id) {
+      commit('updateMidiInput', id)
     },
     updateMidiOutput ({commit}, id) {
       commit('updateMidiOutput', id)

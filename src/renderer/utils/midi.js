@@ -172,6 +172,7 @@ const MIDI_STATE = {
 var midi = null
 var midiState = MIDI_STATE.IDLE
 var midiOut = null
+var baseChannel = 1
 var putInstrumentPos = -1
 var getInstrumentTimerId = null
 var getInstrumentDataCallback = function (pos, name) { }
@@ -245,13 +246,11 @@ function onMIDISuccess (midiData) {
   }
 }
 
-var baseChannel = 0
-
 function isExpectedSysex (messageData, cmd = null, value = null) {
   return messageData.data[0] === 0xF0 &&
          messageData.data[1] === 0x0F &&
          messageData.data[2] === 0x03 &&
-         messageData.data[3] === baseChannel &&
+         messageData.data[3] === (baseChannel - 1) &&
          (cmd == null ? true : messageData.data[4] === cmd) &&
          // messageData.data[5] === 0x00 &&
          (value == null ? true : messageData.data[6] === value)

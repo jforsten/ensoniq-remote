@@ -330,6 +330,9 @@ export default {
     },
 
     getDeviceLoadedInstruments () {
+      // const { dialog } = require('electron').remote
+      // console.log(dialog.showOpenDialog({ properties: ['openFile'] }))
+      // console.log(dialog.showOpenDialog({ properties: ['openDirectory'] }))
       this.selectMode = false
       this.progress = true
       DataSource.getAllInstrumentData()

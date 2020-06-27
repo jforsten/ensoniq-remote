@@ -1,28 +1,14 @@
 <template>
-  <v-layout
-    column
-    justify-center
-  >
+  <v-layout column justify-center>
     <v-flex xs12>
-      <v-flex
-        xs6
-        my-3
-      >
+      <v-flex xs6 my-3>
         <div class="headline">Settings</div>
       </v-flex>
-
-      <v-flex
-        xs6
-        mt-5
-        mb-4
-      >
-        <div class="subheading">Device</div>
+      <v-flex xs6 mt-3 mb-4>
+        <div class="subheading">Device setup</div>
       </v-flex>
        <v-layout row>
-        <v-flex
-          xs3
-          mx-4
-        >
+        <v-flex xs3 mx-4>
           <v-select
             v-model="currentEnsoniqDevice"
             :items="ensoniqDevices"
@@ -33,21 +19,27 @@
             label="Ensoniq device type"
           />
         </v-flex>
-       </v-layout>
-
-      <v-flex
-        xs6
-        mt-5
-        mb-4
-      >
-        <div class="subheading">MIDI</div>
-      </v-flex>
-
-      <v-layout row>
-        <v-flex
-          xs6
+       <!--  <v-flex
+          xs2
           mx-4
         >
+          <v-select
+            v-model="currentBaseChannel"
+            :items="midiChannels"
+            item-text="name"
+            item-value="id"
+            prepend-icon="mdi-midi"
+            box
+            label="Base channel"
+          />
+        </v-flex>
+ -->
+       </v-layout>
+      <v-flex xs6 mt-3 mb-4>
+        <div class="subheading">MIDI Connection</div>
+      </v-flex>
+      <v-layout row>
+        <v-flex xs6 mx-4>
           <v-select
             v-model="currentMidiInput"
             :items="midiInputs"
@@ -58,10 +50,7 @@
             label="MIDI Input"
           />
         </v-flex>
-        <v-flex
-          xs6
-          mx-3
-        >
+        <v-flex xs6 mx-3>
           <v-select
             v-model="currentMidiOutput"
             :items="midiOutputs"
@@ -73,45 +62,57 @@
           />
         </v-flex>
       </v-layout>
-      <v-flex mt-5>
-
+      <v-flex mt-3>
       </v-flex>
-      <v-flex
-        xs6
-        mt-4
-        mb-2
-      >
-        <div class="subheading">FILE PATHS</div>
+      <v-flex xs6 mt-3 mb-2>
+        <div class="subheading">File paths</div>
       </v-flex>
-      <v-layout fluid>
+      <v-layout>
         <v-flex xs12>
-
-          <v-flex
-            xs12
-            mx-4
-          >
-            <v-text-field
-              v-model="currentMediaDirectory"
-              prepend-icon="mdi-folder-outline"
-              label="Ensoniq media directory"
-            />
-            <v-text-field
-              v-model="currentWorkingDirectory"
-              prepend-icon="mdi-folder-outline"
-              label="Working directory"
-            />
-            <v-text-field
-              v-model="currentEnsoniqStorageDevice"
-              prepend-icon="mdi-folder-outline"
-              label="Ensoniq Storage Device"
-            />
-            <v-text-field
-              v-model="currentEpslinPath"
-              prepend-icon="mdi-link"
-              label="Path to EpsLin executable"
-            />
-          </v-flex>
-
+          <v-layout row>
+            <v-flex xs11 mx-4>
+              <v-text-field
+                v-model="currentMediaDirectory"
+                prepend-icon="mdi-folder-outline"
+                label="Ensoniq media directory"
+              />
+            </v-flex>
+            <v-flex xs1 mx-4>
+              <v-btn 
+                block
+                @click="selectMediaFolder"
+              >
+              select
+              </v-btn>
+            </v-flex>   
+          </v-layout>
+          <!-- <v-layout row>
+            <v-flex xs11 mx-4>
+              <v-text-field
+                v-model="currentWorkingDirectory"
+                prepend-icon="mdi-folder-outline"
+                label="Working directory"
+              />
+            </v-flex>
+          </v-layout> -->
+          <v-layout row>
+            <v-flex xs12 mx-4>
+              <v-text-field
+                v-model="currentEnsoniqStorageDevice"
+                prepend-icon="mdi-transit-connection-variant"
+                label="Ensoniq Storage Device"
+              />
+            </v-flex>
+          </v-layout>
+          <!-- <v-layout row>
+            <v-flex xs8 mx-4>
+              <v-text-field
+                v-model="currentEpslinPath"
+                prepend-icon="mdi-engine"
+                label="Path to EpsLin executable"
+              />
+            </v-flex>
+          </v-layout> -->
         </v-flex>
       </v-layout>
       <v-btn @click="readMidiPorts()">Refresh Midi ports</v-btn> 
@@ -137,6 +138,7 @@ export default {
   computed: {
     ...mapState('settings', [
       'ensoniqDevice',
+      'baseChannel',
       'midiInput',
       'midiOutput',
       'mediaDirectory',
@@ -149,9 +151,18 @@ export default {
       get () { return DataSource.getEnsoniqDevices() }
     },
 
+    midiChannels: {
+      get () { return Array.from(new Array(16), (x, i) => i + 1) }
+    },
+
     currentEnsoniqDevice: {
       get () { return this.ensoniqDevice },
       set (value) { this.updateEnsoniqDevice(value) }
+    },
+
+    currentBaseChannel: {
+      get () { return this.baseChannel },
+      set (value) { this.updateBaseChannel(value) }
     },
 
     currentMidiInput: {
@@ -188,6 +199,7 @@ export default {
   methods: {
     ...mapActions({
       updateEnsoniqDevice: 'settings/updateEnsoniqDevice',
+      updateBaseChannel: 'settings/updateBaseChannel',
       updateMediaDirectory: 'settings/updateMediaDirectory',
       updateWorkingDirectory: 'settings/updateWorkingDirectory',
       updateMidiInput: 'settings/updateMidiInput',
@@ -214,6 +226,11 @@ export default {
       }).catch(err => {
         console.error('catch: ' + err)
       })
+    },
+
+    selectMediaFolder () {
+      const { dialog } = require('electron').remote
+      this.currentMediaDirectory = dialog.showOpenDialog({ properties: ['openDirectory'] })
     },
 
     save () {

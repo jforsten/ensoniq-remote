@@ -155,6 +155,10 @@ export const DataSource = {
 
   saveSettings () {
     localStorage.setItem('settings', JSON.stringify(store.getters['settings/allSettings']))
+    const electron = require('electron')
+    const userDataPath = (electron.app || electron.remote.app).getPath('userData')
+    console.log(userDataPath)
+    console.log(localStorage.getItem('settings'))
   },
 
   initializeMidi () {
