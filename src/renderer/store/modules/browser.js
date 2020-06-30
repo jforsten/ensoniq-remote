@@ -11,6 +11,7 @@ export default {
     currentPathName: '/',
     currentMediaId: '',
     currentMedia: '',
+    currentMediaLabel: '',
     mediaList: [],
     deviceLoadedInstruments: [null, null, null, null, null, null, null, null]
 
@@ -21,6 +22,7 @@ export default {
     currentPath: state => `${state.currentPath}`,
     currentMediaId: state => `${state.currentMediaId}`,
     currentMedia: state => `${state.currentMedia}`,
+    currentMediaLabel: state => `${state.currentMediaLabel}`,
     mediaList: state => `${state.mediaList}`,
     deviceLoadedInstruments: state => `${state.deviceLoadedInstruments}`
   },
@@ -38,6 +40,9 @@ export default {
     updateCurrentMediaId (state, id) {
       state.currentMediaId = id
       state.currentMedia = state.mediaList.find(item => { return item.id === state.currentMediaId }).name
+    },
+    updateCurrentMediaLabel (state, label) {
+      state.currentMediaLabel = label
     },
     updateMediaList (state) {
       // ToDo change so that DataSource will call action..
@@ -64,6 +69,10 @@ export default {
 
     updateCurrentMediaId (context, id) {
       context.commit('updateCurrentMediaId', id)
+    },
+
+    updateCurrentMediaLabel (context, label) {
+      context.commit('updateCurrentMediaLabel', label)
     },
 
     updateMediaList (context) {
@@ -97,13 +106,19 @@ export default {
           commit('updateCurrentPathName', state.currentPathName + '/' + Helpers.capital_letter(name))
         }
       }
-      DataSource.getDirectoryInfoFromEnsoniaMedia(state.currentPath).then(items => { commit('updateItems', items) })
+      DataSource.getDirectoryInfoFromEnsoniaMedia(state.currentPath).then(data => {
+        commit('updateItems', data.items)
+        commit('updateCurrentMediaLabel', data.label)
+      })
     },
 
     goParentDir ({commit, state}) {
       commit('updateCurrentPath', Helpers.parent_dir(state.currentPath))
       commit('updateCurrentPathName', Helpers.parent_dir(state.currentPathName))
-      DataSource.getDirectoryInfoFromEnsoniaMedia(state.currentPath).then(items => { commit('updateItems', items) })
+      DataSource.getDirectoryInfoFromEnsoniaMedia(state.currentPath).then(data => {
+        commit('updateItems', data.items)
+        commit('updateCurrentMediaLabel', data.label)
+      })
     }
   }
 }

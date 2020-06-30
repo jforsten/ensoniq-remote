@@ -107,8 +107,7 @@ export default {
   methods: {
     get_icon (itemTypeId) {
       return TypeIcons.get_icon(itemTypeId)
-    },
-    
+    }
   },
   computed: {
     dataItems: function () {

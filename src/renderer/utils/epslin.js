@@ -28,7 +28,7 @@ const epslin = function (args, expectJson = false) {
       p.stdout.on('data', (data) => {
         var jsonString = new TextDecoder('utf-8').decode(data)
         jsonString = jsonString.split('\\').join('\\\\')
-        resolve(JSON.parse(jsonString).items)
+        resolve(JSON.parse(jsonString))
       })
     }
     p.stderr.on('data', (data) => {

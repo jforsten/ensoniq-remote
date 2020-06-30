@@ -57,7 +57,7 @@
         >
         <v-layout row wrap>
           <v-flex
-            xs5
+            xs8
             ml-2
             pt-2
           >
@@ -68,9 +68,23 @@
               :items="mediaList"
               item-text="name"
               item-value="id"
-              label="Ensoniq media file"
-            />
-         
+              label="Ensoniq media"
+              single-line
+            >
+              <template v-slot:prepend-item>
+                <v-list-tile @click="">
+                  <v-list-tile-content>
+                    <v-list-tile-title>/dev/sdd</v-list-tile-title>
+                  </v-list-tile-content>
+                </v-list-tile>
+                  <v-list-tile @click="">
+                    <v-list-tile-content>
+                      <v-list-tile-title>/dev/sde</v-list-tile-title>
+                    </v-list-tile-content>
+                  </v-list-tile>
+                <v-divider class="mt-2"></v-divider>
+              </template>
+            </v-select>
             <v-btn
               icon
               @click="previousMedia"
@@ -191,10 +205,8 @@
         {{ensoniqDevice}} 
         <v-icon small color="grey darken-2">mdi-power-on</v-icon>
         <v-icon small color="grey darken-2">mdi-login-variant</v-icon>
-    
         {{midiInputName}}
         <v-icon small color="grey darken-2">mdi-power-on</v-icon>
-
         <v-icon small color="grey darken-2">mdi-logout-variant</v-icon>
         {{midiOutputName}}
         </font>
@@ -212,7 +224,6 @@
 
 import { mapState, mapActions } from 'Vuex'
 import { DataSource } from './utils/datasource'
-import { Midi } from './utils/midi'
 import { Helpers } from './utils/helpers'
 
 export default {
@@ -258,13 +269,6 @@ export default {
       'epslin'
     ]),
 
-    currentMidi: {
-      get () {
-        var name = Midi.getInputName(this.midiInput)
-        console.warn('port:' + this.midiInput + 'NAME:' + name)
-        return name
-      }
-    },
     currentMidiInput: {
       get () {
         var input = DataSource.getCurrentMidiInputName()
@@ -330,9 +334,6 @@ export default {
     },
 
     getDeviceLoadedInstruments () {
-      // const { dialog } = require('electron').remote
-      // console.log(dialog.showOpenDialog({ properties: ['openFile'] }))
-      // console.log(dialog.showOpenDialog({ properties: ['openDirectory'] }))
       this.selectMode = false
       this.progress = true
       DataSource.getAllInstrumentData()

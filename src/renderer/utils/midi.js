@@ -336,12 +336,9 @@ function getOutputNameById (outputId) {
 }
 
 function getInputNameById (inputId) {
-  console.warn('id:' + inputId)
   if (midi === null || inputId === undefined) { return '' }
-  console.log(midi.inputs)
   var input = midi.inputs.get(inputId)
-  console.log(input)
-  console.log(input.name)
+  if (input === undefined || input.name === undefined) { return '' }
   return input.name
 }
 

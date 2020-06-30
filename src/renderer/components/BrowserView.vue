@@ -14,7 +14,7 @@
       <v-flex>
         <div class="grey darken-2">
           <v-flex px-1>
-            {{currentPathName}}
+            {{currentMediaLabel}}: {{currentPathName}}
           </v-flex>
         </div>
       </v-flex>
@@ -107,7 +107,17 @@ export default {
   },
 
   computed: {
-    ...mapState('browser', ['items', 'currentPath', 'currentPathName', 'currentMediaId', 'mediaList', 'deviceLoadedInstruments']),
+    ...mapState('browser',
+      [
+        'items',
+        'currentPath',
+        'currentPathName',
+        'currentMediaId',
+        'currentMediaLabel',
+        'mediaList',
+        'deviceLoadedInstruments'
+      ]
+    ),
 
     // Change name casing
     dataItems: function () {
