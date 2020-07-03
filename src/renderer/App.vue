@@ -72,12 +72,12 @@
               single-line
             >
               <template v-slot:prepend-item>
-                <v-list-tile @click="">
+                <v-list-tile @click="chqangeMedia()">
                   <v-list-tile-content>
                     <v-list-tile-title>/dev/sdd</v-list-tile-title>
                   </v-list-tile-content>
                 </v-list-tile>
-                  <v-list-tile @click="">
+                  <v-list-tile @click="changeMedia()">
                     <v-list-tile-content>
                       <v-list-tile-title>/dev/sde</v-list-tile-title>
                     </v-list-tile-content>

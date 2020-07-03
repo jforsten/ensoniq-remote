@@ -21,7 +21,7 @@ const epslin = function (args, expectJson = false) {
   return new Promise((resolve, reject) => {
     const p = spawn(settings.epslinExecutable, args, { cwd: settings.workingDirectory })
     if (expectJson === false) {
-      p.on('exit', (code) => {
+      p.on('exit', () => {
         resolve()
       })
     } else {

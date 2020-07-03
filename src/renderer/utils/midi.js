@@ -175,8 +175,8 @@ var midiOut = null
 var baseChannel = 1
 var putInstrumentPos = -1
 var getInstrumentTimerId = null
-var getInstrumentDataCallback = function (pos, name) { }
-var getInstrumentFailureCallback = function (pos, name) { }
+var getInstrumentDataCallback = function () { }
+var getInstrumentFailureCallback = function () { }
 
 function init () {
   if (midi !== null) close()
