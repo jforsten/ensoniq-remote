@@ -30,7 +30,6 @@
     </template>
     <template
       slot="expand"
-      slot-scope="props"
     >
       <v-card
         flat

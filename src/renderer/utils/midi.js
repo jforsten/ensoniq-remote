@@ -332,13 +332,15 @@ function getInputById (inputId) {
 
 function getOutputNameById (outputId) {
   if (midi === null || outputId === undefined) { return '' }
-  return midi.outputs.get(outputId).name
+  var output = midi.outputs.get(outputId)
+  if (output === undefined) { return '' }
+  return output.name
 }
 
 function getInputNameById (inputId) {
   if (midi === null || inputId === undefined) { return '' }
   var input = midi.inputs.get(inputId)
-  if (input === undefined || input.name === undefined) { return '' }
+  if (input === undefined) { return '' }
   return input.name
 }
 
@@ -351,6 +353,7 @@ function sendProgramChange (output, idx, channel) {
 }
 
 function sendSysex (output, data) {
+  if (output === undefined) return
   output.send(data)
 }
 
