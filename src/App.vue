@@ -44,7 +44,7 @@
               single-line
             >
               <template v-slot:prepend-item>
-                <v-list-item @click="chqangeMedia()">
+                <v-list-item @click="changeMedia()">
                   <v-list-item-content>
                     <v-list-item-title>/dev/sdd</v-list-item-title>
                   </v-list-item-content>
@@ -132,30 +132,42 @@
       </template>
     </v-app-bar>
     <v-main>
+
+      <v-snackbar
+        v-model="snackbar"
+        :multi-line="multiLine"
+        :timeout="timeout"
+        color="error"
+        transition="slide-y-reverse-transition"
+      >
+        <v-icon class="pr-2" small>{{alertIcon}}</v-icon>
+        {{ text }}
+        <template v-slot:action="{ attrs }">
+          <v-btn
+            color="white"
+            text
+            v-bind="attrs"
+            @click="snackbar = false"
+            icon
+          >
+            <v-icon small>{{closeIcon}}</v-icon>
+          </v-btn>
+        </template>
+      </v-snackbar>
+
       <v-container fluid fill-height>
         <v-slide-y-transition mode="out-in">
           <router-view></router-view>
         </v-slide-y-transition>
       </v-container>
     </v-main>
-    <v-footer app class="pa-0 py-1 pl-2">
-        <font class="caption" color="grey">
-          <v-icon small color="grey darken-2">mdi-piano</v-icon>
-          {{ ensoniqDevice }}
-        </font>
-        <v-divider class="mx-4" vertical />
-         <font class="caption" color="grey">
-          <v-icon small color="grey darken-2">mdi-login-variant</v-icon>
-          {{ midiInputName }}
-        </font>
-        <v-divider class="mx-4" vertical />
-         <font class="caption" color="grey">
-          <v-icon small color="grey darken-2">mdi-logout-variant</v-icon>
-          {{ midiOutputName }}
-        </font>
-        <v-divider class="mx-4" vertical />
-        <v-spacer></v-spacer>
-        <font color="grey" class="pr-2 text-caption">Version 0.9</font>
+    <v-footer app height="22" class="pa-0 pb-1">
+      <component
+        :is="footerView"
+        :ensoniqDevice="ensoniqDevice"
+        :midiInputName="midiInputName"
+        :midiOutputName="midiOutputName"
+       />
     </v-footer>
   </v-app>
 </template>
@@ -164,16 +176,28 @@
 import { mapState, mapActions } from 'vuex'
 import { DataSource } from './utils/datasource'
 import { Helpers } from './utils/helpers'
+import FooterView from './components/FooterView'
 
 export default {
   name: 'ensoniq-remote',
 
+  components: {
+    FooterView
+  },
+
   data: () => ({
+    footerView: 'FooterView',
+    multiLine: false,
+    snackbar: true,
+    timeout: 5000,
+    alertIcon: 'mdi-alert',
+    closeIcon: 'mdi-close',
+    text: 'No MIDI interface found! Please selct one.',
     clipped: true,
     drawer: false,
     fixed: true,
     items: [
-      { icon: 'mdi-playlist-music', title: 'Browser', to: '/' },
+      { icon: 'mdi-file-tree', title: 'Browser', to: '/' },
       { icon: 'mdi-cog', title: 'Settings', to: '/settings' }
     ],
     miniVariant: true,

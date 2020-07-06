@@ -66,6 +66,7 @@
 import { DataSource } from '../../utils/datasource'
 
 export default {
+  name: 'InstrumentPanel',
   props: {
     panelData: {
       type: Object,
