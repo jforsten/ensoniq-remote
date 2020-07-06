@@ -35,7 +35,7 @@
           @click:row="item_click_handler"
           single-expand
           :expanded.sync="expanded"
-          mobile-breakpoint="NaN"
+          mobile-breakpoint=""
         >
           <template v-slot:item.type_id="{ item }">
             <v-icon small class="mr-2">
