@@ -138,21 +138,24 @@
         </v-slide-y-transition>
       </v-container>
     </v-main>
-    <v-footer app height="35">
-      <v-row dense>
-        <font color="grey">
+    <v-footer app class="pa-0 py-1 pl-2">
+        <font class="caption" color="grey">
           <v-icon small color="grey darken-2">mdi-piano</v-icon>
           {{ ensoniqDevice }}
-          <v-icon small color="grey darken-2">mdi-power-on</v-icon>
+        </font>
+        <v-divider class="mx-4" vertical />
+         <font class="caption" color="grey">
           <v-icon small color="grey darken-2">mdi-login-variant</v-icon>
           {{ midiInputName }}
-          <v-icon small color="grey darken-2">mdi-power-on</v-icon>
+        </font>
+        <v-divider class="mx-4" vertical />
+         <font class="caption" color="grey">
           <v-icon small color="grey darken-2">mdi-logout-variant</v-icon>
           {{ midiOutputName }}
         </font>
+        <v-divider class="mx-4" vertical />
         <v-spacer></v-spacer>
-          <font color="grey" class="text-caption">Version 0.9</font>
-      </v-row>
+        <font color="grey" class="pr-2 text-caption">Version 0.9</font>
     </v-footer>
   </v-app>
 </template>

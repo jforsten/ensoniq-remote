@@ -15,7 +15,9 @@
       <v-col
         class="pa-1"
       >
+      <font color="grey" class="text-caption">
         {{currentMediaLabel}}: {{currentPathName}}
+      </font>
       </v-col>
         <v-data-table
           no-data-text="Please select Ensoniq media"
@@ -43,7 +45,6 @@
               :panelData="panelData"
               :selectedItem="item"
             ></component>
- <!-- <v-container>{{item}}</v-container> -->
              </td>
           </template>
         </v-data-table>
