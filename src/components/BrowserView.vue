@@ -7,6 +7,8 @@
   <v-row
     dense
     v-resize="onResize"
+              class="flex-nowrap"
+
   >
     <v-col
       cols="12"
@@ -28,10 +30,12 @@
           hide-default-footer
           fixed-header
           :height="windowSize.y - 240.0"
+          mobile="false"
           dense
           @click:row="item_click_handler"
           single-expand
           :expanded.sync="expanded"
+          mobile-breakpoint="NaN"
         >
           <template v-slot:item.type_id="{ item }">
             <v-icon small class="mr-2">
@@ -61,7 +65,7 @@ import { EnsoniqFileType } from '../utils/ensoniqFileType'
 import { Helpers } from '../utils/helpers'
 import InstrumentPanel from './BrowserView/InstrumentPanel'
 
-const headerStyle = 'secondary font-weight-black pa-1'
+const headerStyle = 'secondary'
 
 export default {
   name: 'browser',

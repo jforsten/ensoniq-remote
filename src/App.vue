@@ -32,8 +32,8 @@
     >
       <v-app-bar-nav-icon @click.native.stop="drawer = !drawer" />
       <v-container fill-height fluid pa-0 ma-0>
-        <v-row dense>
-          <v-col cols="5">
+        <v-row dense class="flex-nowrap">
+          <v-col cols="6">
             <v-select
               @input="changeMedia"
               v-model="currentSelectedMediaId"
@@ -73,12 +73,12 @@
       </v-container>
       <template v-slot:extension>
       <v-container>
-       <v-row dense>
-        <v-col cols="12" class="px-0 py-0 mb-1">
-          <font color="grey" class="caption">Instruments loaded in Ensoniq:</font>
-        </v-col>
-        </v-row>
         <v-row dense>
+          <v-col cols="12" class="px-0 py-0 mb-1 text-no-wrap">
+            <font color="grey" class="caption">Instruments loaded in Ensoniq:</font>
+          </v-col>
+        </v-row>
+        <v-row dense class="flex-nowrap">
           <v-col
             justify-space-between="true"
             v-for="index in 8"
