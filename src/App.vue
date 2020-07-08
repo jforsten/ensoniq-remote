@@ -132,29 +132,7 @@
       </template>
     </v-app-bar>
     <v-main>
-
-      <v-snackbar
-        v-model="snackbar"
-        :multi-line="multiLine"
-        :timeout="timeout"
-        color="error"
-        transition="slide-y-reverse-transition"
-      >
-        <v-icon class="pr-2" small>{{alertIcon}}</v-icon>
-        {{ text }}
-        <template v-slot:action="{ attrs }">
-          <v-btn
-            color="white"
-            text
-            v-bind="attrs"
-            @click="snackbar = false"
-            icon
-          >
-            <v-icon small>{{closeIcon}}</v-icon>
-          </v-btn>
-        </template>
-      </v-snackbar>
-
+      <ErrorView :message.sync="errorMessage" />
       <v-container fluid fill-height>
         <v-slide-y-transition mode="out-in">
           <router-view></router-view>
@@ -177,22 +155,21 @@ import { mapState, mapActions } from 'vuex'
 import { DataSource } from './utils/datasource'
 import { Helpers } from './utils/helpers'
 import FooterView from './components/FooterView'
+import ErrorView from './components/ErrorView'
 
 export default {
   name: 'ensoniq-remote',
 
   components: {
-    FooterView
+    FooterView,
+    ErrorView
   },
 
   data: () => ({
+    errorMessage: '',
+
     footerView: 'FooterView',
-    multiLine: false,
-    snackbar: true,
-    timeout: 5000,
-    alertIcon: 'mdi-alert',
-    closeIcon: 'mdi-close',
-    text: 'No MIDI interface found! Please selct one.',
+
     clipped: true,
     drawer: false,
     fixed: true,
@@ -306,6 +283,7 @@ export default {
         .catch(err => {
           console.error('Error fetching instrument data:' + err)
           this.progress = false
+          this.errorMessage = 'No Ensoniq device found!'
         })
     },
 

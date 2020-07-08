@@ -62,7 +62,6 @@
 </template>
 
 <script>
-
 import { DataSource } from '../../utils/datasource'
 
 export default {
