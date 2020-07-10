@@ -48,7 +48,7 @@
               :is="selectedPanel"
               :panelData="panelData"
               :selectedItem="item"
-            ></component>
+              />
              </td>
           </template>
         </v-data-table>

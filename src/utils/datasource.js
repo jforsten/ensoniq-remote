@@ -17,12 +17,13 @@ export const DataSource = {
     var mediaDirectory = store.getters['settings/mediaDirectory']
     var mediaList = require('fs').readdirSync(mediaDirectory)
 
-    return mediaList.map((name, index) => {
+    var list = mediaList.map((name, index) => {
       var dict = {}
       dict.id = index
       dict.name = name
       return dict
     })
+    store.commit('app/updateMediaList', list)
   },
 
   sendToEnsoniq (path, idx, filename, pos) {

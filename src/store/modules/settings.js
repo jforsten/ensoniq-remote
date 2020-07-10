@@ -1,4 +1,4 @@
-// import { stat } from "fs"
+import { DataSource } from '../../utils/datasource'
 
 export default {
   namespaced: true,
@@ -47,6 +47,7 @@ export default {
       state.workingDirectory = settings.workingDirectory
       state.ensoniqStorageDevice = settings.ensoniqStorageDevice
       state.epslin = settings.epslin
+      DataSource.getMediaList()
     },
     updateEnsoniqDevice (state, dev) {
       state.ensoniqDevice = dev
@@ -62,6 +63,7 @@ export default {
     },
     updateMediaDirectory (state, path) {
       state.mediaDirectory = path
+      DataSource.getMediaList()
     },
     updateWorkingDirectory (state, path) {
       state.workingDirectory = path

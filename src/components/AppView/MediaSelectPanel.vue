@@ -44,7 +44,7 @@
 <script>
 
 import { mapState, mapActions } from 'vuex'
-import { Helpers } from '../../utils/helpers'
+import { DataSource } from '../../utils/datasource'
 
 export default {
   name: 'MediaSelectPanel',
@@ -72,8 +72,7 @@ export default {
   methods: {
     ...mapActions({
       goDir: 'app/goDir',
-      updateCurrentMediaId: 'app/updateCurrentMediaId',
-      updateMediaList: 'app/updateMediaList'
+      updateCurrentMediaId: 'app/updateCurrentMediaId'
     }),
 
     goToRoot () {
@@ -106,11 +105,12 @@ export default {
         offset: 0,
         easing: 'easeInOutCubic'
       })
+    },
+
+    updateMediaList () {
+      DataSource.getMediaList()
     }
-  },
-  mounted () {
-    Helpers.delay(500)
-      .then(() => { this.updateMediaList() })
   }
+
 }
 </script>

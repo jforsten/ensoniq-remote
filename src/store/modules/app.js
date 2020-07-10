@@ -45,9 +45,8 @@ export default {
     updateCurrentMediaLabel (state, label) {
       state.currentMediaLabel = label
     },
-    updateMediaList (state) {
-      // ToDo change so that DataSource will call action..
-      state.mediaList = DataSource.getMediaList()
+    updateMediaList (state, mediaList) {
+      state.mediaList = mediaList
     },
     updateDeviceLoadedInstruments (state, instruments) {
       state.deviceLoadedInstruments = instruments
@@ -78,8 +77,8 @@ export default {
       context.commit('updateCurrentMediaLabel', label)
     },
 
-    updateMediaList (context) {
-      context.commit('updateMediaList')
+    updateMediaList (context, mediaList) {
+      context.commit('updateMediaList', mediaList)
     },
 
     updateDeviceLoadedInstruments (context, instruments) {
