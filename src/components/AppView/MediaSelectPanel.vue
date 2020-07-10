@@ -53,7 +53,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('browser', [
+    ...mapState('app', [
       'currentMediaId',
       'mediaList'
     ]),
@@ -71,9 +71,9 @@ export default {
   },
   methods: {
     ...mapActions({
-      goDir: 'browser/goDir',
-      updateCurrentMediaId: 'browser/updateCurrentMediaId',
-      updateMediaList: 'browser/updateMediaList'
+      goDir: 'app/goDir',
+      updateCurrentMediaId: 'app/updateCurrentMediaId',
+      updateMediaList: 'app/updateMediaList'
     }),
 
     goToRoot () {

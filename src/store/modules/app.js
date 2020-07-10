@@ -13,8 +13,8 @@ export default {
     currentMedia: '',
     currentMediaLabel: '',
     mediaList: [],
-    deviceLoadedInstruments: [null, null, null, null, null, null, null, null]
-
+    deviceLoadedInstruments: [null, null, null, null, null, null, null, null],
+    errorMessage: ''
   },
 
   getters: {
@@ -24,7 +24,8 @@ export default {
     currentMedia: state => `${state.currentMedia}`,
     currentMediaLabel: state => `${state.currentMediaLabel}`,
     mediaList: state => `${state.mediaList}`,
-    deviceLoadedInstruments: state => `${state.deviceLoadedInstruments}`
+    deviceLoadedInstruments: state => `${state.deviceLoadedInstruments}`,
+    errorMessage: state => `${state.errorMessage}`
   },
 
   mutations: {
@@ -54,8 +55,10 @@ export default {
     updateDeviceLoadedInstrument (state, data) {
       console.log(data)
       Vue.set(state.deviceLoadedInstruments, data.pos - 1, data.name)
+    },
+    updateErrorMessage (state, message) {
+      state.errorMessage = message
     }
-
   },
 
   actions: {
@@ -81,6 +84,10 @@ export default {
 
     updateDeviceLoadedInstruments (context, instruments) {
       context.commit('updateDeviceLoadedInstruments', instruments)
+    },
+
+    updateErrorMessage (context, message) {
+      context.commit('updateErrorMessage', message)
     },
 
     goDir ({ commit, state }, dirId) {

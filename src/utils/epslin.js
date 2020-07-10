@@ -9,7 +9,7 @@ var settings = {
   get workingDirectory () { return store.getters['settings/workingDirectory'] },
   get ensoniqStorageDevice () { return store.getters['settings/ensoniqStorageDevice'] },
   get media () {
-    var currentMedia = store.getters['browser/currentMedia']
+    var currentMedia = store.getters['app/currentMedia']
     var mediaDirectory = store.getters['settings/mediaDirectory']
     return mediaDirectory + sep + currentMedia
   }

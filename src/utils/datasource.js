@@ -92,7 +92,7 @@ export const DataSource = {
       console.log('call midi.getinstdata')
       Midi.getInstumentData(outputId, pos,
         (position, name) => {
-          store.commit('browser/updateDeviceLoadedInstrument', { pos: pos, name: name })
+          store.commit('app/updateDeviceLoadedInstrument', { pos: pos, name: name })
           resolve(name)
         },
         (err) => { reject(err) })

@@ -17,11 +17,10 @@
 </template>
 
 <script>
+import { mapState, mapActions } from 'vuex'
+
 export default {
   name: 'ErrorView',
-  props: {
-    message: String
-  },
   data () {
     return {
       text: '',
@@ -32,8 +31,15 @@ export default {
       closeIcon: 'mdi-close'
     }
   },
+  computed: {
+    ...mapState('app', [
+      'errorMessage'])
+  },
+  methods: {
+    ...mapActions({ updateErrorMessage: 'app/updateErrorMessage' })
+  },
   watch: {
-    message (value) {
+    errorMessage (value) {
       if (value === '') return
 
       // Trigger snackbar
@@ -43,7 +49,7 @@ export default {
     snackbar (value) {
       if (value === false) {
         this.text = ''
-        this.$emit('update:message', '')
+        this.updateErrorMessage('')
       }
     }
   }

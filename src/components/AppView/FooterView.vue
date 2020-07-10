@@ -21,12 +21,30 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+import { DataSource } from '../../utils/datasource'
+
 export default {
   name: 'FooterView',
-  props: {
-    ensoniqDevice: String,
-    midiInputName: String,
-    midiOutputName: String
+  computed: {
+    ...mapState('settings', [
+      'ensoniqDevice'
+    ]),
+
+    midiInputName: {
+      get () {
+        var input = DataSource.getCurrentMidiInputName()
+        if (input === null || input === undefined || input === '') return '<none>'
+        return input
+      }
+    },
+    midiOutputName: {
+      get () {
+        var output = DataSource.getCurrentMidiOutputName()
+        if (output === null || output === undefined || output === '') return '<none>'
+        return output
+      }
+    }
   }
 }
 </script>

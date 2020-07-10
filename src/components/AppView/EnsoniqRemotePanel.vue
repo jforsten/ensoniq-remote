@@ -62,6 +62,7 @@
 import { mapState } from 'vuex'
 import { DataSource } from '../../utils/datasource'
 import { Helpers } from '../../utils/helpers'
+import { Error } from '../../utils/error'
 
 export default {
   name: 'EnsoniqRemotePanel',
@@ -78,7 +79,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('browser', [
+    ...mapState('app', [
       'deviceLoadedInstruments'])
   },
   methods: {
@@ -92,7 +93,7 @@ export default {
         .catch(err => {
           console.error('Error fetching instrument data:' + err)
           this.progress = false
-          this.errorMessage = 'No Ensoniq device found!'
+          Error.show('No Ensoniq device found!')
         })
     },
 

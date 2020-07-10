@@ -98,7 +98,7 @@ export default {
   },
 
   computed: {
-    ...mapState('browser',
+    ...mapState('app',
       [
         'items',
         'currentPath',
@@ -145,9 +145,9 @@ export default {
   methods: {
 
     ...mapActions({
-      addItems: 'browser/updateItems',
-      goDir: 'browser/goDir',
-      updateDeviceLoadedInstuments: 'browser/updateDeviceLoadedInstruments'
+      addItems: 'app/updateItems',
+      goDir: 'app/goDir',
+      updateDeviceLoadedInstuments: 'app/updateDeviceLoadedInstruments'
     }),
 
     goToRoot () {
@@ -168,18 +168,8 @@ export default {
     },
 
     item_click_handler (item, row) {
-      // if (expanded) return false
-
       switch (item.type_id) {
         case EnsoniqFileType.Instrument:
-          // var itemsCount = this.dataItems.length
-          /*
-          if (itemsCount > 0 && this.dataItems[itemsCount - 1].index === item.index) {
-            setTimeout(() => {
-              this.scrollTo(Infinity, 500)
-            }, 200)
-          }
-          */
           row.select(!row.isSelected)
           row.expand(!row.isSelected)
           return true

@@ -3,8 +3,8 @@
     <v-navigation-drawer
       temporary
       fixed
-      :mini-variant="miniVariant"
-      :clipped="clipped"
+      mini-variant
+      clipped
       v-model="drawer"
       app
     >
@@ -37,7 +37,7 @@
       </template>
     </v-app-bar>
     <v-main>
-      <ErrorView :message.sync="errorMessage" />
+      <ErrorView />
       <v-container fluid fill-height>
         <v-slide-y-transition mode="out-in">
           <router-view></router-view>
@@ -45,92 +45,43 @@
       </v-container>
     </v-main>
     <v-footer app height="22" class="pa-0 pb-1">
-      <FooterView
-        :ensoniqDevice="ensoniqDevice"
-        :midiInputName="currentMidiInput"
-        :midiOutputName="currentMidiOutput"
-       />
+      <FooterView />
     </v-footer>
   </v-app>
 </template>
 
 <script>
-import { mapState } from 'vuex'
-import { DataSource } from './utils/datasource'
-import FooterView from './components/AppView/FooterView'
-import ErrorView from './components/AppView/ErrorView'
+
 import MediaSelectPanel from './components/AppView/MediaSelectPanel'
 import EnsoniqRemotePanel from './components/AppView/EnsoniqRemotePanel'
+import ErrorView from './components/AppView/ErrorView'
+import FooterView from './components/AppView/FooterView'
 
 export default {
   name: 'ensoniq-remote',
 
   components: {
-    EnsoniqRemotePanel,
     MediaSelectPanel,
-    FooterView,
-    ErrorView
+    EnsoniqRemotePanel,
+    ErrorView,
+    FooterView
   },
 
   data: () => ({
-    errorMessage: '',
-    clipped: true,
     drawer: false,
-    fixed: true,
     items: [
       { icon: 'mdi-file-tree', title: 'Browser', to: '/' },
       { icon: 'mdi-cog', title: 'Settings', to: '/settings' }
-    ],
-    miniVariant: true,
-    right: true,
-    rightDrawer: false,
-    title: 'Ensoniq remote'
-  }),
-
-  computed: {
-    ...mapState('settings', [
-      'ensoniqDevice',
-      'midiInput',
-      'midiOutput'
-    ]),
-
-    currentMidiInput: {
-      get () {
-        var input = DataSource.getCurrentMidiInputName()
-        if (input === null || input === undefined || input === '') return '<none>'
-        return input
-      }
-    },
-    currentMidiOutput: {
-      get () {
-        var output = DataSource.getCurrentMidiOutputName()
-        if (output === null || output === undefined || output === '') return '<none>'
-        return output
-      }
-    }
-  },
-
-  methods: {
-
-  }
+    ]
+  })
 }
 </script>
 
 <style>
-/* Global CSS */
+/* To remove scroll bar in browser view which calculates its own height and makes sure the dat table only has scrolling */
  html {
   overflow: auto !important;
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
-/* html {
-  overflow: hidden !important;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-html::-webkit-scrollbar {
-  width: 0;
-  height: 0;
-} */
 </style>
