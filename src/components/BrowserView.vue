@@ -60,11 +60,11 @@
 <script>
 
 import { mapState, mapActions } from 'vuex'
-import { TypeIcon } from '../utils/typeIcon'
-import { EnsoniqFileType } from '../utils/ensoniqFileType'
-import { Helpers } from '../utils/helpers'
-import InstrumentPanel from './BrowserView/InstrumentPanel'
-import EnsoniqRemotePanel from './BrowserView/EnsoniqRemotePanel'
+import { TypeIcon } from '@/utils/typeIcon'
+import { EnsoniqFileType } from '@/utils/ensoniqFileType'
+import { Helpers } from '@/utils/helpers'
+import InstrumentPanel from '@/components/BrowserView/InstrumentPanel'
+import EnsoniqRemotePanel from '@/components/BrowserView/EnsoniqRemotePanel'
 
 const headerStyle = 'secondary'
 

@@ -1,8 +1,8 @@
-import { Helpers } from '../../utils/helpers.js'
-import { DataSource } from '../../utils/datasource'
+import { Helpers } from '@/utils/helpers.js'
+import { DataSource } from '@/utils/datasource'
 import Vue from 'vue'
 import { sep } from 'path'
-import store from '../../store/'
+import store from '@/store/'
 
 export default {
   namespaced: true,

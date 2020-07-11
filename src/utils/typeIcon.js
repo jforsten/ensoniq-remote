@@ -1,4 +1,4 @@
-import { EnsoniqFileType } from './ensoniqFileType'
+import { EnsoniqFileType } from '@/utils/ensoniqFileType'
 
 export const TypeIcon = {
   Instrument: 'mdi-pulse',

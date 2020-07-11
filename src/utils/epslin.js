@@ -1,4 +1,4 @@
-import store from '../store/'
+import store from '@/store/'
 import { spawn } from 'child_process'
 // import { sep } from 'path'
 

@@ -22,7 +22,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import { DataSource } from '../../utils/datasource'
+import { DataSource } from '@/utils/datasource'
 
 export default {
   name: 'FooterView',

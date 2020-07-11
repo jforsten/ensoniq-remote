@@ -48,9 +48,9 @@
 
 <script>
 
-import MediaSelectPanel from './components/AppView/MediaSelectPanel'
-import ErrorView from './components/AppView/ErrorView'
-import FooterView from './components/AppView/FooterView'
+import MediaSelectPanel from '@/components/AppView/MediaSelectPanel'
+import ErrorView from '@/components/AppView/ErrorView'
+import FooterView from '@/components/AppView/FooterView'
 
 export default {
   name: 'ensoniq-remote',

@@ -1,9 +1,9 @@
-import store from '../store/'
+import store from '@/store/'
 import { sep } from 'path'
-import { EpsLin } from './epslin'
-import { Midi } from './midi'
-import { Helpers } from './helpers'
-import { EnsoniqDeviceType } from './ensoniqDeviceType'
+import { EpsLin } from '@/utils/epslin'
+import { Midi } from '@/utils/midi'
+import { Helpers } from '@/utils/helpers'
+import { EnsoniqDeviceType } from '@/utils/ensoniqDeviceType'
 
 export const DataSource = {
 
