@@ -1,6 +1,8 @@
 import { Helpers } from '../../utils/helpers.js'
 import { DataSource } from '../../utils/datasource'
 import Vue from 'vue'
+import { sep } from 'path'
+import store from '../../store/'
 
 export default {
   namespaced: true,
@@ -40,7 +42,11 @@ export default {
     },
     updateCurrentMediaId (state, id) {
       state.currentMediaId = id
-      state.currentMedia = state.mediaList.find(item => { return item.id === state.currentMediaId }).name
+      // Update also current media path
+      state.currentMedia = store.getters['settings/mediaDirectory'] + sep + state.mediaList.find(item => { return item.id === state.currentMediaId }).name
+    },
+    updateCurrentMedia (state, name) {
+      state.currentMedia = name
     },
     updateCurrentMediaLabel (state, label) {
       state.currentMediaLabel = label
@@ -71,6 +77,10 @@ export default {
 
     updateCurrentMediaId (context, id) {
       context.commit('updateCurrentMediaId', id)
+    },
+
+    updateCurrentMedia (context, name) {
+      context.commit('updateCurrentMedia', name)
     },
 
     updateCurrentMediaLabel (context, label) {

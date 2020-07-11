@@ -11,6 +11,7 @@ export default {
     mediaDirectory: '/Users/jforsten/Projects/epslin/media',
     workingDirectory: './workingDir',
     ensoniqStorageDevice: '/dev/ensoniqDevice',
+    ensoniqDisks: ['disk1', 'disk2'],
     epslin: 'epslin'
   },
 
@@ -24,6 +25,7 @@ export default {
         mediaDirectory: state.mediaDirectory,
         workingDirectory: state.workingDirectory,
         ensoniqStorageDevice: state.ensoniqStorageDevice,
+        ensoniqDisks: state.ensoniqDisks,
         epslin: state.epslin
       }
     },
@@ -33,6 +35,7 @@ export default {
     midiOutput: state => `${state.midiOutput}`,
     epslin: state => `${state.epslin}`,
     ensoniqStorageDevice: state => `${state.ensoniqStorageDevice}`,
+    ensoniqDisks: state => `${state.ensoniqDisks}`,
     workingDirectory: state => `${state.workingDirectory}`,
     mediaDirectory: state => `${state.mediaDirectory}`
   },
@@ -46,6 +49,7 @@ export default {
       state.mediaDirectory = settings.mediaDirectory
       state.workingDirectory = settings.workingDirectory
       state.ensoniqStorageDevice = settings.ensoniqStorageDevice
+      state.ensoniqDisks = settings.ensoniqDisks
       state.epslin = settings.epslin
       DataSource.getMediaList()
     },
@@ -70,6 +74,9 @@ export default {
     },
     updateEnsoniqStorageDevice (state, path) {
       state.ensoniqStorageDevice = path
+    },
+    updateEnsoniqDisks (state, list) {
+      state.ensoniqDisks = list
     },
     updateEpslin (state, path) {
       state.epslin = path
@@ -100,6 +107,9 @@ export default {
     },
     updateEnsoniqStorageDevice (context, path) {
       context.commit('updateEnsoniqStorageDevice', path)
+    },
+    updateEnsoniqDisks (context, list) {
+      context.commit('updateEnsoniqDisks', list)
     },
     updateEpslin (context, path) {
       context.commit('updateEpslin', path)

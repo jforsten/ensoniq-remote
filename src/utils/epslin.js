@@ -1,6 +1,6 @@
 import store from '../store/'
 import { spawn } from 'child_process'
-import { sep } from 'path'
+// import { sep } from 'path'
 
 // Internal properties
 
@@ -10,8 +10,9 @@ var settings = {
   get ensoniqStorageDevice () { return store.getters['settings/ensoniqStorageDevice'] },
   get media () {
     var currentMedia = store.getters['app/currentMedia']
-    var mediaDirectory = store.getters['settings/mediaDirectory']
-    return mediaDirectory + sep + currentMedia
+    console.log(currentMedia)
+    // var mediaDirectory = store.getters['settings/mediaDirectory']
+    return currentMedia // mediaDirectory + sep + currentMedia
   }
 }
 
