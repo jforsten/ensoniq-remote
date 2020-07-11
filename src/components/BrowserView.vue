@@ -4,11 +4,11 @@
   fill-height
   align-content-start
 >
+  <EnsoniqRemotePanel class="pa-0 pb-2" />
   <v-row
     dense
     v-resize="onResize"
-              class="flex-nowrap"
-
+    class="flex-nowrap"
   >
     <v-col
       cols="12"
@@ -29,7 +29,7 @@
           single-select
           hide-default-footer
           fixed-header
-          :height="windowSize.y - 240.0"
+          :height="windowSize.y - 250.0"
           mobile="false"
           dense
           @click:row="item_click_handler"
@@ -64,6 +64,7 @@ import { TypeIcon } from '../utils/typeIcon'
 import { EnsoniqFileType } from '../utils/ensoniqFileType'
 import { Helpers } from '../utils/helpers'
 import InstrumentPanel from './BrowserView/InstrumentPanel'
+import EnsoniqRemotePanel from './BrowserView/EnsoniqRemotePanel'
 
 const headerStyle = 'secondary'
 
@@ -71,6 +72,7 @@ export default {
   name: 'browser',
 
   components: {
+    EnsoniqRemotePanel,
     InstrumentPanel
   },
 
@@ -174,10 +176,18 @@ export default {
           row.expand(!row.isSelected)
           return true
         case EnsoniqFileType.Directory:
+          // Clear expand & selection
+          this.expanded = []
+          row.select(true)
+          row.select(false)
           this.goDir(item.index)
           this.scrollToTop()
           return false
         case EnsoniqFileType.Parent_Directory:
+          // Clear expand & selection
+          this.expanded = []
+          row.select(true)
+          row.select(false)
           this.goDir('..')
           this.scrollToTop()
           return false

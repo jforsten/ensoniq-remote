@@ -27,14 +27,10 @@
     </v-navigation-drawer>
     <v-app-bar
       app
-      extended
-      extension-height="65"
     >
       <v-app-bar-nav-icon @click.native.stop="drawer = !drawer" />
       <MediaSelectPanel />
-      <template v-slot:extension>
-        <EnsoniqRemotePanel />
-      </template>
+
     </v-app-bar>
     <v-main>
       <ErrorView />
@@ -53,7 +49,6 @@
 <script>
 
 import MediaSelectPanel from './components/AppView/MediaSelectPanel'
-import EnsoniqRemotePanel from './components/AppView/EnsoniqRemotePanel'
 import ErrorView from './components/AppView/ErrorView'
 import FooterView from './components/AppView/FooterView'
 
@@ -62,7 +57,6 @@ export default {
 
   components: {
     MediaSelectPanel,
-    EnsoniqRemotePanel,
     ErrorView,
     FooterView
   },
