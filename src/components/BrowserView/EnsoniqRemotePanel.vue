@@ -60,9 +60,9 @@
 
 <script>
 import { mapState } from 'vuex'
-import { DataSource } from '../../utils/datasource'
-import { Helpers } from '../../utils/helpers'
-import { Error } from '../../utils/error'
+import { DataSource } from '@/utils/datasource'
+import { Helpers } from '@/utils/helpers'
+import { Error } from '@/utils/error'
 
 export default {
   name: 'EnsoniqRemotePanel',

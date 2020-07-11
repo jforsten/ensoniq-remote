@@ -62,7 +62,7 @@
 </template>
 
 <script>
-import { DataSource } from '../../utils/datasource'
+import { DataSource } from '@/utils/datasource'
 
 export default {
   name: 'InstrumentPanel',

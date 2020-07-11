@@ -1,5 +1,6 @@
 import { Helpers } from '@/utils/helpers.js'
 import { DataSource } from '@/utils/datasource'
+import { Error } from '@/utils/error'
 import Vue from 'vue'
 import { sep } from 'path'
 import store from '@/store/'
@@ -125,6 +126,9 @@ export default {
       DataSource.getDirectoryInfoFromEnsoniaMedia(state.currentPath).then(data => {
         commit('updateItems', data.items)
         commit('updateCurrentMediaLabel', data.label)
+      }).catch(err => {
+        console.log(err)
+        Error.show(err)
       })
     },
 
@@ -134,6 +138,9 @@ export default {
       DataSource.getDirectoryInfoFromEnsoniaMedia(state.currentPath).then(data => {
         commit('updateItems', data.items)
         commit('updateCurrentMediaLabel', data.label)
+      }).catch(err => {
+        console.log(err)
+        Error.show(err)
       })
     }
   }

@@ -26,7 +26,7 @@ export default {
       text: '',
       multiLine: false,
       snackbar: false,
-      timeout: 5000,
+      timeout: 10000,
       alertIcon: 'mdi-alert',
       closeIcon: 'mdi-close'
     }
@@ -40,7 +40,10 @@ export default {
   },
   watch: {
     errorMessage (value) {
-      if (value === '') return
+      if (value === '') {
+        this.snackbar = false
+        return
+      }
 
       // Trigger snackbar
       this.text = value
