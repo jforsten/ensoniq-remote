@@ -123,7 +123,8 @@ export default {
     },
 
     updateMediaList () {
-      DataSource.getMediaList()
+      console.log(this.mediaDirectory)
+      DataSource.getMediaList(this.mediaDirectory)
     }
   }
 

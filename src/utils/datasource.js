@@ -13,8 +13,7 @@ export const DataSource = {
     return EpsLin.getDir(path)
   },
 
-  getMediaList () {
-    var mediaDirectory = store.getters['settings/mediaDirectory']
+  getMediaList (mediaDirectory) {
     var mediaList = require('fs').readdirSync(mediaDirectory)
 
     var list = mediaList.map((name, index) => {
@@ -148,9 +147,10 @@ export const DataSource = {
     if (localStorage.getItem('settings')) {
       var allSettings = JSON.parse(localStorage.getItem('settings'))
       if (allSettings !== undefined) {
-        return store.dispatch('settings/setAllSettings', allSettings)
+        store.commit('settings/setAllSettings', allSettings)
       }
     }
+    console.warn('Settings loaded!')
     return Promise.resolve()
   },
 
@@ -163,11 +163,13 @@ export const DataSource = {
   },
 
   initializeMidi () {
-    var inputId = store.getters['settings/midiInput']
     // TODO: Why first Midi init does not return inputs/outputs?
-    return Helpers.delay(500)
-      .then(() => { return Midi.initialize(inputId) })
-      .then(() => { return Midi.initialize(inputId) })
+    console.warn('Initialize midi')
+    console.log(store.getters['settings/midiOutput'].id)
+
+    return Helpers.delay(100)
+      .then(() => { return Midi.initialize(store.getters['settings/midiInput'].id) })
+      .then(() => { return Midi.initialize(store.getters['settings/midiInput'].id) })
   }
 
 }

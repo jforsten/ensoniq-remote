@@ -6,12 +6,12 @@ export default {
   state: {
     ensoniqDevice: 'ASR10',
     baseChannel: 1,
-    midiInput: undefined,
-    midiOutput: undefined,
+    midiInput: { id: undefined, name: '' },
+    midiOutput: { id: undefined, name: '' },
     mediaDirectory: '/Users/jforsten/Projects/epslin/media',
     workingDirectory: './workingDir',
     ensoniqStorageDevice: '/dev/ensoniqDevice',
-    ensoniqDisks: ['disk1', 'disk2'],
+    ensoniqDisks: [],
     epslin: 'epslin'
   },
 
@@ -31,8 +31,8 @@ export default {
     },
     ensoniqDevice: state => `${state.ensoniqDevice}`,
     baseChannel: state => `${state.baseChannel}`,
-    midiInput: state => `${state.midiInput}`,
-    midiOutput: state => `${state.midiOutput}`,
+    midiInput: state => { return state.midiInput },
+    midiOutput: state => { return state.midiOutput },
     epslin: state => `${state.epslin}`,
     ensoniqStorageDevice: state => `${state.ensoniqStorageDevice}`,
     ensoniqDisks: state => `${state.ensoniqDisks}`,
@@ -51,7 +51,7 @@ export default {
       state.ensoniqStorageDevice = settings.ensoniqStorageDevice
       state.ensoniqDisks = settings.ensoniqDisks
       state.epslin = settings.epslin
-      DataSource.getMediaList()
+      DataSource.getMediaList(settings.mediaDirectory)
     },
     updateEnsoniqDevice (state, dev) {
       state.ensoniqDevice = dev
@@ -67,7 +67,7 @@ export default {
     },
     updateMediaDirectory (state, path) {
       state.mediaDirectory = path
-      DataSource.getMediaList()
+      DataSource.getMediaList(path)
     },
     updateWorkingDirectory (state, path) {
       state.workingDirectory = path

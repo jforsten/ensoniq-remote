@@ -72,21 +72,19 @@
         <v-row>
           <v-col cols="12">
             <v-row>
-              <v-col cols="10">
+              <v-col cols="12">
                 <v-text-field
                   v-model="currentMediaDirectory"
                   prepend-icon="mdi-folder-outline"
                   label="Ensoniq media directory"
+                  append-icon="mdi-dots-horizontal"
+                  @click:append="selectMediaFolder"
                 />
               </v-col>
-              <v-col cols="2">
-                <v-btn block @click="selectMediaFolder">
-                  select
-                </v-btn>
-              </v-col>
+
             </v-row>
             <v-row>
-              <v-col cols="10">
+              <v-col cols="12">
                 <v-text-field
                   v-model="currentEnsoniqStorageDevice"
                   prepend-icon="mdi-transit-connection-variant"
@@ -176,19 +174,21 @@ export default {
 
     currentMidiInput: {
       get () {
-        return this.midiInput
+        return this.midiInput.id
       },
       set (value) {
-        this.updateMidiInput(value)
+        var input = this.midiInputs.find(item => item.id === value)
+        this.updateMidiInput(input)
       }
     },
 
     currentMidiOutput: {
       get () {
-        return this.midiOutput
+        return this.midiOutput.id
       },
       set (value) {
-        this.updateMidiOutput(value)
+        var output = this.midiOutputs.find(item => item.id === value)
+        this.updateMidiOutput(output)
       }
     },
 
@@ -250,20 +250,6 @@ export default {
       updateEpslin: 'settings/updateEpslin'
     }),
 
-    selectMidiInput (id) {
-      var input = this.midiInputs.find(function (item) {
-        return item.id === id
-      })
-      this.currentMidiInput = input
-    },
-
-    selectMidiOutput (id) {
-      var output = this.midiOutputs.find(function (item) {
-        return item.id === id
-      })
-      this.currentMidiOutput = output
-    },
-
     readMidiPorts () {
       DataSource.getMidiPorts()
         .then(ports => {
@@ -279,7 +265,11 @@ export default {
     selectMediaFolder () {
       const { dialog } = require('electron').remote
       dialog.showOpenDialog({ properties: ['openDirectory'] }).then(result => {
-        this.currentMediaDirectory = result.filePaths[0]
+        if (result.filePaths.length > 0) {
+          console.log('selectMediaFolder -> result', result)
+
+          this.currentMediaDirectory = result.filePaths[0]
+        }
       })
     },
 
@@ -293,9 +283,9 @@ export default {
   },
 
   mounted () {
-    console.log('settings mounted')
-    DataSource.initializeMidi()
-    this.readMidiPorts()
+    DataSource.loadSettings()
+      .then(() => DataSource.initializeMidi())
+      .then(() => { this.readMidiPorts() })
   }
 }
 </script>
