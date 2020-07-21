@@ -90,6 +90,10 @@ export const Midi = {
     getInstrumentFailureCallback = failure
 
     var output = getOutputById(outputId)
+
+    console.log('MIDI out:')
+    console.log(outputId)
+    console.log(output)
     midiOut = output
 
     getInstrumentTimerId = setTimeout(() => { failure('Timeout') }, 3000)

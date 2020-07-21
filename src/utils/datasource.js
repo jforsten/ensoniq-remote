@@ -79,7 +79,7 @@ export const DataSource = {
 
   requestInstrumentLoad (idx, pos) {
     console.log('DataSource: requestInstrumentLoad')
-    var outputId = store.getters['settings/midiOutput']
+    var outputId = store.getters['settings/midiOutput'].id
     return Midi.loadGlobalParameters(outputId)
       .then(() => Midi.prepareLoadInstrument(outputId))
       .then(() => Midi.programChange(outputId, idx, pos))
@@ -87,7 +87,7 @@ export const DataSource = {
   },
 
   getInstrumentData (pos) {
-    var outputId = store.getters['settings/midiOutput']
+    var outputId = store.getters['settings/midiOutput'].id
     return new Promise((resolve, reject) => {
       console.log('call midi.getinstdata')
       Midi.getInstumentData(outputId, pos,
@@ -100,13 +100,13 @@ export const DataSource = {
   },
 
   deleteInstrument (pos) {
-    var outputId = store.getters['settings/midiOutput']
+    var outputId = store.getters['settings/midiOutput'].id
     return Midi.deleteInstrument(outputId, pos)
       .then(() => this.getInstrumentData(pos))
   },
 
   copyInstrument (from, to) {
-    var outputId = store.getters['settings/midiOutput']
+    var outputId = store.getters['settings/midiOutput'].id
     return Midi.deleteInstrument(outputId, to)
       .then(() => Midi.prepareCopyInstrument(outputId, from))
       .then(() => Midi.copyInstrument(outputId, from, to))
@@ -114,7 +114,7 @@ export const DataSource = {
   },
 
   playInstrument (pos, note, volume) {
-    var outputId = store.getters['settings/midiOutput']
+    var outputId = store.getters['settings/midiOutput'].id
     return Midi.playInstrument(outputId, pos, note, volume)
   },
 
@@ -130,13 +130,13 @@ export const DataSource = {
   },
 
   getCurrentMidiInputName () {
-    var inputId = store.getters['settings/midiInput']
+    var inputId = store.getters['settings/midiInput'].id
     if (inputId === undefined) return '-'
     return Midi.getInputName(inputId)
   },
 
   getCurrentMidiOutputName () {
-    var outputId = store.getters['settings/midiOutput']
+    var outputId = store.getters['settings/midiOutput'].id
     if (outputId === undefined) return '-'
     return Midi.getOutputName(outputId)
   },
