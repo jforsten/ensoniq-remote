@@ -1,13 +1,14 @@
 <template>
-  <v-container>
-    <v-row dense>
-      <v-col cols="12" class="px-0 py-0 mb-1 text-no-wrap">
+  <v-container fluid class="pa-0">
+    <v-row>
+      <v-col cols="12" class="px-3 py-0 mb-1 text-no-wrap">
         <font color="grey" class="caption">Instruments loaded in Ensoniq:</font>
       </v-col>
     </v-row>
-    <v-row dense class="flex-nowrap">
+    <v-row
+      class="flex-nowrap pl-3"
+    >
       <v-col
-        justify-space-between="true"
         v-for="index in 8"
         :key="index + 1"
         class="pa-0 pr-2 mb-2"
@@ -17,6 +18,7 @@
             <v-btn
               small
               block
+              width="100"
               :disabled="progress"
               :outlined="getButtonMode(index)"
               :color="getButtonColor(index)"
