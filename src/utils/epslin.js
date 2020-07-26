@@ -19,6 +19,13 @@ var settings = {
 // Internal methods
 
 const epslin = function (args, expectJson = false) {
+  console.warn(require('os').platform())
+  console.warn(process.env.NODE_ENV)
+  console.warn(require('electron').remote.app.getAppPath())
+  console.warn(process.resourcesPath)
+  console.warn(settings.workingDirectory)
+  console.warn(settings.epslinExecutable)
+
   return new Promise((resolve, reject) => {
     const p = spawn(settings.epslinExecutable, args, { cwd: settings.workingDirectory })
     if (expectJson === false) {

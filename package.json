@@ -1,7 +1,15 @@
 {
   "name": "ensoniq-remote",
-  "version": "0.1.0",
+  "version": "0.9.0",
   "private": true,
+  "author": {
+    "name": "Juha Forsten",
+    "email": "juha.forsten@gmail.com",
+    "url": "https://gitlab.com/jforsten"
+  },
+  "homepage": "https://gitlab.com/jforsten/Ensoniq-remote",
+  "license": "GPL-3.0-or-later",
+  "description": "Remtote sample loading utility for Ensoniq samplers",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",

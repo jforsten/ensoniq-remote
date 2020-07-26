@@ -1,4 +1,5 @@
 import { DataSource } from '@/utils/datasource'
+import { sep } from 'path'
 
 export default {
   namespaced: true,
@@ -8,8 +9,8 @@ export default {
     baseChannel: 1,
     midiInput: { id: undefined, name: '' },
     midiOutput: { id: undefined, name: '' },
-    mediaDirectory: '/Users/jforsten/Projects/epslin/media',
-    workingDirectory: './workingDir',
+    mediaDirectory: '/my/ensoniq/media',
+    workingDirectory: process.env.NODE_ENV === 'development' ? 'workingDir' : process.resourcesPath + sep + 'workingDir',
     ensoniqStorageDevice: '/dev/ensoniqDevice',
     ensoniqDisks: [],
     epslin: 'epslin'
