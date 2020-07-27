@@ -10,7 +10,9 @@ export default {
     midiInput: { id: undefined, name: '' },
     midiOutput: { id: undefined, name: '' },
     mediaDirectory: '/my/ensoniq/media',
-    workingDirectory: process.env.NODE_ENV === 'development' ? 'workingDir' : process.resourcesPath + sep + 'workingDir',
+    workingDirectory: process.env.NODE_ENV === 'development'
+      ? 'workingDir' + '_' + require('os').platform()
+      : process.resourcesPath + sep + 'workingDir' + '_' + require('os').platform(),
     ensoniqStorageDevice: '/dev/ensoniqDevice',
     ensoniqDisks: [],
     epslin: 'epslin'
@@ -24,7 +26,6 @@ export default {
         midiInput: state.midiInput,
         midiOutput: state.midiOutput,
         mediaDirectory: state.mediaDirectory,
-        workingDirectory: state.workingDirectory,
         ensoniqStorageDevice: state.ensoniqStorageDevice,
         ensoniqDisks: state.ensoniqDisks,
         epslin: state.epslin
@@ -48,7 +49,6 @@ export default {
       state.midiInput = settings.midiInput
       state.midiOutput = settings.midiOutput
       state.mediaDirectory = settings.mediaDirectory
-      state.workingDirectory = settings.workingDirectory
       state.ensoniqStorageDevice = settings.ensoniqStorageDevice
       state.ensoniqDisks = settings.ensoniqDisks
       state.epslin = settings.epslin
@@ -69,9 +69,6 @@ export default {
     updateMediaDirectory (state, path) {
       state.mediaDirectory = path
       DataSource.getMediaList(path)
-    },
-    updateWorkingDirectory (state, path) {
-      state.workingDirectory = path
     },
     updateEnsoniqStorageDevice (state, path) {
       state.ensoniqStorageDevice = path
@@ -102,9 +99,6 @@ export default {
     },
     updateMediaDirectory (context, path) {
       context.commit('updateMediaDirectory', path)
-    },
-    updateWorkingDirectory (context, path) {
-      context.commit('updateWorkingDirectory', path)
     },
     updateEnsoniqStorageDevice (context, path) {
       context.commit('updateEnsoniqStorageDevice', path)

@@ -7,7 +7,14 @@ module.exports = {
       nodeIntegration: true,
       builderOptions: {
         win: {
-          extraResources: ['./workingDir/**']
+          extraResources: ['./workingDir_win32/**'],
+          requestedExecutionLevel: 'highestAvailable'
+        },
+        mac: {
+          extraResources: ['./workingDir_darwin/**']
+        },
+        linux: {
+          extraResources: ['./workingDir_linux/**']
         }
       }
     }
