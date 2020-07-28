@@ -15,7 +15,7 @@ export default {
       : process.resourcesPath + sep + 'workingDir' + '_' + require('os').platform(),
     ensoniqStorageDevice: '/dev/ensoniqDevice',
     ensoniqDisks: [],
-    epslin: 'epslin'
+    epslin: './epslin'
   },
 
   getters: {
@@ -27,8 +27,7 @@ export default {
         midiOutput: state.midiOutput,
         mediaDirectory: state.mediaDirectory,
         ensoniqStorageDevice: state.ensoniqStorageDevice,
-        ensoniqDisks: state.ensoniqDisks,
-        epslin: state.epslin
+        ensoniqDisks: state.ensoniqDisk
       }
     },
     ensoniqDevice: state => `${state.ensoniqDevice}`,
@@ -51,7 +50,6 @@ export default {
       state.mediaDirectory = settings.mediaDirectory
       state.ensoniqStorageDevice = settings.ensoniqStorageDevice
       state.ensoniqDisks = settings.ensoniqDisks
-      state.epslin = settings.epslin
       DataSource.getMediaList(settings.mediaDirectory)
     },
     updateEnsoniqDevice (state, dev) {
@@ -75,9 +73,6 @@ export default {
     },
     updateEnsoniqDisks (state, list) {
       state.ensoniqDisks = list
-    },
-    updateEpslin (state, path) {
-      state.epslin = path
     }
   },
 
@@ -105,9 +100,6 @@ export default {
     },
     updateEnsoniqDisks (context, list) {
       context.commit('updateEnsoniqDisks', list)
-    },
-    updateEpslin (context, path) {
-      context.commit('updateEpslin', path)
     }
   }
 }
