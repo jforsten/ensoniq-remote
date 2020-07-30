@@ -1,26 +1,35 @@
 <template>
-  <v-container fill-height fluid justify-start>
+  <v-container
+    fill-height
+    fluid
+    justify-start
+  >
     <v-row dense>
       <v-col cols="12">
-        <v-col>
-          <div class="headline">Settings</div>
-        </v-col>
-        <v-col>
-          <div class="subheading">Device setup</div>
-        </v-col>
-        <v-row>
-          <v-col cols="4">
-            <v-select
-              v-model="currentEnsoniqDevice"
-              :items="ensoniqDevices"
-              item-text="name"
-              item-value="id"
-              prepend-icon="mdi-piano"
-              filled
-              label="Ensoniq device type"
-            />
+        <v-form
+          ref="form"
+          v-model="valid"
+          lazy-validation
+        >
+          <v-col>
+            <div class="headline">Settings</div>
           </v-col>
-          <!--  <v-flex
+          <v-col>
+            <div class="subheading">Device setup</div>
+          </v-col>
+          <v-row>
+            <v-col cols="4">
+              <v-select
+                v-model="currentEnsoniqDevice"
+                :items="ensoniqDevices"
+                item-text="name"
+                item-value="id"
+                prepend-icon="mdi-piano"
+                filled
+                label="Ensoniq device type"
+              />
+            </v-col>
+            <!--  <v-flex
           xs2
           mx-4
         >
@@ -33,100 +42,161 @@
             box
             label="Base channel"
           />
-        </v-flex> -->
-        </v-row>
-        <v-col>
-          <div class="subheading">MIDI Connection</div>
-        </v-col>
-        <v-row>
-          <v-col cols="6">
-            <v-select
-              v-model="currentMidiInput"
-              :items="midiInputs"
-              item-text="name"
-              item-value="id"
-              prepend-icon="mdi-midi-port"
-              filled
-              label="MIDI Input"
-            />
+            </v-flex>-->
+          </v-row>
+          <v-col>
+            <div class="subheading">MIDI Connection</div>
           </v-col>
-          <v-col cols="6">
-            <v-select
-              v-model="currentMidiOutput"
-              :items="midiOutputs"
-              item-text="name"
-              item-value="id"
-              prepend-icon="mdi-midi-port"
-              filled
-              label="MIDI Output"
-            />
+          <v-row>
+            <v-col cols="6">
+              <v-select
+                v-model="currentMidiInput"
+                :items="midiInputs"
+                item-text="name"
+                item-value="id"
+                prepend-icon="mdi-midi-port"
+                filled
+                label="MIDI Input"
+                :rules="[v => !!v || 'Midi input is required']"
+                required
+              />
+            </v-col>
+            <v-col cols="6">
+              <v-select
+                v-model="currentMidiOutput"
+                :items="midiOutputs"
+                item-text="name"
+                item-value="id"
+                prepend-icon="mdi-midi-port"
+                filled
+                label="MIDI Output"
+                :rules="[v => !!v || 'Midi output is required']"
+                required
+              />
+            </v-col>
+          </v-row>
+          <v-row class="pr-3">
+            <v-spacer></v-spacer>
+            <v-btn @click="readMidiPorts()">Refresh Midi ports</v-btn>
+          </v-row>
+          <v-col>
+            <div class="subheading">File paths</div>
           </v-col>
-        </v-row>
-        <v-row class="pr-3">
-          <v-spacer></v-spacer>
-          <v-btn @click="readMidiPorts()">Refresh Midi ports</v-btn>
-        </v-row>
-        <v-col>
-          <div class="subheading">File paths</div>
-        </v-col>
-        <v-row>
-          <v-col cols="12">
-            <v-row>
-              <v-col cols="12">
-                <v-text-field
-                  v-model="currentMediaDirectory"
-                  prepend-icon="mdi-folder-outline"
-                  label="Ensoniq media directory"
-                  append-icon="mdi-dots-horizontal"
-                  @click:append="selectMediaFolder"
-                />
-              </v-col>
-
-            </v-row>
-            <v-row>
-              <v-col cols="12">
-                <v-text-field
-                  v-model="currentEnsoniqStorageDevice"
-                  prepend-icon="mdi-transit-connection-variant"
-                  label="Linked Ensoniq Storage Device"
-                />
-              </v-col>
-            </v-row>
+          <v-row>
+            <v-col cols="12">
+              <v-row>
+                <v-col cols="12">
+                  <v-text-field
+                    v-model="currentMediaDirectory"
+                    prepend-icon="mdi-folder-outline"
+                    label="Ensoniq media directory"
+                    append-icon="mdi-dots-horizontal"
+                    @click:append="selectMediaFolder"
+                    :rules="[rules.required, rules.mediaDirectory]"
+                    required
+                  />
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col cols="12">
+                  <v-text-field
+                    v-model="currentEnsoniqStorageDevice"
+                    prepend-icon="mdi-transit-connection-variant"
+                    label="Linked Ensoniq Storage Device"
+                    @blur="checkAccessRights"
+                    :rules="[rules.required, rules.linkedDevice]"
+                    required
+                  />
+                </v-col>
+              </v-row>
+            </v-col>
+          </v-row>
+          <v-col>
+            <div class="subheading">Other Ensoniq Storage devices</div>
           </v-col>
-        </v-row>
-        <v-col>
-          <div class="subheading">Other Ensoniq Storage devices</div>
-        </v-col>
-        <v-row>
-          <v-col cols="6">
-            <v-textarea
-              v-model="currentEnsoniqDisks"
-              prepend-icon="mdi-harddisk"
-              outlined
-              rows="3"
-              row-height="25"
-              no-resize
-            ></v-textarea>
-          </v-col>
-        </v-row>
-        <v-row class="pt-4">
-          <v-spacer></v-spacer>
-          <v-btn class="px-2 mx-2" @click="save()">Save</v-btn>
-        </v-row>
+          <v-row>
+            <v-col cols="6">
+              <v-textarea
+                v-model="currentEnsoniqDisks"
+                prepend-icon="mdi-harddisk"
+                outlined
+                rows="3"
+                row-height="25"
+                no-resize
+              ></v-textarea>
+            </v-col>
+          </v-row>
+          <v-row class="pt-4">
+            <v-spacer></v-spacer>
+            <v-btn
+              class="px-2 mx-2"
+              @click="save()"
+            >Save</v-btn>
+          </v-row>
+        </v-form>
       </v-col>
     </v-row>
+    <v-dialog
+      v-model="dialog"
+      max-width="500"
+      persistent
+    >
+      <v-card color="grey darken-3">
+        <v-card-title class="headline">Fix device permissions?</v-card-title>
+        <v-card-text>
+          Permission to read and write <strong>{{currentEnsoniqStorageDevice}}</strong> is required.<br>
+          Allow changes to device access permissions?
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            text
+            @click="dialog = false"
+          >
+            Cancel
+          </v-btn>
+          <v-btn
+            text
+            @click="dialog = false; fixLinkDevicePermissions()"
+          >
+            Proceed
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
 <script>
 import { mapState, mapActions } from 'vuex'
 import { DataSource } from '@/utils/datasource'
+import { FileSystem } from '@/utils/filesystem'
+import { Helpers } from '@/utils/helpers'
+
+// import { Error } from '@/utils/error'
 
 export default {
   data () {
     return {
       midiInputs: [],
-      midiOutputs: []
+      midiOutputs: [],
+      dialog: false,
+      valid: true,
+      rules: {
+        required: value => !!value || 'Required.',
+        linkedDevice: value => {
+          return (
+            (FileSystem.exists(value) && !FileSystem.isDirectory(value)) ||
+            'Device not found!'
+          )
+        },
+        mediaDirectory: value => {
+          return (
+            (FileSystem.exists(value) && FileSystem.isDirectory(value)) ||
+            'Directory not found!'
+          )
+        }
+      }
     }
   },
   computed: {
@@ -224,7 +294,7 @@ export default {
         return this.ensoniqDisks.join('\n')
       },
       set (value) {
-        this.updateEnsoniqDisks(value.split('\n').filter((v) => v !== ''))
+        this.updateEnsoniqDisks(value.split('\n').filter(v => v !== ''))
       }
     },
 
@@ -273,6 +343,26 @@ export default {
       })
     },
 
+    checkAccessRights (event) {
+      console.log(event)
+      console.log(this.currentEnsoniqStorageDevice)
+
+      if (Helpers.isWindows()) return
+
+      if (
+        FileSystem.exists(this.currentEnsoniqStorageDevice) &&
+        !FileSystem.isDirectory(this.currentEnsoniqStorageDevice)
+      ) {
+        if (!FileSystem.hasAccess(this.currentEnsoniqStorageDevice)) {
+          this.dialog = true
+        }
+      }
+    },
+
+    fixLinkDevicePermissions () {
+      FileSystem.sudo('chmod 666 ' + this.currentEnsoniqStorageDevice)
+    },
+
     save () {
       DataSource.saveSettings()
     },
@@ -285,7 +375,12 @@ export default {
   mounted () {
     DataSource.loadSettings()
       .then(() => DataSource.initializeMidi())
-      .then(() => { this.readMidiPorts() })
+      .then(() => {
+        this.readMidiPorts()
+      })
+      .then(() => {
+        this.$refs.form.validate()
+      })
   }
 }
 </script>

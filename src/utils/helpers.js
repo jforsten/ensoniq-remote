@@ -1,4 +1,19 @@
 export const Helpers = {
+  getOS () {
+    return require('os').platform()
+  },
+
+  isWindows () {
+    return this.getOS() === 'win32'
+  },
+
+  isMac () {
+    return this.getOS() === 'darwin'
+  },
+
+  isLinux () {
+    return this.getOS() === 'linux'
+  },
 
   capital_letter (str) {
     str = str.trim().toLowerCase()

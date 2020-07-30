@@ -9,11 +9,11 @@ export default {
     baseChannel: 1,
     midiInput: { id: undefined, name: '' },
     midiOutput: { id: undefined, name: '' },
-    mediaDirectory: '/my/ensoniq/media',
+    mediaDirectory: '',
     workingDirectory: process.env.NODE_ENV === 'development'
       ? 'workingDir' + '_' + require('os').platform()
       : process.resourcesPath + sep + 'workingDir' + '_' + require('os').platform(),
-    ensoniqStorageDevice: '/dev/ensoniqDevice',
+    ensoniqStorageDevice: '',
     ensoniqDisks: [],
     epslin: './epslin'
   },
