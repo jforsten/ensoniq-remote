@@ -57,7 +57,7 @@
                 prepend-icon="mdi-midi-port"
                 filled
                 label="MIDI Input"
-                :rules="[v => !!v || 'Midi input is required']"
+                :rules="[rules.midiIn]"
                 required
               />
             </v-col>
@@ -70,7 +70,7 @@
                 prepend-icon="mdi-midi-port"
                 filled
                 label="MIDI Output"
-                :rules="[v => !!v || 'Midi output is required']"
+                :rules="[rules.midiOut]"
                 required
               />
             </v-col>
@@ -184,7 +184,10 @@ export default {
       valid: true,
       rules: {
         required: value => !!value || 'Required.',
+        midiOut: value => !!value || 'Midi output is required',
+        midiIn: value => !!value || 'Midi input is required',
         linkedDevice: value => {
+          if (Helpers.isWindows()) return true
           return (
             (FileSystem.exists(value) && !FileSystem.isDirectory(value)) ||
             'Device not found!'
@@ -244,7 +247,13 @@ export default {
 
     currentMidiInput: {
       get () {
-        return this.midiInput.id
+        console.log('Trying to find saved midi input:')
+        console.log(this.midiInput)
+
+        if (this.midiInputs.find(item => item === this.midiInput) !== undefined) {
+          return this.midiInput.id
+        }
+        return ''
       },
       set (value) {
         var input = this.midiInputs.find(item => item.id === value)
@@ -254,7 +263,13 @@ export default {
 
     currentMidiOutput: {
       get () {
-        return this.midiOutput.id
+        console.log('Trying to find saved midi output:')
+        console.log(this.midiOutput)
+
+        if (this.midiOutputs.find(item => item === this.midiOutput) !== undefined) {
+          return this.midiOutput.id
+        }
+        return ''
       },
       set (value) {
         var output = this.midiOutputs.find(item => item.id === value)
@@ -291,7 +306,10 @@ export default {
 
     currentEnsoniqDisks: {
       get () {
-        return this.ensoniqDisks.join('\n')
+        if (this.ensoniqDisks !== undefined) {
+          return this.ensoniqDisks.join('\n')
+        }
+        return ''
       },
       set (value) {
         this.updateEnsoniqDisks(value.split('\n').filter(v => v !== ''))
