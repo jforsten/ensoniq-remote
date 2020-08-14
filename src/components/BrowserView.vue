@@ -37,7 +37,7 @@
           :expanded.sync="expanded"
           mobile-breakpoint=""
         >
-          <template v-slot:item.type_id="{ item }">
+          <template v-slot:[`item.type_id`]="{ item }">
             <v-icon small class="mr-2">
               {{get_icon(item.type_id)}}
             </v-icon>
