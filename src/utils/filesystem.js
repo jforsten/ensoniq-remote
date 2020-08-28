@@ -26,10 +26,19 @@ export const FileSystem = {
     try {
       var fs = require('fs')
       fs.accessSync(path, fs.constants.R_OK | fs.constants.W_OK)
-      console.log('can read/write')
       return true
     } catch (err) {
       console.error('no access to ' + path)
+      return false
+    }
+  },
+  isExecutabe (path) {
+    try {
+      var fs = require('fs')
+      fs.accessSync(path, fs.constants.X_OK)
+      return true
+    } catch (err) {
+      console.error('no execute rights to ' + path)
       return false
     }
   },

@@ -175,11 +175,18 @@ export const DataSource = {
 
   initializeEpsLin () {
     if (Helpers.isWindows()) return
-    console.warn('Initialize epslin')
     const epslin = store.getters['settings/workingDirectory'] + sep + store.getters['settings/epslin']
+    if (FileSystem.isExecutable(epslin)) return
+    console.warn('Initialize epslin executable rights')
     console.log(epslin)
-    FileSystem.chmod(epslin, '555')
+    FileSystem.chmod(epslin, '100')
     return Promise.resolve()
-  }
+  },
 
+  initialize () {
+    return this.loadSettings()
+      .then(() => Helpers.delay(1000))
+      .then(() => DataSource.initializeEpsLin())
+      .then(() => DataSource.initializeMidi())
+  }
 }

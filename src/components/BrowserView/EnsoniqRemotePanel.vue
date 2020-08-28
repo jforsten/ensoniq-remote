@@ -63,7 +63,6 @@
 <script>
 import { mapState } from 'vuex'
 import { DataSource } from '@/utils/datasource'
-import { Helpers } from '@/utils/helpers'
 import { Error } from '@/utils/error'
 
 export default {
@@ -199,10 +198,7 @@ export default {
     }
   },
   mounted () {
-    DataSource.loadSettings()
-      .then(() => Helpers.delay(1000))
-      .then(() => DataSource.initializeEpsLin())
-      .then(() => DataSource.initializeMidi())
+    DataSource.initialize()
       .then(() => this.getDeviceLoadedInstruments())
   }
 }

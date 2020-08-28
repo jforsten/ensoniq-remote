@@ -391,9 +391,7 @@ export default {
   },
 
   mounted () {
-    DataSource.loadSettings()
-      .then(() => DataSource.initializeEpsLin())
-      .then(() => DataSource.initializeMidi())
+    DataSource.initialize()
       .then(() => {
         this.readMidiPorts()
       })
