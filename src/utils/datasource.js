@@ -3,6 +3,7 @@ import { sep } from 'path'
 import { EpsLin } from '@/utils/epslin'
 import { Midi } from '@/utils/midi'
 import { Helpers } from '@/utils/helpers'
+import { FileSystem } from '@/utils/filesystem'
 import { EnsoniqDeviceType } from '@/utils/ensoniqDeviceType'
 
 export const DataSource = {
@@ -170,6 +171,15 @@ export const DataSource = {
     return Helpers.delay(100)
       .then(() => { return Midi.initialize(store.getters['settings/midiInput'].id) })
       .then(() => { return Midi.initialize(store.getters['settings/midiInput'].id) })
+  },
+
+  initializeEpsLin () {
+    if (Helpers.isWindows()) return
+    console.warn('Initialize epslin')
+    const epslin = store.getters['settings/workingDirectory'] + sep + store.getters['settings/epslin']
+    console.log(epslin)
+    FileSystem.chmod(epslin, '555')
+    return Promise.resolve()
   }
 
 }

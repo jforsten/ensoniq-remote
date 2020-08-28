@@ -201,6 +201,7 @@ export default {
   mounted () {
     DataSource.loadSettings()
       .then(() => Helpers.delay(1000))
+      .then(() => DataSource.initializeEpsLin())
       .then(() => DataSource.initializeMidi())
       .then(() => this.getDeviceLoadedInstruments())
   }
