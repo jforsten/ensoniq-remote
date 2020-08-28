@@ -32,7 +32,7 @@ export const FileSystem = {
       return false
     }
   },
-  isExecutabe (path) {
+  isExecutable (path) {
     try {
       var fs = require('fs')
       fs.accessSync(path, fs.constants.X_OK)

@@ -179,7 +179,7 @@ export const DataSource = {
     if (FileSystem.isExecutable(epslin)) return
     console.warn('Initialize epslin executable rights')
     console.log(epslin)
-    FileSystem.chmod(epslin, '100')
+    FileSystem.chmod(epslin, '500')
     return Promise.resolve()
   },
 
