@@ -1,6 +1,5 @@
 import store from '@/store/'
 import { spawn } from 'child_process'
-// import { sep } from 'path'
 
 // Internal properties
 
@@ -11,34 +10,32 @@ var settings = {
   get media () {
     var currentMedia = store.getters['app/currentMedia']
     console.log(currentMedia)
-    // var mediaDirectory = store.getters['settings/mediaDirectory']
-    return currentMedia // mediaDirectory + sep + currentMedia
+    return currentMedia
   }
 }
 
 // Internal methods
 
 const epslin = function (args, expectJson = false) {
-  console.warn(require('os').platform())
-  console.warn(process.env.NODE_ENV)
-  console.warn(require('electron').remote.app.getAppPath())
-  console.warn(process.resourcesPath)
-  console.warn(settings.workingDirectory)
-  console.warn(settings.epslinExecutable)
-
   return new Promise((resolve, reject) => {
+    // Cannot use "on exit/close" (does not work in Win) so hackish solution to use just stdout callback
     const p = spawn(settings.epslinExecutable, args, { cwd: settings.workingDirectory })
-    if (expectJson === false) {
-      p.on('exit', () => {
-        resolve()
-      })
-    } else {
-      p.stdout.on('data', (data) => {
-        var jsonString = new TextDecoder('utf-8').decode(data)
-        jsonString = jsonString.split('\\').join('\\\\')
-        resolve(JSON.parse(jsonString))
-      })
-    }
+
+    p.stdout.on('data', (data) => {
+      var jsonString = new TextDecoder('utf-8').decode(data)
+      jsonString = jsonString.split('\\').join('\\\\')
+      try {
+        var ret = JSON.parse(jsonString)
+        resolve(ret)
+      } catch (e) {
+        if (expectJson === false) {
+          resolve()
+        } else {
+          reject(data)
+        }
+      }
+    })
+
     p.stderr.on('data', (data) => {
       console.error('stderr: ' + data)
       reject(data)
