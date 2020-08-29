@@ -164,12 +164,10 @@ export const DataSource = {
   },
 
   initializeMidi () {
-    // TODO: Why first Midi init does not return inputs/outputs?
     console.warn('Initialize midi')
     console.log(store.getters['settings/midiOutput'].id)
 
     return Helpers.delay(100)
-      .then(() => { return Midi.initialize(store.getters['settings/midiInput'].id) })
       .then(() => { return Midi.initialize(store.getters['settings/midiInput'].id) })
   },
 

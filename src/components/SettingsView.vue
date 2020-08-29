@@ -249,8 +249,9 @@ export default {
       get () {
         console.log('Trying to find saved midi input:')
         console.log(this.midiInput)
+        console.log(this.midiInputs)
 
-        if (this.midiInputs.find(item => item === this.midiInput) !== undefined) {
+        if (this.midiInputs.find(item => (item.name === this.midiInput.name && item.id === this.midiInput.id)) !== undefined) {
           return this.midiInput.id
         }
         return ''
@@ -266,7 +267,7 @@ export default {
         console.log('Trying to find saved midi output:')
         console.log(this.midiOutput)
 
-        if (this.midiOutputs.find(item => item === this.midiOutput) !== undefined) {
+        if (this.midiOutputs.find(item => (item.name === this.midiOutput.name && item.id === this.midiOutput.id)) !== undefined) {
           return this.midiOutput.id
         }
         return ''

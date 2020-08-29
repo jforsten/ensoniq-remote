@@ -27,7 +27,7 @@ export default {
         midiOutput: state.midiOutput,
         mediaDirectory: state.mediaDirectory,
         ensoniqStorageDevice: state.ensoniqStorageDevice,
-        ensoniqDisks: state.ensoniqDisk
+        ensoniqDisks: state.ensoniqDisks
       }
     },
     ensoniqDevice: state => `${state.ensoniqDevice}`,
