@@ -6,15 +6,12 @@
   class="grey darken-2 ma-0 pa-0"
   >
     <v-row
-      fill-width
-      dense
       no-gutters
-      class="pa-0 ma-0"
+      fluid
+      align="center"
     >
-      <v-col class="mx-3 my-2">
-        <v-icon color="grey" >mdi-subdirectory-arrow-right</v-icon>
-      </v-col>
-      <v-col cols="11" class="px-0 py-0 my-1">
+      <v-col cols=11 class="px-0 py-0 my-1">
+        <v-icon color="grey" class="pl-4 pr-1">mdi-subdirectory-arrow-right</v-icon>
         <v-btn
           class="pa-0 ma-1 grey darken-4"
           v-for="option in panelData.selectOptions"
@@ -25,17 +22,14 @@
           {{option.text}}
         </v-btn>
       </v-col>
-      <v-spacer> </v-spacer>
-
-      <!-- <v-flex shrink px-2 py-0 my-1>
-        <v-btn class='black' small icon>
+      <!-- <v-col cols=1 align="center">
+        <v-btn class='black mx-2' small icon>
           <v-icon small>mdi-download</v-icon>
         </v-btn>
         <v-btn class='black' small icon>
           <v-icon small>mdi-delete</v-icon>
         </v-btn>
-      </v-flex> -->
-
+      </v-col> -->
     </v-row>
     <v-dialog
       v-model="showProgress"
@@ -63,6 +57,7 @@
 
 <script>
 import { DataSource } from '@/utils/datasource'
+import { Error } from '@/utils/error'
 
 export default {
   name: 'InstrumentPanel',
@@ -88,7 +83,11 @@ export default {
       this.showProgress = true
       DataSource.sendToEnsoniq(data.path, this.selectedItem.index, this.selectedItem.filename, data.index)
         .then(() => { this.showProgress = false })
-        .catch((err) => { this.showProgress = false; console.error('Error loading instrument' + err) })
+        .catch((err) => {
+          this.showProgress = false
+          console.error('Error loading instrument: ' + err)
+          Error.show('Error loading instrument: ' + err)
+        })
     }
   }
 }

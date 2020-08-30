@@ -67,19 +67,19 @@ export const EpsLin = {
     ])
   },
 
-  putEfe (filename) {
-    console.log('EpsLin: putEfe filename:' + filename)
+  putEfe (filename, idx = 1) {
+    console.log('EpsLin: putEfe filename:' + filename + ' to idx: ' + idx)
     return epslin([
-      '-p1',
+      '-p' + idx,
       settings.ensoniqStorageDevice,
       filename
     ])
   },
 
-  eraseEfe () {
-    console.log('EpsLin: clearEfes')
+  eraseEfe (idx = 1) {
+    console.log('EpsLin: clearEfe at idx:' + idx)
     return epslin([
-      '-e1',
+      '-e' + idx,
       settings.ensoniqStorageDevice
     ])
   }
