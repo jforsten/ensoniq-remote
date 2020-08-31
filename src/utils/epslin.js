@@ -1,5 +1,6 @@
 import store from '@/store/'
 import { spawn } from 'child_process'
+// import { execFile } from 'child_process'
 
 // Internal properties
 
@@ -15,6 +16,39 @@ var settings = {
 }
 
 // Internal methods
+
+// ExecFile version is unreliable in Windows so continue to investigate...
+/*
+const epslin = function (args, expectJson = false) {
+  return new Promise((resolve, reject) => {
+    console.log('ExecFile')
+    execFile(settings.epslinExecutable, args, { cwd: settings.workingDirectory },
+      (error, stdout, stderr) => {
+        if (error) {
+          console.error(error)
+          reject(error)
+          return
+        }
+        var jsonString = stdout // new TextDecoder('utf-8').decode(stdout)
+        console.log(jsonString)
+        jsonString = jsonString.split('\\').join('\\\\')
+        try {
+          var ret = JSON.parse(jsonString)
+          console.log('JSON')
+          resolve(ret)
+        } catch (e) {
+          if (expectJson === false) {
+            console.warn('NO JSON')
+            resolve()
+          } else {
+            console.error('ERROR in JSON')
+            reject(stdout)
+          }
+        }
+      })
+  })
+}
+*/
 
 const epslin = function (args, expectJson = false) {
   return new Promise((resolve, reject) => {

@@ -384,6 +384,7 @@ export default {
 
     save () {
       DataSource.saveSettings()
+      this.readMidiPorts()
     },
 
     delay (ms) {
@@ -393,12 +394,8 @@ export default {
 
   mounted () {
     DataSource.initialize()
-      .then(() => {
-        this.readMidiPorts()
-      })
-      .then(() => {
-        this.$refs.form.validate()
-      })
+      .then(() => { this.readMidiPorts() })
+      .then(() => { this.$refs.form.validate() })
   }
 }
 </script>
