@@ -32,7 +32,8 @@ export const DataSource = {
       .then(() => this.putInstrumentToEnsoniqStorage(filename))
       .then(() => Helpers.delay(300))
       .then(() => this.requestInstrumentLoad(1, pos))
-      .then(() => { console.log('DataSource: Sent to ensoniq!') })
+      // .then(() => { console.log('DataSource: Sent to ensoniq!') })
+      .catch((e) => { console.error(e); throw e })
       .finally(() => this.deleteFileInWorkingDirectory(filename))
   },
 
@@ -50,7 +51,7 @@ export const DataSource = {
         resolve()
       } catch (err) {
       // handle the error
-        console.log('cannot delete file:' + filename + ' - Reason: ' + err)
+        console.error('cannot delete file:' + filename + ' - Reason: ' + err)
         reject(err)
       }
     })
@@ -81,10 +82,14 @@ export const DataSource = {
   requestInstrumentLoad (idx, pos) {
     console.log('DataSource: requestInstrumentLoad')
     var outputId = store.getters['settings/midiOutput'].id
-    return Midi.loadGlobalParameters(outputId)
+    return Midi.changeStorageDevice(outputId) // Midi.loadGlobalParameters(outputId)
+      .then(() => Midi.deleteInstrument(outputId, pos))
+      .then(() => Midi.createInstrumentPlaceholder(outputId, pos))
+      .then(() => Midi.prepareInstrumentPlaceholder(outputId, pos))
       .then(() => Midi.prepareLoadInstrument(outputId))
       .then(() => Midi.programChange(outputId, idx, pos))
       .then(() => this.getInstrumentData(pos))
+      .catch((e) => { console.error('DataSorce: requestInsrumentLoad:' + e); throw e })
   },
 
   getInstrumentData (pos) {
@@ -96,7 +101,10 @@ export const DataSource = {
           store.commit('app/updateDeviceLoadedInstrument', { pos: pos, name: name })
           resolve(name)
         },
-        (err) => { reject(err) })
+        (err) => {
+          console.error('DataSource: getInstrumentData (pos=' + pos + ') - error:' + err)
+          reject(err)
+        })
     })
   },
 

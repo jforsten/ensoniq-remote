@@ -84,19 +84,104 @@ export const Midi = {
     })
   },
 
+  refreshDisk (outputId) {
+    return new Promise((resolve, reject) => {
+      var output = getOutputById(outputId)
+      try {
+        sendVirtualKey(output, 0x11) // COMMAND
+          .then(() => delay(200))
+          .then(() => sendVirtualKey(output, 0x15)) // SYSTEM
+          .then(() => delay(200))
+          .then(() => sendVirtualKey(output, 0x39)) // LAYER / 9
+          .then(() => delay(200))
+          .then(() => sendVirtualKey(output, 0x24)) // RIGHT
+          .then(() => delay(200))
+          .then(() => sendVirtualKey(output, 0x25)) // ENTER / YES
+          .then(() => delay(200))
+          .then(() => sendVirtualKey(output, 0x23)) // CANCEL / NO
+          .then(() => delay(200))
+          .then(() => {
+            resolve()
+          })
+      } catch (err) {
+        console.error('Midi error:' + err)
+        reject(err)
+      }
+    })
+  },
+
+  changeStorageDevice (outputId) {
+    return new Promise((resolve, reject) => {
+      var output = getOutputById(outputId)
+      try {
+        sendVirtualKey(output, 0x11) // COMMAND
+          .then(() => delay(200))
+          .then(() => sendVirtualKey(output, 0x15)) // SYSTEM
+          .then(() => delay(200))
+          .then(() => sendVirtualKey(output, 0x35)) // FILTER / 5
+          .then(() => delay(200))
+          .then(() => sendVirtualKey(output, 0x25)) // ENTER / YES
+          .then(() => delay(200))
+          .then(() => sendVirtualKey(output, 0x25)) // ENTER / YES
+          .then(() => delay(500))
+          .then(() => {
+            resolve()
+          })
+      } catch (err) {
+        console.error('Midi error:' + err)
+        reject(err)
+      }
+    })
+  },
+
+  createInstrumentPlaceholder (outputId, pos) {
+    console.warn('create instrument placeholder: pos=' + pos)
+    return new Promise((resolve, reject) => {
+      var output = getOutputById(outputId)
+      try {
+        createInstrument(output, pos)
+          .then(() => delay(300))
+          .then(() => {
+            resolve()
+          })
+      } catch (err) {
+        console.error('Midi error:' + err)
+        reject(err)
+      }
+    })
+  },
+
+  prepareInstrumentPlaceholder (outputId, pos) {
+    console.warn('prepare instrument placeholder: pos=' + pos)
+    return new Promise((resolve, reject) => {
+      var output = getOutputById(outputId)
+      try {
+        setParameter(output, pos, 0, 6, pos - 1)
+          .then(() => delay(300))
+          .then(() => {
+            resolve()
+          })
+      } catch (err) {
+        console.error('Midi error:' + err)
+        reject(err)
+      }
+    })
+  },
+
+  getFreeMemory (outputId) {
+    var output = getOutputById(outputId)
+    getParameter(output, 0, 0x34, 0x00)
+  },
+
   getInstumentData (outputId, pos, success, failure) {
     putInstrumentPos = pos
     getInstrumentDataCallback = success
     getInstrumentFailureCallback = failure
 
     var output = getOutputById(outputId)
-
-    console.log('MIDI out:')
-    console.log(outputId)
-    console.log(output)
     midiOut = output
 
-    getInstrumentTimerId = setTimeout(() => { failure('Timeout') }, 3000)
+    getInstrumentTimerId = setTimeout(() => { failure('Timeout - pos=' + pos) }, TIMEOUT_IN_MS)
 
     try {
       getInstrument(output, pos)
@@ -165,6 +250,9 @@ export const Midi = {
   }
 }
 
+const TIMEOUT_IN_MS = 5000
+const RETRY_TIME_IN_MS = 1000
+
 const MIDI_STATE = {
   IDLE: 0,
   GET_INSTRUMENT_SENT: 1,
@@ -186,7 +274,7 @@ function init () {
   if (midi !== null) close()
   return navigator.requestMIDIAccess({ sysex: true })
     .then(onMIDISuccess, onMIDIFailure)
-    .then(() => delay(500))
+    .then(() => delay(50))
 }
 
 function close () {
@@ -261,16 +349,18 @@ function isExpectedSysex (messageData, cmd = null, value = null) {
 }
 
 function gotMIDImessage (messageData) {
+  console.warn(messageData)
   var name = ''
   // In case of disk access, Ensoniq returns "disk access in progress" = 0x14
   if (
     (midiState === MIDI_STATE.GET_INSTRUMENT_SENT || midiState === MIDI_STATE.GET_INSTRUMENT_WAITING_DISK_ACCESS) &&
     isExpectedSysex(messageData, 0x01, 0x14)
   ) {
+    console.warn('Disk access...')
     midiState = MIDI_STATE.GET_INSTRUMENT_WAITING_DISK_ACCESS
-    setTimeout(() => { getInstrument(midiOut, putInstrumentPos) }, 1000)
+    setTimeout(() => { getInstrument(midiOut, putInstrumentPos) }, RETRY_TIME_IN_MS)
     clearTimeout(getInstrumentTimerId)
-    getInstrumentTimerId = setTimeout(() => { getInstrumentFailureCallback('Timeout') }, 3000)
+    getInstrumentTimerId = setTimeout(() => { getInstrumentFailureCallback('Timeout') }, TIMEOUT_IN_MS)
     return
   }
 
@@ -279,6 +369,7 @@ function gotMIDImessage (messageData) {
     midiState === MIDI_STATE.GET_INSTRUMENT_SENT &&
     isExpectedSysex(messageData, 0x01, 0x05)
   ) {
+    console.warn('Invalid instrument pos=' + putInstrumentPos)
     midiState = MIDI_STATE.IDLE
     clearTimeout(getInstrumentTimerId)
     getInstrumentDataCallback(putInstrumentPos, null)
@@ -290,6 +381,7 @@ function gotMIDImessage (messageData) {
     (midiState === MIDI_STATE.GET_INSTRUMENT_SENT || midiState === MIDI_STATE.GET_INSTRUMENT_WAITING_DISK_ACCESS) &&
     isExpectedSysex(messageData, 0x01, 0x00)
   ) {
+    console.warn('ACK pos=' + putInstrumentPos)
     midiState = MIDI_STATE.GET_INSTRUMENT_READY_FOR_RESPONSE
     return
   }
@@ -299,6 +391,7 @@ function gotMIDImessage (messageData) {
     midiState === MIDI_STATE.GET_INSTRUMENT_READY_FOR_RESPONSE &&
     isExpectedSysex(messageData, 0x0C)
   ) {
+    console.warn('PUT inst received - pos=' + putInstrumentPos)
     putInstrumentPos = messageData.data[6] + 1
     midiState = MIDI_STATE.PUT_INSTRUMENT_RECEIVED
     sendStatusOk(midiOut)
@@ -310,6 +403,7 @@ function gotMIDImessage (messageData) {
     midiState === MIDI_STATE.PUT_INSTRUMENT_RECEIVED &&
     isExpectedSysex(messageData)
   ) {
+    console.warn('Inst DATA received - pos=' + putInstrumentPos)
     var offset = 4
     for (var i = 0; i < 12; i++) {
       var char = (messageData.data[offset + i * 3] << 4) + (messageData.data[offset + (i * 3) + 1] >> 2)
@@ -349,6 +443,8 @@ function getInputNameById (inputId) {
 }
 
 function noteOn (output, channel, note, volume) {
+  console.warn('Note on')
+  console.warn([0x90 + channel, note, volume])
   output.send([0x90 + channel, note, volume])
 }
 
@@ -372,6 +468,39 @@ function sendVirtualKey (output, key) {
   })
 }
 
+function getParameter (output, pos, paramHi, paramLo) {
+  return new Promise((resolve) => {
+    sendSysex(output, [
+      0xf0, 0x0f, 0x03, 0x00,
+      0x08,
+      0x00, pos - 1,
+      0x00, 0x00,
+      0x00, 0x01,
+      paramHi, paramLo,
+      0xf7
+    ])
+    // midiState = MIDI_STATE.GET_INSTRUMENT_SENT
+    resolve()
+  })
+}
+
+function setParameter (output, pos, paramHi, paramLo, val) {
+  return new Promise((resolve) => {
+    sendSysex(output, [
+      0xf0, 0x0f, 0x03, 0x00,
+      0x11,
+      0x00, pos - 1,
+      0x00, 0x00,
+      0x00, 0x01,
+      paramHi, paramLo,
+      0x00, 0x00, 0x00, val,
+      0xf7
+    ])
+    // midiState = MIDI_STATE.GET_INSTRUMENT_SENT
+    resolve()
+  })
+}
+
 function getInstrument (output, pos) {
   return new Promise((resolve) => {
     sendSysex(output, [
@@ -389,6 +518,17 @@ function sendStatusOk (output) {
     sendSysex(output, [
       0xf0, 0x0f, 0x03, 0x00,
       0x01, 0x00, 0x00,
+      0xf7
+    ])
+    resolve()
+  })
+}
+
+function createInstrument (output, pos) {
+  return new Promise((resolve) => {
+    sendSysex(output, [
+      0xf0, 0x0f, 0x03, 0x00,
+      0x15, 0x00, pos - 1, 0x00, 0x00, 0x00, 0x01,
       0xf7
     ])
     resolve()
