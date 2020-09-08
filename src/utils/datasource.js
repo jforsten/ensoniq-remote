@@ -81,22 +81,29 @@ export const DataSource = {
 
   requestInstrumentLoad (idx, pos) {
     console.log('DataSource: requestInstrumentLoad')
+    var deviceType = store.getters['settings/ensoniqDevice']
+    console.warn(deviceType)
     var outputId = store.getters['settings/midiOutput'].id
-    return Midi.changeStorageDevice(outputId) // Midi.loadGlobalParameters(outputId)
+    return Midi.changeStorageDevice(outputId, deviceType)
       .then(() => Midi.deleteInstrument(outputId, pos))
-      .then(() => Midi.createInstrumentPlaceholder(outputId, pos))
-      .then(() => Midi.prepareInstrumentPlaceholder(outputId, pos))
+      .then(() => EnsoniqDeviceType.isEPS16(deviceType) ? Midi.createInstrumentPlaceholder(outputId, pos) : Promise.resolve()) // For EPS16, prepare placeholder instrument
+      .then(() => EnsoniqDeviceType.isEPS16(deviceType) ? Midi.prepareInstrumentPlaceholder(outputId, pos) : Promise.resolve()) // For EPS16, prepare placeholder instrument
       .then(() => Midi.prepareLoadInstrument(outputId))
       .then(() => Midi.programChange(outputId, idx, pos))
+      .then(() => Helpers.delay(EnsoniqDeviceType.isEPS(deviceType) ? 500 : 10)) // EPS is slow.. add delay
       .then(() => this.getInstrumentData(pos))
       .catch((e) => { console.error('DataSorce: requestInsrumentLoad:' + e); throw e })
   },
 
   getInstrumentData (pos) {
+    var deviceType = store.getters['settings/ensoniqDevice']
+    console.warn('deviceType:' + deviceType)
+    console.warn('Value:' + EnsoniqDeviceType.getValue(deviceType))
+
     var outputId = store.getters['settings/midiOutput'].id
     return new Promise((resolve, reject) => {
       console.log('call midi.getinstdata')
-      Midi.getInstumentData(outputId, pos,
+      Midi.getInstumentData(outputId, deviceType, pos,
         (position, name) => {
           store.commit('app/updateDeviceLoadedInstrument', { pos: pos, name: name })
           resolve(name)
@@ -105,7 +112,7 @@ export const DataSource = {
           console.error('DataSource: getInstrumentData (pos=' + pos + ') - error:' + err)
           reject(err)
         })
-    })
+    }).then(() => Helpers.delay(EnsoniqDeviceType.isEPS(deviceType) ? 200 : 10)) // EPS is slow.. add delay
   },
 
   deleteInstrument (pos) {
@@ -128,7 +135,8 @@ export const DataSource = {
   },
 
   getAllInstrumentData () {
-    return DataSource.getInstrumentData(1)
+    return Helpers.delay(200)
+      .then(() => DataSource.getInstrumentData(1))
       .then(() => DataSource.getInstrumentData(2))
       .then(() => DataSource.getInstrumentData(3))
       .then(() => DataSource.getInstrumentData(4))
