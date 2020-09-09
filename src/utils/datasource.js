@@ -146,6 +146,17 @@ export const DataSource = {
       .then(() => DataSource.getInstrumentData(8))
   },
 
+  clearAllInstrumentData () {
+    store.commit('app/updateDeviceLoadedInstrument', { pos: 1, name: null })
+    store.commit('app/updateDeviceLoadedInstrument', { pos: 2, name: null })
+    store.commit('app/updateDeviceLoadedInstrument', { pos: 3, name: null })
+    store.commit('app/updateDeviceLoadedInstrument', { pos: 4, name: null })
+    store.commit('app/updateDeviceLoadedInstrument', { pos: 5, name: null })
+    store.commit('app/updateDeviceLoadedInstrument', { pos: 6, name: null })
+    store.commit('app/updateDeviceLoadedInstrument', { pos: 7, name: null })
+    store.commit('app/updateDeviceLoadedInstrument', { pos: 8, name: null })
+  },
+
   getCurrentMidiInputName () {
     var inputId = store.getters['settings/midiInput'].id
     if (inputId === undefined) return '-'
