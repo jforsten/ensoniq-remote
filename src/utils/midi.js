@@ -345,6 +345,14 @@ function internalGetMidiOuts () {
   return outputs
 }
 
+function onStateChange (event) {
+  var port = event.port
+  var state = port.state
+  var name = port.name
+  var type = port.type
+  if (type === 'input') console.log('name', name, 'port', port, 'state', state)
+}
+
 function addInputListener (input) {
   if (input === undefined) {
     console.log('Midi: No input to add listener!')
@@ -362,6 +370,8 @@ function onMIDISuccess (midiData) {
   midi = midiData
   var allInputs = midi.inputs.values()
   var allOutputs = midi.outputs.values()
+
+  midi.onstatechange = onStateChange
 
   console.log(midiData)
 
