@@ -95,6 +95,7 @@ export default {
           console.error('Error fetching instrument data:' + err)
           this.progress = false
           Error.show('No Ensoniq device found!')
+          DataSource.clearAllInstrumentData()
         })
     },
 

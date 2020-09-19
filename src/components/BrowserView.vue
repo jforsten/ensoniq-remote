@@ -25,6 +25,7 @@
           no-data-text="Please select Ensoniq media"
           :headers="headers"
           :items="dataItems"
+          item-class="color"
           item-key="index"
           single-select
           hide-default-footer
@@ -38,7 +39,7 @@
           mobile-breakpoint=""
         >
           <template v-slot:[`item.type_id`]="{ item }">
-            <v-icon small class="mr-2">
+            <v-icon small :class="get_color(item.type_id)">
               {{get_icon(item.type_id)}}
             </v-icon>
           </template>
@@ -120,11 +121,15 @@ export default {
       return tmpItems.map(i => {
         var item = i
         if (item.name !== undefined) {
-          item.name = Helpers.capital_letter(item.name)
+          item.name =
+            item.type_id === EnsoniqFileType.Directory || item.type_id === EnsoniqFileType.Parent_Directory
+              ? item.name.toUpperCase() : Helpers.capital_letter(item.name)
         }
+        item.color = this.get_color(item.type_id)
         return item
       })
     },
+
     selectedPanel: function () {
       return 'InstrumentPanel'
     },
@@ -197,6 +202,18 @@ export default {
 
     get_icon (itemTypeId) {
       return TypeIcon.get_icon(itemTypeId)
+    },
+
+    get_color (itemTypeId) {
+      switch (itemTypeId) {
+        case EnsoniqFileType.Instrument:
+          return 'white--text'
+        case EnsoniqFileType.Directory:
+        case EnsoniqFileType.Parent_Directory:
+          return 'font-weight-bold grey--text'
+        default:
+          return 'grey--text text--darken-2'
+      }
     },
 
     scrollTo (pos, duration) {
