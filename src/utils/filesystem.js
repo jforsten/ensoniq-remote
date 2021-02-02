@@ -45,13 +45,13 @@ export const FileSystem = {
   sudo (cmd) {
     // Mac (Catalina) cannot use sudo-prompt so need to get the access through terminal
     if (require('os').platform() === 'darwin') {
-    const run = `osascript -e 'tell application "Terminal" to do script "sudo ${cmd} ; exit"'`
+      const run = `osascript -e 'tell application "Terminal" to do script "sudo ${cmd} ; exit"'`
       require('child_process').exec(run, (error) => {
-        if (error) throw error          
+        if (error) throw error
       })
       return
     }
-    
+
     const sudo = require('sudo-prompt')
     const options = {
       name: 'Ensoniq Remote'
