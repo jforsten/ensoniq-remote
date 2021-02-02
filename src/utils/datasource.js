@@ -32,7 +32,6 @@ export const DataSource = {
       .then(() => this.putInstrumentToEnsoniqStorage(filename))
       .then(() => Helpers.delay(300))
       .then(() => this.requestInstrumentLoad(1, pos))
-      // .then(() => { console.log('DataSource: Sent to ensoniq!') })
       .catch((e) => { console.error(e); throw e })
       .finally(() => this.deleteFileInWorkingDirectory(filename))
   },
