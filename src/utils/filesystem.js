@@ -10,7 +10,7 @@ export const FileSystem = {
   },
   exists (path) {
     try {
-      var fs = require('fs')
+      const fs = require('fs')
       fs.accessSync(path, fs.constants.F_OK)
       console.log('file exists')
       return true
@@ -24,7 +24,7 @@ export const FileSystem = {
   },
   hasAccess (path) {
     try {
-      var fs = require('fs')
+      const fs = require('fs')
       fs.accessSync(path, fs.constants.R_OK | fs.constants.W_OK)
       return true
     } catch (err) {
@@ -34,7 +34,7 @@ export const FileSystem = {
   },
   isExecutable (path) {
     try {
-      var fs = require('fs')
+      const fs = require('fs')
       fs.accessSync(path, fs.constants.X_OK)
       return true
     } catch (err) {
@@ -45,15 +45,15 @@ export const FileSystem = {
   sudo (cmd) {
     // Mac (Catalina) cannot use sudo-prompt so need to get the access through terminal
     if (require('os').platform() === 'darwin') {
-      const run = `osascript -e 'tell application "Terminal" to do script "sudo ${cmd} ; exit"'`
+    const run = `osascript -e 'tell application "Terminal" to do script "sudo ${cmd} ; exit"'`
       require('child_process').exec(run, (error) => {
-        if (error) throw error
+        if (error) throw error          
       })
       return
     }
-
-    var sudo = require('sudo-prompt')
-    var options = {
+    
+    const sudo = require('sudo-prompt')
+    const options = {
       name: 'Ensoniq Remote'
     }
     sudo.exec(cmd, options,

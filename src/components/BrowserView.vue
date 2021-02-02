@@ -116,14 +116,13 @@ export default {
     // Change name casing
     dataItems: function () {
       // Make local copy from store data
-      var tmpItems = JSON.parse(JSON.stringify(this.items))
+      const tmpItems = JSON.parse(JSON.stringify(this.items))
 
       return tmpItems.map(i => {
-        var item = i
+        const item = i
         if (item.name !== undefined) {
           item.name =
-            item.type_id === EnsoniqFileType.Directory || item.type_id === EnsoniqFileType.Parent_Directory
-              ? item.name.toUpperCase() : Helpers.capital_letter(item.name)
+            item.type_id === EnsoniqFileType.Directory || item.type_id === EnsoniqFileType.Parent_Directory ? item.name.toUpperCase() : Helpers.capital_letter(item.name)
         }
         item.color = this.get_color(item.type_id)
         return item

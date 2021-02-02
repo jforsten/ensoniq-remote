@@ -100,12 +100,12 @@ export default {
     },
 
     getName (index) {
-      var name = this.deviceLoadedInstruments[index - 1]
+      const name = this.deviceLoadedInstruments[index - 1]
       return name === null ? '<none>' : name
     },
 
     getNameColor (index) {
-      var name = this.deviceLoadedInstruments[index - 1]
+      const name = this.deviceLoadedInstruments[index - 1]
       if (name === null) return this.selectMode ? 'grey' : ''
       return 'white'
     },
@@ -148,7 +148,7 @@ export default {
       console.warn(e)
       console.warn('RIGHT:' + pos)
       if (e.type === 'mousedown') {
-        var relativeX = 0
+        let relativeX = 0
         if (e.target.nodeName === 'BUTTON') {
           relativeX =
             1 -
