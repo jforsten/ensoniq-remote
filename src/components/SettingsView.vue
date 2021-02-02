@@ -257,7 +257,7 @@ export default {
         return ''
       },
       set (value) {
-        var input = this.midiInputs.find(item => item.id === value)
+        const input = this.midiInputs.find(item => item.id === value)
         this.updateMidiInput(input)
       }
     },
@@ -273,7 +273,7 @@ export default {
         return ''
       },
       set (value) {
-        var output = this.midiOutputs.find(item => item.id === value)
+        const output = this.midiOutputs.find(item => item.id === value)
         this.updateMidiOutput(output)
       }
     },

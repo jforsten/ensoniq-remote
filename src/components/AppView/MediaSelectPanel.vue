@@ -106,7 +106,7 @@ export default {
     },
 
     previousMediaFile () {
-      var id = this.currentMediaId - 1
+      let id = this.currentMediaId - 1
       if (id < 0) id = this.mediaList.length - 1
       this.updateCurrentMediaId(id)
       this.goToRoot()

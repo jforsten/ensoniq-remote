@@ -15,10 +15,10 @@ export const DataSource = {
   },
 
   getMediaList (mediaDirectory) {
-    var mediaList = require('fs').readdirSync(mediaDirectory)
+    const mediaList = require('fs').readdirSync(mediaDirectory)
 
-    var list = mediaList.map((name, index) => {
-      var dict = {}
+    const list = mediaList.map((name, index) => {
+      const dict = {}
       dict.id = index
       dict.name = name
       return dict
@@ -44,7 +44,7 @@ export const DataSource = {
 
   deleteFileInWorkingDirectory (filename) {
     console.log('DataSource: deleteFileInWorkingDirectory')
-    var workingDirectory = store.getters['settings/workingDirectory']
+    const workingDirectory = store.getters['settings/workingDirectory']
     return new Promise((resolve, reject) => {
       try {
         require('fs').unlinkSync(workingDirectory + sep + filename)
@@ -81,9 +81,9 @@ export const DataSource = {
 
   requestInstrumentLoad (idx, pos) {
     console.log('DataSource: requestInstrumentLoad')
-    var deviceType = store.getters['settings/ensoniqDevice']
+    const deviceType = store.getters['settings/ensoniqDevice']
     console.warn(deviceType)
-    var outputId = store.getters['settings/midiOutput'].id
+    const outputId = store.getters['settings/midiOutput'].id
     return Midi.changeStorageDevice(outputId, deviceType)
       .then(() => Midi.deleteInstrument(outputId, pos))
       .then(() => EnsoniqDeviceType.isEPS16(deviceType) ? Midi.createInstrumentPlaceholder(outputId, pos) : Promise.resolve()) // For EPS16, prepare placeholder instrument
@@ -96,11 +96,11 @@ export const DataSource = {
   },
 
   getInstrumentData (pos) {
-    var deviceType = store.getters['settings/ensoniqDevice']
+    const deviceType = store.getters['settings/ensoniqDevice']
     console.warn('deviceType:' + deviceType)
     console.warn('Value:' + EnsoniqDeviceType.getValue(deviceType))
 
-    var outputId = store.getters['settings/midiOutput'].id
+    const outputId = store.getters['settings/midiOutput'].id
     return new Promise((resolve, reject) => {
       console.log('call midi.getinstdata')
       Midi.getInstumentData(outputId, deviceType, pos,
@@ -116,13 +116,13 @@ export const DataSource = {
   },
 
   deleteInstrument (pos) {
-    var outputId = store.getters['settings/midiOutput'].id
+    const outputId = store.getters['settings/midiOutput'].id
     return Midi.deleteInstrument(outputId, pos)
       .then(() => this.getInstrumentData(pos))
   },
 
   copyInstrument (from, to) {
-    var outputId = store.getters['settings/midiOutput'].id
+    const outputId = store.getters['settings/midiOutput'].id
     return Midi.deleteInstrument(outputId, to)
       .then(() => Midi.prepareCopyInstrument(outputId, from))
       .then(() => Midi.copyInstrument(outputId, from, to))
@@ -130,7 +130,7 @@ export const DataSource = {
   },
 
   playInstrument (pos, note, volume) {
-    var outputId = store.getters['settings/midiOutput'].id
+    const outputId = store.getters['settings/midiOutput'].id
     return Midi.playInstrument(outputId, pos, note, volume)
   },
 
@@ -158,13 +158,13 @@ export const DataSource = {
   },
 
   getCurrentMidiInputName () {
-    var inputId = store.getters['settings/midiInput'].id
+    const inputId = store.getters['settings/midiInput'].id
     if (inputId === undefined) return '-'
     return Midi.getInputName(inputId)
   },
 
   getCurrentMidiOutputName () {
-    var outputId = store.getters['settings/midiOutput'].id
+    const outputId = store.getters['settings/midiOutput'].id
     if (outputId === undefined) return '-'
     return Midi.getOutputName(outputId)
   },
@@ -173,7 +173,7 @@ export const DataSource = {
 
   loadSettings () {
     if (localStorage.getItem('settings')) {
-      var allSettings = JSON.parse(localStorage.getItem('settings'))
+      const allSettings = JSON.parse(localStorage.getItem('settings'))
       if (allSettings !== undefined) {
         store.commit('settings/setAllSettings', allSettings)
       }

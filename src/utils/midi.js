@@ -32,7 +32,7 @@ export const Midi = {
   programChange (outputId, idx, pos) {
     return new Promise((resolve, reject) => {
       try {
-        var output = getOutputById(outputId)
+        const output = getOutputById(outputId)
         sendProgramChange(output, idx, pos - 1)
         setTimeout(() => { resolve() }, 300)
       } catch (err) {
@@ -44,7 +44,7 @@ export const Midi = {
 
   prepareLoadInstrument (outputId) {
     return new Promise((resolve, reject) => {
-      var output = getOutputById(outputId)
+      const output = getOutputById(outputId)
       try {
         sendVirtualKey(output, BUTTON.LOAD_MODE)
           .then(() => delay(200))
@@ -62,7 +62,7 @@ export const Midi = {
 
   loadGlobalParameters (outputId) {
     return new Promise((resolve, reject) => {
-      var output = getOutputById(outputId)
+      const output = getOutputById(outputId)
       try {
         sendVirtualKey(output, BUTTON.INSTRUMENT_1)
           .then(() => delay(200))
@@ -87,7 +87,7 @@ export const Midi = {
   changeStorageDevice (outputId, deviceType) {
     console.warn(deviceType)
     return new Promise((resolve, reject) => {
-      var output = getOutputById(outputId)
+      const output = getOutputById(outputId)
       try {
         sendVirtualKey(output, BUTTON.COMMAND_MODE)
           .then(() => delay(200))
@@ -113,7 +113,7 @@ export const Midi = {
   createInstrumentPlaceholder (outputId, pos) {
     console.log('create instrument placeholder: pos=' + pos)
     return new Promise((resolve, reject) => {
-      var output = getOutputById(outputId)
+      const output = getOutputById(outputId)
       try {
         createInstrument(output, pos)
           .then(() => delay(300))
@@ -130,7 +130,7 @@ export const Midi = {
   prepareInstrumentPlaceholder (outputId, pos) {
     console.log('prepare instrument placeholder: pos=' + pos)
     return new Promise((resolve, reject) => {
-      var output = getOutputById(outputId)
+      const output = getOutputById(outputId)
       try {
         setParameter(output, pos, 0, 6, pos - 1)
           .then(() => delay(300))
@@ -145,7 +145,7 @@ export const Midi = {
   },
 
   getFreeMemory (outputId) {
-    var output = getOutputById(outputId)
+    const output = getOutputById(outputId)
     getParameter(output, 0, 0x34, 0x00)
   },
 
@@ -155,10 +155,10 @@ export const Midi = {
     getInstrumentFailureCallback = failure
     retryCount = 0
 
-    var output = getOutputById(outputId)
+    const output = getOutputById(outputId)
     midiOut = output
 
-    var retryFunction = () => {
+    const retryFunction = () => {
       retryCount++
       console.warn('RETRY GetInstrument') // For EPS, retry as there sometimes very slow respose
       getInstrumentTimerId = setTimeout(() => {
@@ -191,7 +191,7 @@ export const Midi = {
   deleteInstrument (outputId, pos) {
     return new Promise((resolve, reject) => {
       try {
-        var output = getOutputById(outputId)
+        const output = getOutputById(outputId)
         deleteInstrument(output, pos)
         setTimeout(() => { resolve() }, 300)
       } catch (err) {
@@ -203,7 +203,7 @@ export const Midi = {
 
   prepareCopyInstrument (outputId, from) {
     return new Promise((resolve, reject) => {
-      var output = getOutputById(outputId)
+      const output = getOutputById(outputId)
       try {
         sendVirtualKey(output, BUTTON.INSTRUMENT)
           .then(() => delay(200))
@@ -222,7 +222,7 @@ export const Midi = {
   copyInstrument (outputId, from, to) {
     return new Promise((resolve, reject) => {
       try {
-        var output = getOutputById(outputId)
+        const output = getOutputById(outputId)
         copyInstrument(output, from, to)
         setTimeout(() => { resolve() }, 300)
       } catch (err) {
@@ -234,7 +234,7 @@ export const Midi = {
 
   playInstrument (outputId, pos, note, volume) {
     return new Promise((resolve, reject) => {
-      var output = getOutputById(outputId)
+      const output = getOutputById(outputId)
       try {
         noteOn(output, pos - 1, note, volume)
         resolve()
@@ -288,7 +288,7 @@ const BUTTON = {
 const TIMEOUT_IN_MS = 5000
 const RETRY_TIME_IN_MS = 1000
 const MAX_RETRY_COUNT = 3
-var retryCount = 0
+let retryCount = 0
 
 const MIDI_STATE = {
   IDLE: 0,
@@ -298,14 +298,14 @@ const MIDI_STATE = {
   GET_INSTRUMENT_READY_FOR_RESPONSE: 4
 }
 
-var midi = null
-var midiState = MIDI_STATE.IDLE
-var midiOut = null
-var baseChannel = 1
-var putInstrumentPos = -1
-var getInstrumentTimerId = null
-var getInstrumentDataCallback = function () { }
-var getInstrumentFailureCallback = function () { }
+let midi = null
+let midiState = MIDI_STATE.IDLE
+let midiOut = null
+const baseChannel = 1
+let putInstrumentPos = -1
+let getInstrumentTimerId = null
+let getInstrumentDataCallback = function () { }
+let getInstrumentFailureCallback = function () { }
 
 function init () {
   if (midi !== null) close()
@@ -315,16 +315,16 @@ function init () {
 }
 
 function close () {
-  var allInputs = midi.inputs.values()
-  for (var input = allInputs.next(); input && !input.done; input = allInputs.next()) {
+  const allInputs = midi.inputs.values()
+  for (let input = allInputs.next(); input && !input.done; input = allInputs.next()) {
     input.value.onmidimessage = null
   }
 }
 
 function internalGetMidiIns () {
-  var inputs = []
+  const inputs = []
   midi.inputs.forEach(function (port) {
-    var dict = {}
+    const dict = {}
     dict.id = port.id
     dict.name = port.name
     console.log(port)
@@ -334,9 +334,9 @@ function internalGetMidiIns () {
 }
 
 function internalGetMidiOuts () {
-  var outputs = []
+  const outputs = []
   midi.outputs.forEach(function (port) {
-    var dict = {}
+    const dict = {}
     dict.id = port.id
     dict.name = port.name
     console.log(port)
@@ -346,10 +346,10 @@ function internalGetMidiOuts () {
 }
 
 function onStateChange (event) {
-  var port = event.port
-  var state = port.state
-  var name = port.name
-  var type = port.type
+  const port = event.port
+  const state = port.state
+  const name = port.name
+  const type = port.type
   if (type === 'input') console.log('name', name, 'port', port, 'state', state)
 }
 
@@ -368,19 +368,19 @@ function onMIDISuccess (midiData) {
   console.log('MIDI success')
   // this is all our MIDI data
   midi = midiData
-  var allInputs = midi.inputs.values()
-  var allOutputs = midi.outputs.values()
+  const allInputs = midi.inputs.values()
+  const allOutputs = midi.outputs.values()
 
   midi.onstatechange = onStateChange
 
   console.log(midiData)
 
   console.log('INPUTS:')
-  for (var input = allInputs.next(); input && !input.done; input = allInputs.next()) {
+  for (let input = allInputs.next(); input && !input.done; input = allInputs.next()) {
     console.log(input.value.name + ' ' + input.value.id)
   }
   console.log('OUTPUTS:')
-  for (var output = allOutputs.next(); output && !output.done; output = allOutputs.next()) {
+  for (let output = allOutputs.next(); output && !output.done; output = allOutputs.next()) {
     console.log(output.value.name + ' ' + output.value.id)
   }
 }
@@ -397,7 +397,7 @@ function isExpectedSysex (messageData, cmd = null, value = null) {
 
 function gotMIDImessage (messageData) {
   console.log(messageData)
-  var name = ''
+  let name = ''
   // In case of disk access, Ensoniq returns "disk access in progress" = 0x14
   if (
     (midiState === MIDI_STATE.GET_INSTRUMENT_SENT || midiState === MIDI_STATE.GET_INSTRUMENT_WAITING_DISK_ACCESS) &&
@@ -451,9 +451,9 @@ function gotMIDImessage (messageData) {
     isExpectedSysex(messageData)
   ) {
     console.log('Inst DATA received - pos=' + putInstrumentPos)
-    var offset = 4
-    for (var i = 0; i < 12; i++) {
-      var char = (messageData.data[offset + i * 3] << 4) + (messageData.data[offset + (i * 3) + 1] >> 2)
+    const offset = 4
+    for (let i = 0; i < 12; i++) {
+      const char = (messageData.data[offset + i * 3] << 4) + (messageData.data[offset + (i * 3) + 1] >> 2)
       name += String.fromCharCode(char)
     }
     midiState = MIDI_STATE.IDLE
@@ -477,14 +477,14 @@ function getInputById (inputId) {
 
 function getOutputNameById (outputId) {
   if (midi === null || outputId === undefined) { return '' }
-  var output = midi.outputs.get(outputId)
+  const output = midi.outputs.get(outputId)
   if (output === undefined) { return '' }
   return output.name
 }
 
 function getInputNameById (inputId) {
   if (midi === null || inputId === undefined) { return '' }
-  var input = midi.inputs.get(inputId)
+  const input = midi.inputs.get(inputId)
   if (input === undefined) { return '' }
   return input.name
 }

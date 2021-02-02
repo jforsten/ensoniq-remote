@@ -4,12 +4,12 @@ import { spawn } from 'child_process'
 
 // Internal properties
 
-var settings = {
+const settings = {
   get epslinExecutable () { return store.getters['settings/epslin'] },
   get workingDirectory () { return store.getters['settings/workingDirectory'] },
   get ensoniqStorageDevice () { return store.getters['settings/ensoniqStorageDevice'] },
   get media () {
-    var currentMedia = store.getters['app/currentMedia']
+    const currentMedia = store.getters['app/currentMedia']
     console.log(currentMedia)
     return currentMedia
   }
@@ -56,10 +56,10 @@ const epslin = function (args, expectJson = false) {
     const p = spawn(settings.epslinExecutable, args, { cwd: settings.workingDirectory })
 
     p.stdout.on('data', (data) => {
-      var jsonString = new TextDecoder('utf-8').decode(data)
+      let jsonString = new TextDecoder('utf-8').decode(data)
       jsonString = jsonString.split('\\').join('\\\\')
       try {
-        var ret = JSON.parse(jsonString)
+        const ret = JSON.parse(jsonString)
         resolve(ret)
       } catch (e) {
         if (expectJson === false) {
