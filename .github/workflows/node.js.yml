@@ -58,9 +58,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/upload-artifact@v2
         with:
-          path: ./dist_electron/ensoniq-remote-Setup-0.9.0.exe
+          path: ./dist_electron/ensoniq-remote Setup-0.9.0.exe
           name: ensoniq-remote-win
-  
+      - run: |
+          cd dist_electron
+          dir
   release:
     runs-on: ubuntu-latest
     needs: [win, mac, linux]
@@ -95,7 +97,7 @@ jobs:
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
         asset_path: /home/runner/work/ensoniq-remote/ensoniq-remote/ensoniq-remote-win/ensoniq-remote-Setup-0.9.0.exe
-        asset_name: ensoniq-remote-Setup-0.9.0.exe
+        asset_name: ensoniq-remote-Setup 0.9.0.exe
         asset_content_type: application/octet-stream
 
     - name: Upload Release Asset osx
