@@ -9,7 +9,7 @@ on:
   pull_request:
     branches: [ master ]
 jobs:
-  build:
+  mac:
     runs-on: macos-latest
     name: electron build osx
     steps:
@@ -26,4 +26,39 @@ jobs:
         with:
           path: ./dist_electron/ensoniq-remote-0.9.0.dmg
           name: ensoniq-remote-osx
-        
+  lin:
+    runs-on: ubuntu-latest
+    name: electron build lin
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+          architecture: 'x64' # optional, x64 or x86. If not specified, x64 will be used by default
+      - run: npm install
+      - run: npm run electron:build
+      - run: tree
+        env: 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/upload-artifact@v2
+        with:
+          path: ./dist_electron/ensoniq-remote-0.9.0.AppImage
+          name: ensoniq-remote-linux
+  win:
+    runs-on: windows-latest
+    name: electron build win
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+          architecture: 'x64' # optional, x64 or x86. If not specified, x64 will be used by default
+      - run: npm install
+      - run: npm run electron:build
+        env: 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/upload-artifact@v2
+        with:
+          path: ./dist_electron/ensoniq-remote-0.9.0.zip
+          name: ensoniq-remote-win
+          
