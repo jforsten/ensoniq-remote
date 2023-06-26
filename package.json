@@ -9,7 +9,7 @@
   },
   "homepage": "https://gitlab.com/jforsten/Ensoniq-remote",
   "license": "GPL-3.0-or-later",
-  "description": "Remtote sample loading utility for Ensoniq samplers",
+  "description": "Remote sample loading utility for Ensoniq samplers",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
