@@ -16,7 +16,7 @@ export const EnsoniqFileType = {
   ASR_Sequence: 28,
   ASR_Song: 29,
   ASR_Bank: 30,
-  ASR_Trak: 31,
+  ASR_Track: 31,
   ASR_OS: 32,
   ASR_Effect: 33,
   ASR_Macro: 34

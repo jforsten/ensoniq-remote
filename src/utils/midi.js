@@ -149,7 +149,7 @@ export const Midi = {
     getParameter(output, 0, 0x34, 0x00)
   },
 
-  getInstumentData (outputId, deviceType, pos, success, failure) {
+  getInstrumentData (outputId, deviceType, pos, success, failure) {
     putInstrumentPos = pos
     getInstrumentDataCallback = success
     getInstrumentFailureCallback = failure
@@ -160,7 +160,7 @@ export const Midi = {
 
     const retryFunction = () => {
       retryCount++
-      console.warn('RETRY GetInstrument') // For EPS, retry as there sometimes very slow respose
+      console.warn('RETRY GetInstrument') // For EPS, retry as there sometimes very slow response
       getInstrumentTimerId = setTimeout(() => {
         if (retryCount < MAX_RETRY_COUNT) {
           retryFunction()
@@ -464,7 +464,7 @@ function gotMIDImessage (messageData) {
 }
 
 function onMIDIFailure () {
-  console.warn('Not recognising MIDI controller')
+  console.warn('Not recognizing MIDI controller')
 }
 
 function getOutputById (outputId) {

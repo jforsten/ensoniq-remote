@@ -10,7 +10,7 @@ export const DataSource = {
 
   // Storage
 
-  getDirectoryInfoFromEnsoniaMedia (path) {
+  getDirectoryInfoFromEnsoniqMedia (path) {
     return EpsLin.getDir(path)
   },
 
@@ -91,7 +91,7 @@ export const DataSource = {
       .then(() => Midi.programChange(outputId, idx, pos))
       .then(() => Helpers.delay(EnsoniqDeviceType.isEPS(deviceType) ? 500 : 10)) // EPS is slow.. add delay
       .then(() => this.getInstrumentData(pos))
-      .catch((e) => { console.error('DataSorce: requestInsrumentLoad:' + e); throw e })
+      .catch((e) => { console.error('DataSource: requestInstrumentLoad:' + e); throw e })
   },
 
   getInstrumentData (pos) {
@@ -102,7 +102,7 @@ export const DataSource = {
     const outputId = store.getters['settings/midiOutput'].id
     return new Promise((resolve, reject) => {
       console.log('call midi.getinstdata')
-      Midi.getInstumentData(outputId, deviceType, pos,
+      Midi.getInstrumentData(outputId, deviceType, pos,
         (position, name) => {
           store.commit('app/updateDeviceLoadedInstrument', { pos: pos, name: name })
           resolve(name)

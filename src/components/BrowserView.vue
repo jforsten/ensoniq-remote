@@ -153,15 +153,15 @@ export default {
     ...mapActions({
       addItems: 'app/updateItems',
       goDir: 'app/goDir',
-      updateDeviceLoadedInstuments: 'app/updateDeviceLoadedInstruments'
+      updateDeviceLoadedInstruments: 'app/updateDeviceLoadedInstruments'
     }),
 
     goToRoot () {
       this.goDir('/')
     },
 
-    updataLoadedDeviceInstrument (pos, name) {
-      this.updataLoadedDeviceInstrument(this.deviceLoadedInstruments[pos] = name)
+    updateLoadedDeviceInstrument (pos, name) {
+      this.updateLoadedDeviceInstrument(this.deviceLoadedInstruments[pos] = name)
     },
 
     getDeviceLoadedInstruments () {
