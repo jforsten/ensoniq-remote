@@ -67,7 +67,7 @@ export const DataSource = {
   },
 
   getEnsoniqDevices () {
-    return Object.keys(EnsoniqDeviceType).map(key => {
+    return Object.keys(EnsoniqDeviceType).filter(key => typeof EnsoniqDeviceType[key] === 'string').map(key => {
       return { id: key, name: EnsoniqDeviceType[key] }
     })
   },
