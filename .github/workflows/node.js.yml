@@ -22,9 +22,10 @@ jobs:
       - run: npm run electron:build
         env: 
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: jaywcjlove/github-action-package@main
       - uses: actions/upload-artifact@v2
         with:
-          path: ./dist_electron/ensoniq-remote-0.9.0.dmg
+          path: ./dist_electron/ensoniq-remote-${{ steps.info.outputs.version }}.dmg
           name: ensoniq-remote-osx
   linux:
     runs-on: ubuntu-latest
@@ -39,9 +40,10 @@ jobs:
       - run: npm run electron:build
         env: 
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: jaywcjlove/github-action-package@main
       - uses: actions/upload-artifact@v2
         with:
-          path: ./dist_electron/ensoniq-remote-0.9.0.AppImage
+          path: ./dist_electron/ensoniq-remote-${{ steps.info.outputs.version }}.AppImage
           name: ensoniq-remote-linux
   win:
     runs-on: windows-latest
@@ -56,9 +58,10 @@ jobs:
       - run: npm run electron:build
         env: 
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: jaywcjlove/github-action-package@main
       - uses: actions/upload-artifact@v2
         with:
-          path: ./dist_electron/ensoniq-remote Setup 0.9.0.exe
+          path: ./dist_electron/ensoniq-remote Setup ${{ steps.info.outputs.version }}.exe
           name: ensoniq-remote-win
       - run: |
           cd dist_electron
@@ -96,8 +99,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: /home/runner/work/ensoniq-remote/ensoniq-remote/ensoniq-remote-win/ensoniq-remote Setup 0.9.0.exe
-        asset_name: ensoniq-remote-Setup 0.9.0.exe
+        asset_path: /home/runner/work/ensoniq-remote/ensoniq-remote/ensoniq-remote-win/ensoniq-remote Setup ${{ steps.info.outputs.version }}.exe
+        asset_name: ensoniq-remote-Setup ${{ steps.info.outputs.version }}.exe
         asset_content_type: application/octet-stream
 
     - name: Upload Release Asset osx
@@ -107,8 +110,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: /home/runner/work/ensoniq-remote/ensoniq-remote/ensoniq-remote-osx/ensoniq-remote-0.9.0.dmg
-        asset_name: ensoniq-remote-0.9.0.dmg
+        asset_path: /home/runner/work/ensoniq-remote/ensoniq-remote/ensoniq-remote-osx/ensoniq-remote-${{ steps.info.outputs.version }}.dmg
+        asset_name: ensoniq-remote-${{ steps.info.outputs.version }}.dmg
         asset_content_type: application/octet-stream
   
     - name: Upload Release Asset linux
@@ -118,6 +121,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: /home/runner/work/ensoniq-remote/ensoniq-remote/ensoniq-remote-linux/ensoniq-remote-0.9.0.AppImage
-        asset_name: ensoniq-remote-0.9.0.AppImage
+        asset_path: /home/runner/work/ensoniq-remote/ensoniq-remote/ensoniq-remote-linux/ensoniq-remote-${{ steps.info.outputs.version }}.AppImage
+        asset_name: ensoniq-remote-${{ steps.info.outputs.version }}.AppImage
         asset_content_type: application/octet-stream
