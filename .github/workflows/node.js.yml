@@ -22,7 +22,9 @@ jobs:
       - run: npm run electron:build
         env: 
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - uses: jaywcjlove/github-action-package@main
+      - name: package.json info
+        id: info
+        uses: jaywcjlove/github-action-package@main
       - uses: actions/upload-artifact@v2
         with:
           path: ./dist_electron/ensoniq-remote-${{ steps.info.outputs.version }}.dmg
@@ -40,7 +42,9 @@ jobs:
       - run: npm run electron:build
         env: 
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - uses: jaywcjlove/github-action-package@main
+      - name: package.json info
+        id: info
+        uses: jaywcjlove/github-action-package@main
       - uses: actions/upload-artifact@v2
         with:
           path: ./dist_electron/ensoniq-remote-${{ steps.info.outputs.version }}.AppImage
@@ -58,7 +62,9 @@ jobs:
       - run: npm run electron:build
         env: 
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - uses: jaywcjlove/github-action-package@main
+      - name: package.json info
+        id: info
+        uses: jaywcjlove/github-action-package@main
       - uses: actions/upload-artifact@v2
         with:
           path: ./dist_electron/ensoniq-remote Setup ${{ steps.info.outputs.version }}.exe
@@ -71,6 +77,9 @@ jobs:
     needs: [win, mac, linux]
     steps:
     - uses: actions/checkout@v2
+    - name: package.json info
+      id: info
+      uses: jaywcjlove/github-action-package@main
     - name: Get current date
       id: date
       run: echo "MY_DATE=$(date +'%Y%m%d-%H%M%S')" >> $GITHUB_ENV
