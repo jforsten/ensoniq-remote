@@ -1,6 +1,6 @@
 {
   "name": "ensoniq-remote",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "private": true,
   "author": {
     "name": "Juha Forsten",
@@ -50,5 +50,10 @@
     "vue-cli-plugin-vuetify": "~2.1.0",
     "vue-template-compiler": "^2.6.12",
     "vuetify-loader": "^1.7.1"
+  },
+  "overrides": {
+    "vue-cli-plugin-electron-builder": {
+      "electron-builder": "^23.1.0"
+    }
   }
 }
